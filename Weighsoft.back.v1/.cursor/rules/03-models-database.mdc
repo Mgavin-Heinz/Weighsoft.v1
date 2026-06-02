@@ -1,0 +1,323 @@
+---
+description: Eloquent model patterns, database conventions, and UUID handling
+globs: ["app/Models/**/*.php", "database/migrations/**/*.php"]
+alwaysApply: false
+---
+
+# Models and Database Patterns
+
+## Model Structure
+
+### Basic Model Pattern
+
+```php
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Company extends Model
+{
+    use SoftDeletes;
+
+    protected $table = 'companies';
+    
+    protected $fillable = [
+        'code', 
+        'registered_name', 
+        'tel', 
+        'fax',
+        // ... all fillable fields
+    ];
+
+    // Relationships
+    public function cameras(): HasMany
+    {
+        return $this->hasMany('App\Models\Camera');
+    }
+}
+```
+
+## UUID Handling
+
+**CRITICAL**: This application uses UUIDs stored as BINARY(16) in MySQL.
+
+### Querying with UUIDs
+
+```php
+// ✅ CORRECT - Using UUID_TO_BIN in whereRaw
+$weighingHeader = weighingHeaders::whereRaw("id = UUID_TO_BIN(?, TRUE)", [$id])
+    ->first();
+
+// ✅ CORRECT - Selecting with BIN_TO_UUID
+$weighingHeader = weighingHeaders::whereRaw("id = UUID_TO_BIN(?, TRUE)", [$id])
+    ->first(["weighingheaders.*", DB::raw("BIN_TO_UUID(id, TRUE) as id2")]);
+
+// After selecting, replace id
+if (!empty($weighingHeader)) {
+    $weighingHeader['id'] = $weighingHeader['id2'];
+    unset($weighingHeader['id2']);
+}
+
+// ❌ WRONG - Direct comparison
+$weighingHeader = weighingHeaders::where('id', $id)->first();
+```
+
+### Inserting with UUIDs
+
+```php
+// In migrations or raw SQL
+DB::insert("
+    INSERT INTO weighingheaders (id, transaction, ...)
+    VALUES (UUID_TO_BIN(UUID(), true), ?, ...)
+", [$transaction, ...]);
+```
+
+### Updating with UUIDs
+
+```php
+DB::update("
+    UPDATE weighingheaders
+    SET status = ?, updated_at = CURRENT_TIMESTAMP
+    WHERE id = UUID_TO_BIN(?, TRUE)
+", [$status, $id]);
+```
+
+## Soft Deletes
+
+Many models use SoftDeletes:
+
+```php
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Company extends Model
+{
+    use SoftDeletes;
+    // ...
+}
+```
+
+### Querying with Soft Deletes
+
+```php
+// Automatically excludes soft-deleted records
+$companies = Company::all();
+
+// Include soft-deleted
+$companies = Company::withTrashed()->get();
+
+// Only soft-deleted
+$companies = Company::onlyTrashed()->get();
+```
+
+## Relationships
+
+### HasMany Relationship
+
+```php
+public function cameras(): HasMany
+{
+    return $this->hasMany('App\Models\Camera');
+}
+
+// Usage
+$company = Company::find($id);
+$cameras = $company->cameras;
+```
+
+### BelongsTo Relationship
+
+```php
+public function company(): BelongsTo
+{
+    return $this->belongsTo('App\Models\Company');
+}
+
+// Usage
+$site = Site::find($id);
+$company = $site->company;
+```
+
+## Mass Assignment
+
+### Fillable Fields
+
+Always define `$fillable` array:
+
+```php
+protected $fillable = [
+    'code',
+    'registered_name',
+    'tel',
+    'fax',
+    // ... all fields that can be mass assigned
+];
+```
+
+### Guarded Fields
+
+Alternatively, use `$guarded` (less common):
+
+```php
+protected $guarded = ['id', 'created_at', 'updated_at'];
+```
+
+## Model Methods
+
+### Creating Records
+
+```php
+// Single create
+$company = Company::create([
+    'code' => 'COMP001',
+    'registered_name' => 'Company Name'
+]);
+
+// Or using model instance
+$company = new Company();
+$company->code = 'COMP001';
+$company->registered_name = 'Company Name';
+$company->save();
+```
+
+### Updating Records
+
+```php
+// Update existing
+$company = Company::find($id);
+$company->update([
+    'registered_name' => 'New Name'
+]);
+
+// Or direct assignment
+$company->registered_name = 'New Name';
+$company->save();
+```
+
+### Deleting Records
+
+```php
+// Soft delete (if using SoftDeletes)
+$company->delete();
+
+// Force delete (permanent)
+$company->forceDelete();
+```
+
+## Query Builder Patterns
+
+### Basic Queries
+
+```php
+// Get all
+$companies = Company::all();
+
+// Find by ID
+$company = Company::find($id);
+
+// Find or fail (throws exception)
+$company = Company::findOrFail($id);
+
+// Where clause
+$companies = Company::where('code', 'COMP001')->get();
+
+// First
+$company = Company::where('code', 'COMP001')->first();
+```
+
+### Complex Queries
+
+```php
+// Multiple where clauses
+$sites = Site::where('company_id', $companyId)
+    ->where('active', true)
+    ->get();
+
+// Where with relationships
+$cameras = Camera::whereHas('company', function($query) use ($companyId) {
+    $query->where('id', $companyId);
+})->get();
+```
+
+## Raw SQL Queries
+
+When using raw SQL (especially for UUIDs):
+
+```php
+use Illuminate\Support\Facades\DB;
+
+// Select
+$results = DB::select("
+    SELECT 
+        weighingheaders.*,
+        BIN_TO_UUID(id, TRUE) as id2
+    FROM weighingheaders
+    WHERE id = UUID_TO_BIN(?, TRUE)
+", [$id]);
+
+// Select one
+$result = DB::selectOne("SELECT count(1) as count FROM weighingheaders WHERE ...", [$params]);
+
+// Insert
+DB::insert("INSERT INTO table (id, field) VALUES (UUID_TO_BIN(UUID(), true), ?)", [$value]);
+
+// Update
+DB::update("UPDATE table SET field = ? WHERE id = UUID_TO_BIN(?, TRUE)", [$value, $id]);
+```
+
+## Migrations
+
+### Migration Structure
+
+```php
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateCompaniesTable extends Migration
+{
+    public function up()
+    {
+        Schema::create('companies', function (Blueprint $table) {
+            $table->id();
+            $table->string('code');
+            $table->string('registered_name');
+            // ... more columns
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists('companies');
+    }
+}
+```
+
+### UUID Columns in Migrations
+
+```php
+// For UUID primary keys
+$table->uuid('id')->primary();
+// Or
+$table->binary('id', 16)->primary();  // BINARY(16) for UUID
+```
+
+## Critical Rules
+
+1. **ALWAYS** use `UUID_TO_BIN()` and `BIN_TO_UUID()` for UUID operations
+2. **ALWAYS** define `$fillable` or `$guarded` in models
+3. **ALWAYS** use SoftDeletes where appropriate
+4. **ALWAYS** define relationships in models
+5. **DO** use Eloquent when possible, raw SQL only when necessary
+6. **DO** handle UUID conversion after queries
+7. **DO** use transactions for multi-step database operations
+8. **DO NOT** compare UUIDs directly without conversion
+9. **DO NOT** use `find()` with UUID strings directly

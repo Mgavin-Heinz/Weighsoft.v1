@@ -1,0 +1,213 @@
+---
+description: JWT authentication patterns, authorization, and security conventions
+globs: ["app/Http/Controllers/**/*.php", "app/Http/Middleware/**/*.php"]
+alwaysApply: false
+---
+
+# Authentication and Authorization
+
+## JWT Authentication
+
+This application uses **tymon/jwt-auth** for JWT authentication.
+
+## Controller Authentication
+
+### JwtAuthController Base Class
+
+**ALL authenticated controllers** must extend `JwtAuthController`:
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Company;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+
+class CompanyController extends JwtAuthController
+{
+    private Company $model;
+
+    public function __construct() {
+        parent::__construct();  // REQUIRED - sets up authentication
+        $this->model = new Company();
+    }
+    
+    // Controller methods...
+}
+```
+
+### Available Properties
+
+When extending `JwtAuthController`:
+- `$this->user` - The authenticated user (automatically available)
+- `$this->error($message, $code)` - Helper for error responses
+
+### Authentication Flow
+
+The `JwtAuthController` constructor:
+1. Applies `auth:api` middleware
+2. Gets authenticated user via `auth()->user()`
+3. Returns 401 if token is invalid
+4. Returns 404 if user not found
+
+## User Access Control
+
+### Role-Based Access
+
+Check user roles for access control:
+
+```php
+public function index(): JsonResponse
+{
+    $companyId = $this->user->company_id;
+    
+    // Role 1 and 2 are admins (full access)
+    if (!$companyId || ($this->user->role_id == 1) || ($this->user->role_id == 2)) {
+        $companies = $this->model::all();
+    } else {
+        // Regular users only see their company
+        $companies = [Company::find($companyId)];
+    }
+    
+    return response()->json($companies);
+}
+```
+
+### Company-Based Filtering
+
+Many endpoints filter by `company_id`:
+
+```php
+// Get user's company
+$companyId = $this->user->company_id;
+
+// Filter by company
+$sites = Site::where('company_id', $companyId)->get();
+```
+
+### Site-Based Filtering
+
+Filter by site when applicable:
+
+```php
+$siteId = $this->user->site_id;
+$workstations = WorkStations::where('site_id', $siteId)->get();
+```
+
+## Authentication Endpoints
+
+### Login
+
+```php
+// In AuthController
+Route::post('authenticate', [AuthController::class, 'login']);
+```
+
+### Register
+
+```php
+Route::post('register', [AuthController::class, 'register']);
+```
+
+### Refresh Token
+
+```php
+Route::get('refresh', [AuthController::class, 'refreshToken']);
+```
+
+## User Properties
+
+Common user properties:
+- `$user->id` - User ID
+- `$user->company_id` - User's company
+- `$user->site_id` - User's site
+- `$user->role_id` - User's role (1, 2 = admin)
+- `$user->workstations_id` - User's workstation
+
+## Authorization Patterns
+
+### Check User Permissions
+
+```php
+// Check if user has access to resource
+$company = Company::find($id);
+
+if ($this->user->role_id != 1 && $this->user->role_id != 2) {
+    if ($company->id != $this->user->company_id) {
+        return response()->json(['error' => 'Unauthorized'], 403);
+    }
+}
+```
+
+### User ID Tracking
+
+Track which user performed actions:
+
+```php
+// In store method
+$data['firstWeightUserId'] = $this->user->id;
+
+// In update method
+$data['secondWeightUserId'] = $this->user->id;
+$data['verifyUserId'] = $this->user->id;
+
+// In delete method
+$this->headerService->deleteWeighingHeader($id, $this->user->id, $reason);
+```
+
+## Error Responses
+
+### Authentication Errors
+
+Handled automatically by `JwtAuthController`:
+- Invalid token → 401
+- User not found → 404
+
+### Authorization Errors
+
+Return 403 for authorization failures:
+
+```php
+if (!$this->hasPermission($resource)) {
+    return response()->json(['error' => 'Forbidden'], 403);
+}
+```
+
+## Middleware
+
+### Auth Middleware
+
+Applied automatically by `JwtAuthController`:
+```php
+$this->middleware('auth:api');
+```
+
+### Custom Middleware
+
+Create custom middleware for additional checks:
+
+```php
+// In app/Http/Middleware/
+class CheckCompanyAccess
+{
+    public function handle($request, Closure $next)
+    {
+        // Check company access
+        return $next($request);
+    }
+}
+```
+
+## Critical Rules
+
+1. **ALWAYS** extend `JwtAuthController` for authenticated endpoints
+2. **ALWAYS** call `parent::__construct()` in controller constructor
+3. **ALWAYS** check user roles for admin access (role_id 1 or 2)
+4. **ALWAYS** filter by `company_id` when appropriate
+5. **ALWAYS** track user ID for audit trails
+6. **DO** use `$this->user` to access authenticated user
+7. **DO** return 403 for authorization failures
+8. **DO NOT** bypass authentication in controllers
+9. **DO NOT** trust client-provided user IDs

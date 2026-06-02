@@ -1,0 +1,113 @@
+---
+description: Version management and commit workflow for all code changes
+alwaysApply: true
+---
+
+# Version Control and Commit Workflow
+
+## 🚨 CRITICAL: ALWAYS UPDATE VERSIONS FIRST! 🚨
+
+**⚠️ THE AI ASSISTANT MUST BUMP VERSIONS IMMEDIATELY AFTER ANY CODE CHANGE ⚠️**
+
+### MANDATORY WORKFLOW:
+
+```
+1. Make code change
+2. IMMEDIATELY bump version (no exceptions!)
+3. Commit code + version together
+```
+
+**If the AI forgets to bump versions, the USER WILL REJECT THE CHANGES.**
+
+## Automated Version Update (AI MUST DO THIS AUTOMATICALLY)
+
+When the AI assistant makes changes, it MUST **AUTOMATICALLY**:
+
+1. ✅ **Detect which project** (backend/frontend) was changed
+2. ✅ **Increment version** appropriately (patch/minor/major)
+3. ✅ **Update ALL version files** in the SAME commit
+4. ✅ **Include "[Version]" commit** immediately after code commit
+5. ✅ **NEVER ask permission** - just do it!
+
+## Version Update Process
+
+### Backend Version Files (Weighsoft.back.v1)
+
+When making ANY changes to the backend, update these files:
+
+1. **`build.bat`** - Update `set version=0.10.X`
+2. **`build.sh`** - Update `version=0.10.X`
+
+### Frontend Version Files (Weighsoft.ui.v1)
+
+When making ANY changes to the frontend, update these files:
+
+1. **`build.bat`** - Update `set version=0.10.X`
+2. **`build.sh`** - Update `version=0.10.X`
+3. **`app/tpls/layout/page-title.html`** - Update all three versions
+4. **`package.json`** - Update `"version": "1.3.X"`
+
+**Version Increment Rules:**
+- **Patch (0.10.X)**: Bug fixes, small features, UI changes, configuration changes
+- **Minor (0.X.0)**: New features, API additions, significant enhancements
+- **Major (X.0.0)**: Breaking changes, major refactoring
+
+## Version File Locations
+
+### Backend
+- `build.bat` - Line with `set version=`
+- `build.sh` - Line with `version=`
+
+### Frontend
+- `build.bat` - Line with `set version=`
+- `build.sh` - Line with `version=`
+- `app/tpls/layout/page-title.html` - Version display line
+- `package.json` - `"version"` field
+
+## Important Notes
+
+1. **NEVER commit without updating versions** - Every change requires a version bump
+2. **NEVER commit without a descriptive message** - Commit messages should explain what changed
+3. **ALWAYS synchronize versions** - Frontend and backend versions must match
+4. **ALWAYS include version update in commit message** - Makes it easy to track version changes
+5. **Version updates are part of the change** - Don't make separate commits for version updates
+
+## Example Complete Workflow
+
+```bash
+# 1. Make code changes (AI or developer)
+# ... edit files ...
+
+# 2. Update versions
+# Edit build.bat, build.sh, page-title.html, package.json
+
+# 3. Stage changes
+git add .
+
+# 4. Commit with message
+git commit -m "[Feature] Add ESP32 boom and light control
+
+- Add 4 IP address fields to weighbridges table
+- Create ESP32 control service for boom/light devices
+- Add control buttons to weighing create/update screens
+- Update weighbridge form with IP configuration fields
+- Version updated to 0.10.4"
+
+# 5. Verify
+git log -1
+```
+
+## Exceptions
+
+**DO NOT update versions for:**
+- Documentation-only changes (unless explicitly requested)
+- Comment-only changes
+- Whitespace/formatting-only changes
+
+**DO update versions for:**
+- Any code changes (even small fixes)
+- Database migrations
+- Configuration changes
+- New features
+- Bug fixes
+- Refactoring

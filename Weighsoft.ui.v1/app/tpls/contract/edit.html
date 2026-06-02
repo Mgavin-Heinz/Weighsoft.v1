@@ -1,0 +1,77 @@
+<form class="row">
+        <div class="col-md-12">
+            <h3>Add / Edit</h3>
+        </div>
+        <div class="form-group col-sm-12 col-md-6">
+            <label for="inputName" class="label label-danger">Contract Name</label>
+            <input required type="text" class="form-control" id="inputName" placeholder="Name" ng-model="System.contractInfo.name">
+        </div>
+        <div class="form-group col-sm-12 col-md-6">
+            <label for="inputexpirydate" class="label label-danger">Expiry Date</label>
+            <input required type="text" date-range-picker class="form-control date-picker" options="{singleDatePicker: true, locale: { format: 'YYYY-MM-DD'}}"
+                id="inputexpirydate" placeholder="YYYY-MM-DD" ng-model="System.contractInfo.expiry_date">
+        </div>
+        <div class="form-group col-sm-12 col-md-6">
+            <label for="inputamount" class="label label-danger">Amount in {{System.Site.measure_type}}</label>
+            <input required type="text" class="form-control" id="inputamount" placeholder="Contract Amount in {{System.Site.measure_type}}" ng-model="System.contractInfo.amount">
+        </div>
+        <div class="form-group col-sm-12 col-md-6">
+            <label for="inputprice" class="label label-danger">Price</label>
+            <input required type="text" class="form-control" id="inputamount" placeholder="Contract Price" ng-model="System.contractInfo.price">
+        </div>
+        <div class="form-group col-sm-12 col-md-6">
+            <label for="selectdirection" class="label label-danger">Direction</label>
+            <ui-select name="selectdirection" id="selectdirection" ng-model="System.contractInfo.direction" theme="selectize">
+                <ui-select-match>{{$select.selected}}</ui-select-match>
+                <ui-select-choices repeat="option in System.Directions | filter: $select.search">
+                    <div ng-bind-html="option | highlight: $select.search"></div>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+        <div class="form-group col-sm-12 col-md-6">
+            <label for="selectproduct" class="label label-danger">Product</label>
+            <ui-select name="selectproduct" id="selectproduct" ng-model="System.selected_product" theme="selectize"
+            on-select="System.SelectionChanged()">
+                <ui-select-match>{{$select.selected.name}}</ui-select-match>
+                <ui-select-choices repeat="option in System.Products | filter: $select.search">
+                    <div ng-bind-html="option.name | highlight: $select.search"></div>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+        <div class="form-group col-sm-12 col-md-6">
+            <label for="selectbusinesspartner" class="label label-danger">Business Partner</label>
+            <ui-select name="selectbusinesspartner" id="selectbusinesspartner" ng-model="System.selected_businessPartner" theme="selectize"
+            on-select="System.SelectionChanged()">
+                <ui-select-match>{{$select.selected.name}}</ui-select-match>
+                <ui-select-choices repeat="option in System.BusinessPartners | filter: $select.search">
+                    <div ng-bind-html="option.name | highlight: $select.search"></div>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+        <div class="form-group col-sm-12 col-md-6">
+            <label for="stockpile_nr" class="label label-default">Stockpile Nr</label>
+            <input type="text" class="form-control" id="stockpile_nr" placeholder="Optional" ng-model="System.contractInfo.stockpile_nr">
+        </div>
+        <div class="form-group col-sm-12 col-md-6">
+            <label for="destination" class="label label-default">Destination</label>
+            <input type="text" class="form-control" id="destination" placeholder="Optional" ng-model="System.contractInfo.destination">
+        </div>
+        <div class="form-group col-sm-12 col-md-6" 
+        ng-if="System.ShowLink" >
+            <label for="selectoldercontract" class="label label-danger">Linked Contract</label>
+            <ui-select name="selectoldercontract" id="selectoldercontract" ng-model="System.selected_oldercontract" theme="selectize">
+                <ui-select-match>{{$select.selected.name}}</ui-select-match>
+                <ui-select-choices repeat="option in System.Oldercontract | filter: $select.search">
+                    <div ng-bind-html="option.name | highlight: $select.search"></div>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+        <div class="form-group col-sm-12">
+            <div class="col-sm-6">
+                <button class="btn btn-danger" ng-click="System.saveForm()">Save</button>
+            </div>
+            <div class="col-sm-6">
+                <button class="btn btn-black pull-right" ng-click="System.cancelEdit()">Cancel</button>
+            </div>
+        </div>
+    </form>

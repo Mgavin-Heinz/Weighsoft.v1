@@ -1,0 +1,287 @@
+---
+description: UI Router patterns, state management, and navigation conventions
+globs: ["app/js/routes.js", "app/js/**/*controller*.js"]
+alwaysApply: false
+---
+
+# Routing and State Management Rules
+
+## UI Router Configuration
+
+All routes are defined in `app/js/routes.js` using UI Router (NOT ngRoute).
+
+### State Definition Pattern
+
+```javascript
+state('app.feature', {
+  url: '/feature',
+  templateUrl: appHelper.templatePath('feature/list'),
+  controller: 'FeatureCtrl as System',
+  resolve: {
+    deps: function ($ocLazyLoad) {
+      return $ocLazyLoad.load([
+        ASSETS.tables.datatables,
+        ASSETS.extra.toastr,
+      ]);
+    },
+  }
+})
+```
+
+## State Naming Conventions
+
+### State Names
+
+- Use dot notation: `app.company`, `app.weigh_create`, `app.reprint_list`
+- Match URL structure: `/app/company` → `app.company`
+- Use underscores for multi-word features: `app.company_create`, `app.weigh_update`
+
+### URL Patterns
+
+- List views: `url: '/feature'` → state: `app.feature`
+- Create views: `url: '/feature/create'` → state: `app.feature_create`
+- Edit views: `url: '/feature/manage'` or `url: '/feature/edit/:id'` → state: `app.feature_manage` or `app.feature_edit`
+- Nested states: `app.pallets.list`, `app.tares.edit`
+
+## Navigation Patterns
+
+### Basic Navigation
+
+```javascript
+// ✅ CORRECT - Simple navigation
+$state.go('app.company');
+
+// ✅ CORRECT - Navigation with parameters
+$state.go('app.weigh_create', {
+  company_id: vm.companyId,
+  site_id: vm.siteId,
+  workstation_id: vm.workstationId
+});
+
+// ✅ CORRECT - Navigation with URL parameters
+$state.go('app.reprint_edit', {
+  id: weighingId,
+  company_id: companyId,
+  site_id: siteId,
+  workstation_id: workstationId
+});
+```
+
+### State Parameters
+
+Define parameters in state definition:
+
+```javascript
+state('app.weigh_update', {
+  url: '/weigh/update',
+  params: {
+    company_id: '',
+    site_id: '',
+    workstation_id: '',
+    company: '',
+    site: '',
+    workstation: ''
+  }
+})
+```
+
+Access parameters in controller:
+
+```javascript
+// From $stateParams (deprecated but still used)
+var companyId = $stateParams.company_id;
+
+// From $state (preferred)
+var companyId = $state.params.company_id;
+```
+
+## State Persistence
+
+### Preserving State Across Navigation
+
+**CRITICAL**: When navigating between related views, preserve state in `$rootScope.Params`:
+
+```javascript
+// Before navigation - Store state
+vm.addForm = function() {
+  // Initialize $rootScope.Params if not exists
+  if (!$rootScope.Params) {
+    $rootScope.Params = {
+      company_id: null,
+      site_id: null,
+      workstation_id: null
+    };
+  }
+  
+  // Store current state
+  $rootScope.Params.company_id = vm.HeaderSingle.company_id;
+  $rootScope.Params.site_id = vm.HeaderSingle.site_id;
+  $rootScope.Params.workstation_id = vm.HeaderSingle.workstation_id;
+  
+  // Navigate with parameters
+  $state.go('app.weigh_create', {
+    company_id: vm.HeaderSingle.company_id,
+    site_id: vm.HeaderSingle.site_id,
+    workstation_id: vm.HeaderSingle.workstation_id
+  });
+};
+
+// After navigation - Restore state
+function initialize() {
+  if ($rootScope.Params && $rootScope.Params.company_id) {
+    vm.HeaderSingle.company_id = $rootScope.Params.company_id;
+    vm.HeaderSingle.site_id = $rootScope.Params.site_id;
+    vm.HeaderSingle.workstation_id = $rootScope.Params.workstation_id;
+    // Load related data
+    loadData();
+  }
+}
+```
+
+## Route Guards and Authentication
+
+### Authentication Check
+
+Authentication is handled globally in `app.js`:
+
+```javascript
+$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+  var normalRoutes = ['login'];
+  var loginInfo = MyLocalStorage.getItem('user_info');
+  
+  if (!loginInfo && $.inArray(toState.name, normalRoutes) == -1) {
+    event.preventDefault();
+    $state.transitionTo('login');
+  }
+});
+```
+
+**DO NOT** manually check authentication in controllers - it's handled globally.
+
+### Redirect Patterns
+
+```javascript
+// Redirect to default state
+state('app.reprint', {
+  url: '/reprint',
+  redirectTo: 'app.reprint_list'
+})
+```
+
+## Lazy Loading
+
+### Asset Loading with ocLazyLoad
+
+Use `resolve` to lazy load assets:
+
+```javascript
+state('app.company', {
+  url: '/company',
+  templateUrl: appHelper.templatePath('companies/list'),
+  controller: 'CompaniesCtrl as System',
+  resolve: {
+    deps: function ($ocLazyLoad) {
+      return $ocLazyLoad.load([
+        ASSETS.tables.datatables,
+        ASSETS.extra.toastr,
+      ]);
+    },
+  }
+})
+```
+
+### Common Asset Dependencies
+
+- **DataTables**: `ASSETS.tables.datatables`
+- **Toastr**: `ASSETS.extra.toastr`
+- **Charts**: `ASSETS.charts.dxCharts`, `ASSETS.charts.dxGlobalize`
+- **Forms**: `ASSETS.forms.jQueryValidate`
+
+## Abstract States
+
+Use abstract states for shared layouts:
+
+```javascript
+state('app', {
+  abstract: true,
+  url: '/app',
+  templateUrl: appHelper.templatePath('layout/app-body'),
+  controller: function ($rootScope) {
+    $rootScope.isLoginPage = false;
+    $rootScope.isMainPage = true;
+  },
+})
+```
+
+All feature states should be children of `app`:
+
+```javascript
+state('app.company', {  // Child of 'app'
+  url: '/company',
+  // ...
+})
+```
+
+## State Change Events
+
+### Listening to State Changes
+
+```javascript
+// In controller
+$rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
+  // Update menu active state
+  $sidebarMenuItems.setActive(toState.name);
+});
+```
+
+## URL Parameters vs State Parameters
+
+### URL Parameters (in URL)
+
+```javascript
+// State definition
+state('app.reprint_edit', {
+  url: '/reprint/edit/:id?company_id&site_id&workstation_id',
+  // id is required, others are optional query params
+})
+
+// Navigation
+$state.go('app.reprint_edit', {
+  id: 123,
+  company_id: 1,
+  site_id: 2
+});
+// URL: /app/reprint/edit/123?company_id=1&site_id=2
+```
+
+### State Parameters (not in URL)
+
+```javascript
+// State definition
+state('app.weigh_create', {
+  url: '/weigh/create',
+  params: {
+    company_id: '',
+    site_id: ''
+  }
+})
+
+// Navigation
+$state.go('app.weigh_create', {
+  company_id: 1,
+  site_id: 2
+});
+// URL: /app/weigh/create (params not in URL)
+```
+
+## Critical Rules
+
+1. **ALWAYS** use `$state.go()` for navigation (never `window.location` or `$location.path()`)
+2. **ALWAYS** preserve state in `$rootScope.Params` when navigating between related views
+3. **ALWAYS** initialize `$rootScope.Params` before using it
+4. **ALWAYS** use `appHelper.templatePath()` for template URLs
+5. **ALWAYS** include required assets in `resolve` blocks
+6. **ALWAYS** make feature states children of `app` abstract state
+7. **DO NOT** manually check authentication - it's handled globally
+8. **DO** use consistent state naming: `app.feature`, `app.feature_action`
+9. **DO** match URL structure to state names

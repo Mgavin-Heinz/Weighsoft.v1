@@ -1,0 +1,245 @@
+<page-title ng-if="layoutOptions.pageTitles" title="Create Company"></page-title>
+
+<div class="row down-position">
+
+	<div class="col-md-12">
+		<tabset class="col-md-12">
+			<tab heading="Details">		
+				<div class="row">
+					<div class="panel panel-color panel-danger ">
+						<form role="form" class="form-horizontal" role="form">
+							<div class="form-group col-lg-6 col-md-12">
+								<div class="form-group">
+									<label class="col-sm-3 control-label" for="field-1">Code:</label>
+
+									<div class="col-sm-7">
+										<input type="text" class="form-control" id="field-1" ng-model="company_info.code">
+									</div>
+								</div>
+								<br/>
+								<div class="form-group">
+									<label class="col-sm-3 control-label" for="field-1">Registered Name:</label>
+
+									<div class="col-sm-7">
+										<input type="text" class="form-control" id="field-1" ng-model="company_info.registered_name">
+									</div>
+								</div>
+								<br/>
+								<div class="form-group">
+									<label class="col-sm-3 control-label" for="field-1">Tel:</label>
+
+									<div class="col-sm-7">
+										<input type="text" class="form-control" id="field-1" ng-model="company_info.tel">
+									</div>
+								</div>
+								<br/>
+								<div class="form-group">
+									<label class="col-sm-3 control-label" for="field-1">Fax: </label>
+
+									<div class="col-sm-7">
+										<input type="text" class="form-control" id="field-1" ng-model="company_info.fax">
+									</div>
+								</div>
+								<br/>
+								<div class="form-group">
+									<label class="col-sm-3 control-label" for="field-1">Email:</label>
+
+									<div class="col-sm-7">
+										<input type="text" class="form-control" id="field-2" ng-model="company_info.email">
+									</div>
+								</div>	
+								<br/>
+								<div class="form-group">
+									<label class="col-sm-3 control-label" for="field-1">Registration Number: </label>
+
+									<div class="col-sm-7">
+										<input type="text" class="form-control" id="field-1" ng-model="company_info.registration_number">
+									</div>
+								</div>
+								<br/>
+								<div class="form-group">
+									<label class="col-sm-3 control-label" for="field-1">VAT Nr: </label>
+
+									<div class="col-sm-7">
+										<input type="text" class="form-control" id="field-1" ng-model="company_info.vat_nr">
+									</div>
+								</div>
+								<br/>
+								<div class="form-group">
+									<label class="col-sm-3 control-label" for="field-1">Contact Person: </label>
+
+									<div class="col-sm-7">
+										<input type="text" class="form-control" id="field-1" ng-model="company_info.contact_person">
+									</div>
+								</div>
+								<br/>
+								<div class="form-group">
+									<label class="col-sm-3 control-label" for="field-1">Cell: </label>
+
+									<div class="col-sm-7">
+										<input type="text" class="form-control" id="field-1" ng-model="company_info.cell">
+									</div>
+								</div>
+		                    	<br/>
+		                    	<div class="mb10 form-group">
+									<button class="btn btn-blue" ng-click="company_create();">Save</button>
+									<button class="btn btn-blue cancel" ng-click="CreateCompany_cancel()">Cancel</button>
+								</div>
+							</div>
+
+							<div class="col-lg-6 col-md-12">
+								<label class="col-sm-4 control-label" for="field-1">Street address: </label>
+								<br/>
+								<div class="col-sm-12">
+									<blockquote class="blockquote blockquote-success">
+										<div class="form-group">
+											<label class="col-sm-3 control-label" for="field-1">Street: </label>
+
+											<div class="col-sm-9">
+												<input type="text" class="form-control" id="field-1" ng-model="company_info.street">
+											</div>
+										</div>
+
+										<div class="form-group">
+											<label class="col-sm-3 control-label" for="field-1">Suburb: </label>
+												
+											<div class="col-sm-9">
+												<input type="text" class="form-control" id="field-1" ng-model="company_info.suburb1">
+											</div>
+										</div>
+
+										<div class="form-group">
+											<label class="col-sm-3 control-label" for="field-1">City: </label>
+
+											<div class="col-sm-9">
+												<input type="text" class="form-control" id="field-1" ng-model="company_info.city1">
+											</div>
+										</div>
+
+										<div class="form-group">
+											<label class="col-sm-3 control-label" for="field-1">Postal Code: </label>
+
+											<div class="col-sm-9">
+												<input type="text" class="form-control" id="field-1" ng-model="company_info.postal_code1">
+											</div>
+										</div>
+									</blockquote>
+									
+								</div>
+							</div>
+
+							<div class="col-lg-6 col-md-12">
+								<label class="col-sm-4 control-label" for="field-1">Postal address: </label>
+								<div class="col-sm-12">
+									<blockquote class="blockquote blockquote-success">
+										<div class="form-group">
+											<label class="col-sm-3 control-label" for="field-1">PO Box: </label>
+
+											<div class="col-sm-9">
+												<input type="text" class="form-control" id="field-1" ng-model="company_info.po_box">
+											</div>
+										</div>
+
+										<div class="form-group">
+											<label class="col-sm-3 control-label" for="field-1">Suburb: </label>
+												
+											<div class="col-sm-9">
+												<input type="text" class="form-control" id="field-1" ng-model="company_info.suburb2">
+											</div>
+										</div>
+
+										<div class="form-group">
+											<label class="col-sm-3 control-label" for="field-1">City: </label>
+
+											<div class="col-sm-9">
+												<input type="text" class="form-control" id="field-1" ng-model="company_info.city2">
+											</div>
+										</div>
+
+										<div class="form-group">
+											<label class="col-sm-3 control-label" for="field-1">Postal Code: </label>
+											
+											<div class="col-sm-9">
+												<input type="text" class="form-control" id="field-1" ng-model="company_info.postal_code2">
+											</div>
+										</div>
+									</blockquote>
+									
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</tab>
+			<tab heading="Sites">
+				<div class="row">
+					<div class="col-md-10">
+						<button class="btn btn-primary btn-lg btn-adjust" ng-click="site_create();">New Site</button>
+
+						<div class="panel panel-color panel-danger">
+							<div class="panel-body">
+								<table class="table table-bordered table-striped" id="example-2">
+									<thead>
+										<tr>
+											<th>Site</th>
+											<th>Points</th>
+											<th>Active</th>
+										</tr>
+									</thead>
+									
+									<tbody class="middle-align">
+									
+										<tr ng-repeat="site_info in site_infos">
+											<td>{{site_info.site_type}}</td>
+											<td><span ng-repeat="point_info in site_info.point">{{point_info.point_type}}   </span></td>
+											<td  ng-if="site_info.site_active == 'true'"><div class="label label-secondary">Active</div></td>
+											<td  ng-if="site_info.site_active == 'false'"><div class="label label-purple">InActive</div></td>
+										</tr>
+									</tbody>
+								</table>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+			</tab>
+			<tab heading="Setup">
+				<p>Carriage quitting securing be appetite it declared. High eyes kept so busy feel call in. Would day nor ask walls known. But preserved advantage are but and certainty earnestly enjoyment. Passage weather as up am exposed. And natural related man subject. Eagerness get situation his was delighted. </p>
+			</tab>
+			<tab heading="Users">
+				<!-- Removing search and results count filter -->
+				<div class="panel panel-color panel-danger">
+					<div class="panel-body">
+						<table class="table table-bordered table-striped" id="example-2">
+							<thead>
+								<tr>
+									<th>First Name</th>
+									<th>Last Name</th>
+									<th>Email</th>
+									<th>Contact Nr</th>
+									<th>Edit</th>
+								</tr>
+							</thead>
+							
+							<tbody class="middle-align">
+								<tr ng-repeat="userprofile_info in userprofile_infos">
+									<td>{{userprofile_info.firstname}}</td>
+									<td>{{userprofile_info.lastname}}</td>
+									<td>{{userprofile_info.email}}</td>
+									<td>{{userprofile_info.contact_num}}</td>
+									<td>
+										<button ng-click="useredit(userprofile_info.id)" class="btn btn-secondary btn-sm btn-icon icon-left">
+											Edit
+										</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						
+					</div>
+				</div>
+			</tab>
+		</tabset>
+		
+	</div>
+</div>

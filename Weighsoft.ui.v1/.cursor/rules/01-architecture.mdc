@@ -1,0 +1,88 @@
+---
+description: Project architecture, structure, and core patterns for Weighsoft UI
+alwaysApply: true
+---
+
+# Weighsoft UI Architecture Rules
+
+## Framework and Technology Stack
+
+This is an **AngularJS 1.4.8** application. DO NOT suggest or implement Angular 2+ patterns, TypeScript, or modern frameworks. This is a legacy AngularJS application that must maintain backward compatibility.
+
+### Core Dependencies
+- **AngularJS**: 1.4.8 (NOT Angular 2+)
+- **UI Router**: For routing and state management
+- **Restangular**: For all API calls (DO NOT use $http directly)
+- **Bootstrap**: 4.5.0 for UI components
+- **DataTables**: For table functionality
+- **Moment.js**: For date/time handling
+- **Toastr**: For notifications
+
+## Project Structure
+
+```
+app/
+  js/
+    app.js              # Main application module definition
+    routes.js           # All route/state definitions
+    controllers.js      # Controller registrations
+    controllers/        # Individual controller files
+    services.js         # Service definitions
+    factory.js          # Factory definitions
+    directives.js       # Directive registrations
+    directives/         # Individual directive files
+    filters.js          # Filter registrations
+    filters/            # Individual filter files
+    constants.js        # Application constants (ASSETS)
+    helpers/            # Helper utilities
+    env.js              # Environment configuration
+  tpls/                 # HTML templates organized by feature
+    layout/             # Layout templates
+    [feature]/          # Feature-specific templates
+```
+
+## Module Organization
+
+The application uses multiple Angular modules:
+
+- `xenon-app`: Main application module
+- `xenon.controllers`: All controllers
+- `xenon.services`: All services
+- `xenon.factory`: All factories
+- `xenon.directives`: All directives
+
+**CRITICAL**: When adding new code:
+1. Register controllers in `controllers.js` OR in the individual controller file
+2. Register services in `services.js`
+3. Register directives in `directives.js` OR in the individual directive file
+4. Register filters in `filters.js`
+
+## Template Path Helper
+
+**ALWAYS** use `appHelper.templatePath()` for template references:
+
+```javascript
+// ✅ CORRECT
+templateUrl: appHelper.templatePath('companies/list')
+
+// ❌ WRONG
+templateUrl: 'app/tpls/companies/list.html'
+templateUrl: '/tpls/companies/list.html'
+```
+
+## Environment Configuration
+
+- Environment variables are in `app/js/env.js`
+- Base API URL is configured via `window.__env.base`
+- DO NOT hardcode API URLs or environment-specific values
+- Reference: `app/js/env.example.js` for structure
+
+## Critical Architecture Rules
+
+1. **DO NOT** refactor to modern frameworks (React, Vue, Angular 2+)
+2. **DO NOT** convert to TypeScript
+3. **DO NOT** use ES6 modules (import/export) - this uses AngularJS dependency injection
+4. **DO** maintain existing patterns and conventions
+5. **DO** follow the existing file organization structure
+6. **DO** use Restangular for all API calls (never $http directly)
+7. **DO** use UI Router for all routing (never ngRoute)

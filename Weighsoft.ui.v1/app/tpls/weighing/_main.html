@@ -1,0 +1,292 @@
+<page-title ng-if="layoutOptions.pageTitles" title="Weighing"></page-title>
+
+<div class="row down-position">
+
+  <div class="col-md-12">
+    <form role="form" class="form-horizontal row" >
+      <div class="form-group col-md-5" ng-if="user_info.role == 'Admin'">
+        <label class="col-sm-3 control-label" for="field-1">Company:</label>
+        <div class="col-sm-6">
+          <select class="form-control" ng-change="changeCompany()" ng-model="current.company">
+            <option ng-repeat="company_info in company_infos" value="{{company_info.registered_name}}">{{company_info.registered_name}}</option>
+          </select>
+        </div>
+      </div>
+    </form>
+    <br/>
+    <div class="panel panel-color panel-danger">
+      <div class="panel-body">
+        <div class="row">
+          <div class="form-group col-md-6" ng-if="area.Site">
+            <label class="col-sm-4 control-label" for="field-1">Site:</label>
+            <div class="col-sm-8">
+              <select class="form-control" ng-change="changeSite()" ng-model="current.site">
+                <option ng-repeat="site_info in site_infos" value="{{site_info.id}}">{{site_info.site_name}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group col-md-6" ng-if="area.Weighbridge">
+            <label class="col-sm-4 control-label" for="field-1">Weighbridge:</label>
+            <div class="col-sm-8">
+              <select class="form-control" ng-change="changeWeighbridge()" ng-model="current.Weighbridge">
+                <option ng-repeat="Weighbridge_info in weighbridge_infos" value="{{Weighbridge_info.id}}">{{Weighbridge_info.header}}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row" ng-if="area.Type">
+          <div class="form-group col-md-6">
+            <button class="btn btn-primary btn-lg form-control" ng-click="CreateType('In');">In Material</button>
+          </div>
+          <div class="form-group col-md-6">
+            <button class="btn btn-primary btn-lg form-control" ng-click="CreateType('Out');">Out Material</button>
+          </div>
+          <div class="form-group col-md-12" ng-if="current.WeighType == 'In'">
+            <button class="btn btn-primary btn-lg form-control" ng-click="CreateSection('Axle');">In Axle</button>
+          </div>
+          <div class="form-group col-md-12" ng-if="current.WeighType == 'Out'">
+            <button class="btn btn-primary btn-lg form-control" ng-click="CreateSection('Axle');">Out Axle</button>
+          </div>
+          <div class="form-group col-md-12" ng-if="current.WeighType == 'In'">
+            <button class="btn btn-primary btn-lg form-control" ng-click="CreateSection('Public');">In Public</button>
+          </div>
+          <div class="form-group col-md-12" ng-if="current.WeighType == 'Out'">
+            <button class="btn btn-primary btn-lg form-control" ng-click="CreateSection('Public');">Out Public</button>
+          </div>
+          <div class="form-group col-md-12" ng-if="current.WeighType == 'In'">
+            <button class="btn btn-primary btn-lg form-control" ng-click="CreateSection('Normal');">In Normal</button>
+          </div>
+          <div class="form-group col-md-12" ng-if="current.WeighType == 'Out'">
+            <button class="btn btn-primary btn-lg form-control" ng-click="CreateSection('Normal');">Out Normal</button>
+          </div>
+        </div>
+        <div class="row" ng-if="area.Registration">
+          <div class="form-group col-md-6 text-center">
+            <img src="http://placehold.it/350x350" class="img-responsive">
+            <p>Registration Number:</p>
+            <h3>BFG 121 FS</h3>
+            <p>Confirm: <input type="text" class="form-control" ng-model="current.plateLeft"></p>
+          </div>
+          <div class="form-group col-md-6 text-center">
+            <img src="http://placehold.it/350x350" class="img-responsive">
+            <p>Registration Number:</p>
+            <h3>BFG 121 FS</h3>
+            <p>Confirm: <input type="text" class="form-control" ng-model="current.plateRight"></p>
+          </div>
+          <div class="form-group col-md-6 text-center">
+            <div class="form-group col-md-6 text-center">
+              <button class="btn btn-primary btn-lg form-control" ng-click="VerifyPlate();">Continue</button>
+            </div>
+            <div class="form-group col-md-6 text-center">
+              <button class="btn btn-primary btn-lg form-control" ng-click="Reset();">Reset</button>
+            </div>
+          </div>
+        </div>
+        <div class="row" ng-if="area.Customer">
+          <div class="form-group col-md-6">
+            <label class="col-sm-4 control-label" for="field-1">Customer</label>
+            <div class="col-sm-8">
+              <select class="form-control" ng-change="changeCustomer()" ng-model="current.id">
+                <option ng-repeat="Customer_info in Customer_infos" value="{{Customer_info.registered_name}}">{{Customer_info.registered_name}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group col-md-6">
+            <label class="col-sm-4 control-label" for="field-1">Product</label>
+            <div class="col-sm-8">
+              <select class="form-control" ng-change="changeProduct()" ng-model="current.id">
+                <option ng-repeat="Product_info in Product_infos" value="{{Product_info.registered_name}}">{{Product_info.registered_name}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group col-md-6">
+            <label class="col-sm-4 control-label" for="field-1">Grain Type</label>
+            <div class="col-sm-8">
+              <select class="form-control" ng-change="changeGrain()" ng-model="current.id">
+                <option ng-repeat="Grain_info in Grain_infos" value="{{Grain_info.registered_name}}">{{Grain_info.registered_name}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group col-md-6">
+            <label class="col-sm-4 control-label" for="field-1">Silo Instruction No</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group col-md-6">
+            <label class="col-sm-4 control-label" for="field-1">Frost Damage</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group col-md-6">
+            <label class="col-sm-4 control-label" for="field-1">Haulier Code</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group col-md-12">
+            <label class="col-sm-2 control-label" for="field-1">Comment</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group col-md-6">
+            <label class="col-sm-4 control-label" for="field-1">Grade</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group col-md-6">
+            <label class="col-sm-4 control-label" for="field-1">Moisture</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group col-md-6">
+            <label class="col-sm-4 control-label" for="field-1">Protein</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group col-md-6">
+            <label class="col-sm-4 control-label" for="field-1">Hlm</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group col-md-6">
+            <label class="col-sm-4 control-label" for="field-1">Stifsels</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group col-md-6">
+            <label class="col-sm-4 control-label" for="field-1">Val Getal</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group col-md-6 text-center">
+            <div class="form-group col-md-6 text-center">
+              <button class="btn btn-primary btn-lg form-control" ng-click="CreateProductModal('modal-create');">Continue</button>
+            </div>
+            <div class="form-group col-md-6 text-center">
+              <button class="btn btn-primary btn-lg form-control" ng-click="CreateProductModal('modal-create');">Reset</button>
+            </div>
+          </div>
+
+        </div>
+        <div class="row" ng-if="area.WeighingAxle">
+          <div class="form-group col-md-2">
+            <p class="form-control-static text-center">&nbsp;</p>
+            <div class="col-md-12">
+              <p>&nbsp;</p>
+              <img src="http://placehold.it/50x115/fff" class="img-responsive">
+              <p>Overload</p>
+              <p>Mass</p>
+              <p>Limit</p>
+            </div>
+          </div>
+          <div class="form-group col-md-2 bg-danger">
+            <p class="form-control-static text-center">1</p>
+            <div class="col-md-12 text-primary">
+              <p>1</p>
+              <img src="http://placehold.it/50x100" class="img-responsive">
+              <p>0</p>
+              <p>7700</p>
+              <p>7700</p>
+            </div>
+          </div>
+          <div class="form-group col-md-4 bg-primary">
+            <p class="form-control-static text-center">2</p>
+            <div class="col-md-6 text-primary">
+              <p>2</p>
+              <img src="http://placehold.it/50x100" class="img-responsive">
+              <p>0</p>
+              <p>7700</p>
+              <p>7700</p>
+            </div>
+            <div class="col-md-6 text-primary">
+              <p>3</p>
+              <img src="http://placehold.it/50x100" class="img-responsive">
+              <p>0</p>
+              <p>7700</p>
+              <p>7700</p>
+            </div>
+          </div>
+          <div class="form-group col-md-4 bg-danger">
+            <p class="form-control-static text-center">3</p>
+            <div class="col-md-4 text-primary">
+              <p>4</p>
+              <img src="http://placehold.it/50x100" class="img-responsive">
+              <p>0</p>
+              <p>7700</p>
+              <p>7700</p>
+            </div>
+            <div class="col-md-4 text-primary">
+              <p>5</p>
+              <img src="http://placehold.it/50x100" class="img-responsive">
+              <p>0</p>
+              <p>7700</p>
+              <p>7700</p>
+            </div>
+            <div class="col-md-4 text-primary">
+              <p>6</p>
+              <img src="http://placehold.it/50x100" class="img-responsive">
+              <p>0</p>
+              <p>7700</p>
+              <p>7700</p>
+            </div>
+          </div>
+          <div class="form-group col-md-12">
+            <label class="col-sm-2 control-label" for="field-1">Mass</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group col-md-12">
+            <label class="col-sm-2 control-label" for="field-1">Status</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group col-md-6 text-center">
+            <div class="form-group col-md-6 text-center">
+              <button class="btn btn-primary btn-lg form-control" ng-click="CreateProductModal('modal-create');">Weigh</button>
+            </div>
+            <div class="form-group col-md-6 text-center">
+              <button class="btn btn-primary btn-lg form-control" ng-click="CreateProductModal('modal-create');">Reset</button>
+            </div>
+          </div>
+          <div class="form-group col-md-6">
+            <label class="col-sm-4 control-label" for="field-1">Total Mass</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group col-md-3">
+            <p>Left:</p>
+            <img src="http://placehold.it/300x300" class="img-responsive">
+          </div>
+
+          <div class="form-group col-md-3">
+            <p>Right:</p>
+            <img src="http://placehold.it/300x300" class="img-responsive">
+          </div>
+
+          <div class="form-group col-md-3">
+            <p>Rear:</p>
+            <img src="http://placehold.it/300x300" class="img-responsive">
+          </div>
+
+          <div class="form-group col-md-3">
+            <p>Number Plate:</p>
+            <img src="http://placehold.it/300x300" class="img-responsive">
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

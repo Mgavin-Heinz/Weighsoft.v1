@@ -1,0 +1,8 @@
+vendor/
+tests/
+node_modules/
+docker/
+database_scripts/
+.vscode/
+.idea/
+bugs/

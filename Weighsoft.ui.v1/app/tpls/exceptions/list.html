@@ -1,0 +1,52 @@
+<page-title ng-if="layoutOptions.pageTitles" title="Exception" description="" data-ng-init="System.initialize()"></page-title>
+<div class="hidden-print">
+    <div class="panel panel-color panel-danger">
+        <div class="panel-heading">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <h2>Exception Management</h2>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <label class="control-label" for="timeTracker">Period</label>
+                <div class="input-group" style="display: flex;">
+                    <span class="input-btn">
+                        <button class="btn btn-default" ng-click="System.clear()">Clear</button>
+                    </span>
+                    <input type="text" date-range-picker class="form-control date-picker" ng-model="date" options="System.options"/>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <label for="company_id" class="control-label">GroupBy</label>
+                <select name="group" id="group_id" class="form-control" ng-model="System.selectedGroup" ng-options="option.value as option.name for option in System.groupList" ng-change="System.filterGroup(System.selectedGroup)">
+                </select>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-sm-12">
+                    <table datatable="ng" dt-options="System.dtOptions" class="table table-striped table-bordered" >
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Code</th>
+                                <th>Description</th>
+                                <th>Comment</th>
+                                <th>Exception Date</th>
+                                <th>TotalNumber</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-ng-repeat="data in System.exceptionData">
+                                <td data-ng-bind="data.id"></td>
+                                <td data-ng-bind="data.code"></td>
+                                <td data-ng-bind="data.description"></td>
+                                <td data-ng-bind="data.comment"></td>
+                                <td data-ng-bind="data.created_at"></td>
+                                <td data-ng-bind="data.TotalNumber"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,401 @@
+
+<page-title ng-if="layoutOptions.pageTitles" title="Weighing" description="" data-ng-init="System.initialize()"></page-title>
+<div class="col-lg-12 col-md-12 hidden-print ">
+    <div class="panel panel-color panel-danger">
+        <div class="panel-heading hidden-print">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <h2>Verify System</h2>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label for="company_id" class="control-label">Company</label>
+                    <select id="company_id" name="company_id" ng-if="!System.User.company_id" ng-model="System.HeaderSingle.company_id" class="form-control" ng-change="System.SelectOnChange('company')" ng-options="option.value as option.name for option in System.Companies">
+                    </select>
+                    <label class="form-control" for="company_name" ng-if="System.User.company_id">{{ System.Companies.registered_name}}</label>
+                </div>
+                <div class="form-group" ng-if="System.HeaderSingle.company_id !== null">
+                    <label for="site_id" class="control-label">Site</label>
+                    <select id="company_id" name="company_id" ng-if="!System.User.site_id" ng-model="System.HeaderSingle.site_id" class="form-control" ng-change="System.SelectOnChange('site')" ng-options="option.value as option.name for option in System.Sites">
+                    </select>
+                    <label class="form-control" for="site_name" ng-if="System.User.site_id">{{ System.Sites[0].name}}</label>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <div>
+                    <div class="form-group" ng-if="System.HeaderSingle.site_id !== null">
+                        <label for="workstation_id" class="control-label">Workstation</label>
+                        <select name="workstation_id" id="workstation_id" ng-if="!System.User.workstations_id" ng-model="System.HeaderSingle.workstation_id" class="form-control" ng-change="System.SelectOnChange('workstation')" ng-options="option.value as option.name for option in System.Workstations">
+                        </select>
+                        <label class="form-control" for="workstation_name" ng-if="System.User.workstations_id">{{ System.Workstations[0].name}}</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="row" ng-if='System.FormDisplay'>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                        <h3 class="control-label">Weighing Type:</h3>
+                        <h4 class="control-label">
+                            {{System.selected_settings.name}}
+                        </h4>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                        <label for="weighbridge_id" class="control-label">Weighbridge:</label>
+                        <label for="weighbridge_id" class="control-label">
+                            {{System.selected_weighbridge.name}}
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.selected_settings.haulier == 'Yes'">
+                    <div class="form-group">
+                        <label for="haulier_id" class="control-label">Haulier:</label>
+                        <label for="haulier_id" class="control-label">
+                            {{System.selected_haulier.name}}
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.selected_settings.numberplate_recognition == 'Yes'">
+                    <div class="form-group">
+                        <h3 for="RegNumber" class="control-label">Number Plate:</h3>
+                        <h4 for="RegNumber" class="control-label">
+                            {{System.Single.RegNumber}}
+                        </h4>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.selected_settings.business_partner == 'Yes'">
+                    <div class="form-group">
+                        <label for="businesspartner_id" class="control-label">Business Partner:</label>
+                        <label for="businesspartner_name" class="control-label">
+                            {{System.selected_businessPartner.name}}
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.selected_settings.use_product_list == 'Yes'">
+                    <div class="form-group">
+                        <label for="product_id" class="control-label">Product:</label>
+                        <ui-select name="product_id" id="product_id" ng-model="System.selected_product" theme="selectize" >
+                            <ui-select-match>{{$select.selected.name}}</ui-select-match>
+                            <ui-select-choices repeat="option in System.Products | filter: $select.search">
+                                <div ng-bind-html="option.name | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+                <!-- Grades -->
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.selected_product.grades_enabled == 'Yes'">
+                    <div class="form-group">
+                        <label for="System.selected_product.grades" class="control-label">Grades:</label>
+                        <ui-select name="System.selected_product.grades" id="System.selected_product.grades" ng-model="System.Single.grades" theme="selectize" >
+                            <ui-select-match>{{$select.selected}}</ui-select-match>
+                            <ui-select-choices repeat="option in System.selected_product.grades | commaspliter">
+                                <div ng-bind-html="option | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+            </div>
+            <div ng-if='System.FormDisplay' class="row  well well-sm">
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.selected_settings.user_defined_input1 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input1" class="control-label">{{System.selected_settings.user_defined_name1}}:</label>
+                        <label for="user_defined_input1" class="control-label">{{System.Single.Custom1}}</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.selected_settings.user_defined_input2 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input2" class="control-label">{{System.selected_settings.user_defined_name2}}:</label>
+                        <label for="user_defined_input2" class="control-label">{{System.Single.Custom2}}</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.selected_settings.user_defined_input3 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input3" class="control-label">{{System.selected_settings.user_defined_name3}}:</label>
+                        <label for="user_defined_input3" class="control-label">{{System.Single.Custom3}}</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.selected_settings.user_defined_input4 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input4" class="control-label">{{System.selected_settings.user_defined_name4}}:</label>
+                        <label for="user_defined_input4" class="control-label">{{System.Single.Custom4}}</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.selected_settings.user_defined_input5 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input5" class="control-label">{{System.selected_settings.user_defined_name5}}:</label>
+                        <label for="user_defined_input5" class="control-label">{{System.Single.Custom5}}</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.selected_settings.user_defined_input6 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input6" class="control-label">{{System.selected_settings.user_defined_name6}}:</label>
+                        <label for="user_defined_input6" class="control-label">{{System.Single.Custom6}}</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.selected_settings.user_defined_input7 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input7" class="control-label">{{System.selected_settings.user_defined_name7}}:</label>
+                        <label for="user_defined_input7" class="control-label">{{System.Single.Custom7}}</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.selected_settings.user_defined_input8 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input8" class="control-label">{{System.selected_settings.user_defined_name8}}:</label>
+                        <label for="user_defined_input8" class="control-label">{{System.Single.Custom8}}</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.selected_settings.user_defined_input9 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input9" class="control-label">{{System.selected_settings.user_defined_name9}}:</label>
+                        <label for="user_defined_input9" class="control-label">{{System.Single.Custom9}}</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.selected_settings.user_defined_input10 != 'N'">
+                    <div class="form-group">
+                        <h3 for="user_defined_input10" class="control-label">{{System.selected_settings.user_defined_name10}}:</h3>
+                        <input name="user_defined_input10" id="user_defined_input10" ng-model="System.Single.Custom10" class="form-control"/>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.selected_settings.user_defined_input11 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input11" class="control-label">{{System.selected_settings.user_defined_name11}}:</label>
+                        <label for="user_defined_input11" class="control-label">{{System.Single.Custom11}}</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.selected_settings.user_defined_input12 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input12" class="control-label">{{System.selected_settings.user_defined_name12}}:</label>
+                        <label for="user_defined_input12" class="control-label">{{System.Single.Custom12}}</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.selected_settings.user_defined_input13 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input13" class="control-label">{{System.selected_settings.user_defined_name13}}:</label>
+                        <label for="user_defined_input13" class="control-label">{{System.Single.Custom13}}</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.selected_settings.user_defined_input14 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input14" class="control-label">{{System.selected_settings.user_defined_name14}}:</label>
+                        <label for="user_defined_input14" class="control-label">{{System.Single.Custom14}}</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.selected_settings.user_defined_input15 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input15" class="control-label">{{System.selected_settings.user_defined_name15}}:</label>
+                        <label for="user_defined_input15" class="control-label">{{System.Single.Custom15}}</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.selected_settings.user_defined_input16 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input16" class="control-label">{{System.selected_settings.user_defined_name16}}:</label>
+                        <label for="user_defined_input16" class="control-label">{{System.Single.Custom16}}</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.selected_settings.user_defined_input17 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input17" class="control-label">{{System.selected_settings.user_defined_name17}}:</label>
+                        <label for="user_defined_input17" class="control-label">{{System.Single.Custom17}}</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.selected_settings.user_defined_input18 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input18" class="control-label">{{System.selected_settings.user_defined_name18}}:</label>
+                        <label for="user_defined_input18" class="control-label">{{System.Single.Custom18}}</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.selected_settings.user_defined_input19 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input19" class="control-label">{{System.selected_settings.user_defined_name19}}:</label>
+                        <label for="user_defined_input19" class="control-label">{{System.Single.Custom19}}</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.selected_settings.user_defined_input20 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input20" class="control-label">{{System.selected_settings.user_defined_name20}}:</label>
+                        <label for="user_defined_input20" class="control-label">{{System.Single.Custom20}}</label>
+                    </div>
+                </div>
+            </div>
+            <!--            <div class="row" ng-if='System.FormDisplay' ng-if="System.Single.weighbridge_id != null">
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                    <label for="FirstWeight" class="control-label">First Weight:</label>
+                                    <input name="FirstWeight" id="FirstWeight" ng-model="System.Single.FirstWeight" class="form-control"
+                                        ng-readonly="WeighBridge.manual == 'No' || System.Single.actiontype == 'Edit' || AxelSetups.Selected != null || WeighingSystem.On != null"/>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.selected_settings.type_of_weighing == 2">
+                                <div class="form-group">
+                                    <label for="SecondWeight" class="control-label">Second Weight:</label>
+                                    <input name="SecondWeight" id="SecondWeight" ng-model="System.Single.SecondWeight" class="form-control" ng-readonly="WeighBridge.manual == 'No' || System.Single.actiontype == 'New' || AxelSetups.Selected != null || WeighingSystem.On != null"/>
+                                </div>
+                            </div>
+                        </div>-->
+            <!--            <div class="row" ng-if='System.FormDisplay'  ng-if="System.Single.weighbridge_id != null">
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                    <label for="FirstWeight" class="control-label">Total Weight:</label>
+                                    <p>{{System.Single.FirstWeight - System.Single.SecondWeight}}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-xs-12" ng-if="(System.selected_settings.first_can_axel == 'Yes' && System.Single.actiontype == 'New') || (System.selected_settings.second_can_axel == 'Yes' && System.Single.actiontype == 'Edit')">
+                                <div class="form-group">
+                                    <input type="button" name="SecondWeight" value="Do Axel Weighing" id="SecondWeight" class="btn btn-danger" ng-click="System.OpenDialog('modal-1', 'lg');" />
+                                </div>
+                            </div>
+                        </div>-->
+            <!--            <div class="row" ng-if="System.FormDisplay && AxelSetups.Selected != null">
+                            <div class="col-md-4 col-sm-4 col-xs-12" ng-if="AxelSetups.Items[0].steering_max != '0'">
+                                <div class="form-group">
+                                    <label for="FirstWeight" class="control-label">Weight1({{AxelSetups.Items[0].steering_max}}):</label>
+                                    <input name="FirstWeight" id="FirstWeight" ng-model="System.Single.Weight1" class="form-control" ng-change="System.AxelChange()" />
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-4 col-xs-12" ng-if="AxelSetups.Items[0].axel_1_max != '0'">
+                                <div class="form-group">
+                                    <label for="FirstWeight" class="control-label">Weight2({{AxelSetups.Items[0].axel_1_max}}):</label>
+                                    <input name="FirstWeight" id="FirstWeight" ng-model="System.Single.Weight2" class="form-control" ng-change="System.AxelChange()" />
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-4 col-xs-12" ng-if="AxelSetups.Items[0].axel_2_max != '0'">
+                                <div class="form-group">
+                                    <label for="FirstWeight" class="control-label">Weight3({{AxelSetups.Items[0].axel_2_max}}):</label>
+                                    <input name="FirstWeight" id="FirstWeight" ng-model="System.Single.Weight3" class="form-control" ng-change="System.AxelChange()" />
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-4 col-xs-12" ng-if="AxelSetups.Items[0].axel_3_max != '0'">
+                                <div class="form-group">
+                                    <label for="FirstWeight" class="control-label">Weight4({{AxelSetups.Items[0].axel_3_max}}):</label>
+                                    <input name="FirstWeight" id="FirstWeight" ng-model="System.Single.Weight4" class="form-control" ng-change="System.AxelChange()" />
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-4 col-xs-12" ng-if="AxelSetups.Items[0].axel_4_max != '0'">
+                                <div class="form-group">
+                                    <label for="FirstWeight" class="control-label">Weight5({{AxelSetups.Items[0].axel_4_max}}):</label>
+                                    <input name="FirstWeight" id="FirstWeight" ng-model="System.Single.Weight5" class="form-control" ng-change="System.AxelChange()" />
+                                </div>
+                            </div>
+                        </div>-->
+            <!--            <div class="row" ng-if="System.FormDisplay && System.selected_settings.use_cameras == 'Yes' && System.selected_settings.display_cameras == 'Yes'">
+                            <div ng-repeat="data in System.Cameras" class="col-sm-4 col-xs-6"><img ng-src="{{data.url}}" alt="camera" class="img-responsive" /></div>
+                            <img ng-repeat="data in System.Cameras" ng-src="{{data.url}}" alt="camera" class="img-responsive" />
+            
+            
+                        </div>-->
+            <div class="row" ng-if="System.FormDisplay">
+
+                <div class="col-md-6">
+                    <button class="btn btn-danger" ng-click="System.save(Single)">Save</button>
+                </div>
+                <div class="col-md-6">
+                    <button class="btn btn-black pull-right"  ng-click="System.cancel()">Cancel</button>
+
+                </div>
+            </div>
+            <div class="row" ng-hide='System.FormDisplay || System.deleteFormDisplay'>
+                <div class="col-sm-12">
+                    <table datatable="ng" class="table table-striped table-bordered" >
+                        <thead>
+                            <tr>
+                                <th>Weighing Type</th>
+                                <th>Reg Number</th>
+                                <th>Weighbridge</th>
+                                <th>Status</th>
+                                <th>Updated At</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr data-ng-repeat="data in System.formData| filter: {status:'VERIFY'}">
+                                <td data-ng-bind="data.settings"></td>
+                                <td data-ng-bind="data.RegNumber"></td>
+                                <td data-ng-bind="data.weighbridge"></td>
+                                <td data-ng-bind="data.status"></td>
+                                <td data-ng-bind="data.updated_at"></td>
+                                <td>
+                                    <a href="javascript:void(0)" data-ng-click="System.editForm(data);" ng-if="data.status === 'VERIFY'" class="btn btn-danger btn-sm btn-icon icon-left">Verify</a>
+                                    <a ng-hide="System.User.role.delete_transaction_flag === 'false'" href="javascript:void(0)" data-ng-click="System.deleteForm(data);" ng-if="data.status === 'VERIFY'" class="btn btn-black btn-sm btn-icon icon-left ng-scope">Delete</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row" ng-if="System.deleteFormDisplay && !System.FormDisplay">
+                <div>
+                    <h2>Reason</h2>
+                </div>
+                <div class="form-group">
+                    <textarea id="reasonBox" rows="5" ng-model="System.deleteReason" class="form-control" placeholder="Please enter your reason...">
+                    </textarea>
+                </div>
+                <div>
+                    <button class="btn btn-danger btn-sm btn-icon icon-left" data-ng-click="System.delete(data);">Delete</button>
+                    <button class="btn btn-black btn-sm btn-icon icon-left ng-scope" data-ng-click="System.cancel();">Cancel</button>
+                </div>
+            </div>
+            <script type="text/ng-template" id="modal-1" class="ng-scope">
+                <div class="modal-header bg-danger">
+                <button type="button" class="close" ng-click="currentModal.dismiss();" aria-hidden="true">&times;</button>
+                <h2 class="modal-title">Select Axel Setup</h2>
+                </div>
+
+                <div class="modal-body">
+                <div class="row">
+                <div class="col-md-12"><select name="" id="" class="form-control" ng-modal="System.selected" ng-options="item as item.name for item in AxelSetups.Items track by item.id" ng-model="AxelSetups.Selected">
+                </select></div></div>
+                <div class="row">
+                <div class="col-md-12"><h4>{{AxelSetups.Selected.name}}</h4></div></div>
+                <div class="row">
+                <div class="col-md-2" ng-if="AxelSetups.Selected.steering_max != ''">
+                <div class="input-group vcenter">
+                <label class="label label-red">{{AxelSetups.Selected.steering}}</label>
+                <span class="input-group-addon glyphicon-{{AxelSetups.Selected.steering}}" id="basic-addon1"></span>
+                <span class="form-control">{{AxelSetups.Selected.steering_max}}</span>
+                </div>
+                </div>
+                <div class="col-md-3" ng-if="AxelSetups.Selected.axel_1_max != ''">
+                <div class="input-group vcenter">
+                <label class="label label-red">{{AxelSetups.Selected.axel_1}}</label>
+                <span class="input-group-addon glyphicon-{{AxelSetups.Selected.axel_1}}" id="basic-addon1"></span>
+                <span class="form-control">{{AxelSetups.Selected.axel_1_max}}</span>
+                </div>
+                </div>
+                <div class="col-md-2" ng-if="AxelSetups.Selected.axel_2_max != ''">
+                <div class="input-group vcenter">
+                <label class="label label-red">{{AxelSetups.Selected.axel_2}}</label>
+                <span class="input-group-addon glyphicon-{{AxelSetups.Selected.axel_2}}" id="basic-addon1"></span>
+                <span class="form-control">{{AxelSetups.Selected.axel_2_max}}</span>
+                </div>
+                </div>
+                <div class="col-md-3" ng-if="AxelSetups.Selected.axel_3_max != ''">
+                <div class="input-group vcenter">
+                <label class="label label-red">{{AxelSetups.Selected.axel_3}}</label>
+                <span class="input-group-addon glyphicon-{{AxelSetups.Selected.axel_3}}" id="basic-addon1"></span>
+                <span class="form-control">{{AxelSetups.Selected.axel_3_max}}</span>
+                </div>
+                </div>
+                <div class="col-md-2" ng-if="AxelSetups.Selected.axel_4_max != ''">
+                <div class="input-group vcenter">
+                <label class="label label-red">{{AxelSetups.Selected.axel_4}}</label>
+                <span class="input-group-addon glyphicon-{{AxelSetups.Selected.axel_4}}" id="basic-addon1"></span>
+                <span class="form-control">{{AxelSetups.Selected.axel_4_max}}</span>
+                </div>
+                </div></div>
+                <div class="row"><div class="col-md-12"><span class="form-control">Vehicle Max : {{AxelSetups.Selected.vehicle_max}}</span></div></div>
+                </div>
+
+                <div class="modal-footer bg-danger">
+
+                <button type="button" class="btn btn-white pull-left" ng-click="currentModal.dismiss();">Cancel</button>
+                <button type="button" class="btn btn-black pull-right" ng-click="currentModal.close(AxelSetups.Selected);">Save changes</button>
+                </div>
+            </script>
+        </div>
+    </div>
+
+</div>

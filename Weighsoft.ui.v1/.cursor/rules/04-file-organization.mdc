@@ -1,0 +1,203 @@
+---
+description: File naming conventions, organization patterns, and directory structure
+alwaysApply: true
+---
+
+# File Organization and Naming Conventions
+
+## File Naming Rules
+
+### Controllers
+
+- **File names**: Use lowercase with underscores: `companies.js`, `weighing_create.js`, `reprint_list.js`
+- **Controller names**: Use PascalCase with `Ctrl` suffix: `CompaniesCtrl`, `WeighingCreateCtrl`
+- **Location**: `app/js/controllers/` or `app/js/controllers/[feature]/`
+
+**Examples**:
+- File: `app/js/controllers/companies.js` → Controller: `CompaniesCtrl`
+- File: `app/js/controllers/weighing_create.js` → Controller: `WeighingCreateCtrl`
+- File: `app/js/controllers/contract/list.controller.js` → Controller: `ContractListCtrl`
+
+### Templates
+
+- **File names**: Use lowercase with underscores: `list.html`, `company_create.html`, `company_edit.html`
+- **Location**: `app/tpls/[feature]/`
+- **Naming pattern**: `[feature]_[action].html` or `[action].html` for feature folders
+
+**Examples**:
+- `app/tpls/companies/list.html`
+- `app/tpls/companies/company_create.html`
+- `app/tpls/weighing/create.html`
+- `app/tpls/weighing/reprint_list.html`
+
+### Directives
+
+- **File names**: Use lowercase with underscores: `ticket.directive.js`, `invoice.directive.js`
+- **Directive names**: Use camelCase: `ticketPrint`, `invoicePrint`
+- **Location**: `app/js/directives/` or `app/js/directives/[feature]/`
+
+**Examples**:
+- `app/js/directives/ticket/ticket.directive.js` → Directive: `ticketPrint`
+- `app/js/directives/invoice/invoice.directive.js` → Directive: `invoicePrint`
+
+### Services and Factories
+
+- **File names**: Use lowercase: `services.js`, `factory.js`
+- **Service names**: Use camelCase with `$` prefix for built-in services: `$menuItems`, `$weightModifiers`
+- **Location**: `app/js/` (main files) or `app/js/helpers/` for utilities
+
+### Filters
+
+- **File names**: Use lowercase with underscores: `common-filters.js`
+- **Filter names**: Use camelCase: `propsFilter`, `makePositive`
+- **Location**: `app/js/filters/`
+
+## Directory Structure Rules
+
+### Feature-Based Organization
+
+When a feature has multiple related files, organize them in subdirectories:
+
+```
+app/js/controllers/
+  contract/
+    contracts.controller.js
+    list.controller.js
+    edit.controller.js
+    transactions.controller.js
+  pallet/
+    pallets.controller.js
+    list.controller.js
+    edit.controller.js
+  tare/
+    tares.controller.js
+    list.controller.js
+    edit.controller.js
+```
+
+### Template Organization
+
+Templates mirror controller organization:
+
+```
+app/tpls/
+  contract/
+    contract.html
+    list.html
+    edit.html
+    transactions.html
+  pallet/
+    pallet.html
+    list.html
+    edit.html
+```
+
+## Naming Conventions Summary
+
+### Identifiers (Variables, Functions, Properties)
+
+- **Use underscores (_) for**: Route names, file names, template paths, API endpoints
+- **Use camelCase for**: JavaScript variables, functions, object properties, directive names
+- **Use PascalCase for**: Controller names, Angular module names
+
+**Examples**:
+```javascript
+// Route names - use underscores
+const routeName = 'company';
+const routeName = 'weighing_headers';
+
+// Variables - use camelCase
+const vm = this;
+vm.companyList = [];
+vm.isEditing = false;
+
+// Controller names - use PascalCase
+.controller('CompaniesCtrl', ...)
+.controller('WeighingCreateCtrl', ...)
+
+// File names - use underscores
+companies.js
+weighing_create.js
+list.controller.js
+```
+
+## File Registration
+
+### Controllers
+
+Controllers can be registered in two ways:
+
+1. **In individual controller file** (preferred for new controllers):
+```javascript
+// app/js/controllers/my_feature.js
+'use strict';
+angular
+  .module('xenon.controllers')
+  .controller('MyFeatureCtrl', function(...) {
+    // ...
+  });
+```
+
+2. **In controllers.js** (for simple controllers):
+```javascript
+// app/js/controllers.js
+angular.module('xenon.controllers')
+  .controller('MyCtrl', function(...) {
+    // ...
+  });
+```
+
+### Directives
+
+Directives can be registered in two ways:
+
+1. **In individual directive file** (preferred):
+```javascript
+// app/js/directives/my_directive/my_directive.directive.js
+angular.module('xenon.controllers')
+  .directive('myDirective', MyDirective);
+
+function MyDirective() {
+  return {
+    // ...
+  };
+}
+```
+
+2. **In directives.js** (for simple directives):
+```javascript
+// app/js/directives.js
+angular.module('xenon.directives')
+  .directive('myDirective', function() {
+    return {
+      // ...
+    };
+  });
+```
+
+## Template Path References
+
+**ALWAYS** use `appHelper.templatePath()` with feature/action pattern:
+
+```javascript
+// ✅ CORRECT
+templateUrl: appHelper.templatePath('companies/list')
+templateUrl: appHelper.templatePath('weighing/create')
+templateUrl: appHelper.templatePath('contract/edit')
+
+// ❌ WRONG
+templateUrl: 'app/tpls/companies/list.html'
+templateUrl: '/tpls/companies/list.html'
+templateUrl: './tpls/companies/list.html'
+```
+
+## Critical Rules
+
+1. **DO** use underscores in file names and route names
+2. **DO** use camelCase for JavaScript identifiers
+3. **DO** use PascalCase for controller names
+4. **DO** organize related files in feature subdirectories
+5. **DO** mirror template structure to controller structure
+6. **DO** use `appHelper.templatePath()` for all template references
+7. **DO NOT** use hyphens in JavaScript identifiers (use underscores instead)
+8. **DO NOT** mix naming conventions within the same context

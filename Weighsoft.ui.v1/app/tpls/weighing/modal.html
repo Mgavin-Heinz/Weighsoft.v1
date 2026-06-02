@@ -1,0 +1,133 @@
+<div class="modal-header bg-danger">
+    <button type="button" class="close" ng-click="currentModal.dismiss();" aria-hidden="true">&times;</button>
+    <h2 class="modal-title">Select Axel Setup</h2>
+</div>
+
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-12">
+            <select name="" id="" class="form-control" ng-change="selectchange()"
+                    ng-options="item as item.name for item in AxelSetups.Items track by item.id" ng-model="AxelSetups.Selected">
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12"><h4>{{AxelSetups.Selected.name}}</h4></div>
+    </div>
+    <div class="row">
+        <div class="col-md-2" ng-if="AxelSetups.Selected.steering_max != ''">
+            <div class="input-group vcenter">
+                <label class="label label-red">{{AxelSetups.Selected.steering}}</label>
+                <span class="input-group-addon glyphicon-{{AxelSetups.Selected.steering}}" id="basic-addon1"></span>
+                <span class="form-control">{{AxelSetups.Selected.steering_max}}</span>
+            </div>
+        </div>
+        <div class="col-md-3" ng-if="AxelSetups.Selected.axel_1_max != ''">
+            <div class="input-group vcenter">
+                <label class="label label-red">{{AxelSetups.Selected.axel_1}}</label>
+                <span class="input-group-addon glyphicon-{{AxelSetups.Selected.axel_1}}" id="basic-addon1"></span>
+                <span class="form-control">{{AxelSetups.Selected.axel_1_max}}</span>
+            </div>
+        </div>
+        <div class="col-md-2" ng-if="AxelSetups.Selected.axel_2_max != ''">
+            <div class="input-group vcenter">
+                <label class="label label-red">{{AxelSetups.Selected.axel_2}}</label>
+                <span class="input-group-addon glyphicon-{{AxelSetups.Selected.axel_2}}" id="basic-addon1"></span>
+                <span class="form-control">{{AxelSetups.Selected.axel_2_max}}</span>
+            </div>
+        </div>
+        <div class="col-md-3" ng-if="AxelSetups.Selected.axel_3_max != ''">
+            <div class="input-group vcenter">
+                <label class="label label-red">{{AxelSetups.Selected.axel_3}}</label>
+                <span class="input-group-addon glyphicon-{{AxelSetups.Selected.axel_3}}" id="basic-addon1"></span>
+                <span class="form-control">{{AxelSetups.Selected.axel_3_max}}</span>
+            </div>
+        </div>
+        <div class="col-md-2" ng-if="AxelSetups.Selected.axel_4_max != ''">
+            <div class="input-group vcenter">
+                <label class="label label-red">{{AxelSetups.Selected.axel_4}}</label>
+                <span class="input-group-addon glyphicon-{{AxelSetups.Selected.axel_4}}" id="basic-addon1"></span>
+                <span class="form-control">{{AxelSetups.Selected.axel_4_max}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Vehicle Max : {{AxelSetups.Selected.vehicle_max}}</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12" ng-class="AxelClass"><h4>Weights <span ng-if="AxelClass != 'bg-success'">OVERLOADED</span></h4></div>
+    </div>
+    <div class="row" ng-if="AxelSetups.Selected != null">        
+        <div class="col-md-2 col-sm-2 col-xs-6" ng-if="AxelSetups.Selected.steering_max != ''">
+            <div class="form-group">
+                <label for="FirstWeight" class="control-label">Weight1 ({{AxelSetups.Selected.steering_max}}):</label>
+                <input name="FirstWeight" readonly="readonly" id="FirstWeight" ng-model="Weight1" class="form-control" />
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-2 col-xs-6" ng-if="AxelSetups.Selected.axel_1_max != ''">
+            <div class="form-group">
+                <label for="FirstWeight" class="control-label">Weight2 ({{AxelSetups.Selected.axel_1_max}}):</label>
+                <input name="FirstWeight" readonly="readonly" id="FirstWeight" ng-model="Weight2" class="form-control" />
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-2 col-xs-6" ng-if="AxelSetups.Selected.axel_2_max != ''">
+            <div class="form-group">
+                <label for="FirstWeight" class="control-label">Weight3 ({{AxelSetups.Selected.axel_2_max}}):</label>
+                <input name="FirstWeight" readonly="readonly" id="FirstWeight" ng-model="Weight3" class="form-control" />
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-2 col-xs-6" ng-if="AxelSetups.Selected.axel_3_max != ''">
+            <div class="form-group">
+                <label for="FirstWeight" class="control-label">Weight4 ({{AxelSetups.Selected.axel_3_max}}):</label>
+                <input name="FirstWeight" readonly="readonly" id="FirstWeight" ng-model="Weight4" class="form-control" />
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-2 col-xs-6" ng-if="AxelSetups.Selected.axel_4_max != ''">
+            <div class="form-group">
+                <label for="FirstWeight" class="control-label">Weight5 ({{AxelSetups.Selected.axel_4_max}}):</label>
+                <input name="FirstWeight" readonly="readonly" id="FirstWeight" ng-model="Weight5" class="form-control" />
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-2 col-xs-6" ng-if="AxelSetups.Selected.steering_max != ''">
+            <div class="form-group">
+                <label for="TotalWeight" class="control-label">Total ({{AxelSetups.Selected.vehicle_max}}):</label>
+                <input name="TotalWeight" readonly="readonly" id="TotalWeight" ng-model="TotalWeight" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <div class="row" ng-if="AxelSetups.Selected != null && AxelClass == 'bg-success'">        
+        <div class="col-md-2 col-sm-2 col-xs-6" ng-if="AxelSetups.Selected.steering_max != ''">
+            <div class="form-group">
+                <button type="button" class="btn btn-success" ng-if="Modal.Weight[0] == 1 && Modal.Weight[1] == 0" ng-click="Modal.WeightSave()">Next</button>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-2 col-xs-6" ng-if="AxelSetups.Selected.axel_1_max != ''">
+            <div class="form-group">
+                <button type="button" class="btn btn-success" ng-if="Modal.Weight[1] == 1 && Modal.Weight[2] == 0" ng-click="Modal.WeightSave()">Next</button>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-2 col-xs-6" ng-if="AxelSetups.Selected.axel_2_max != ''">
+            <div class="form-group">
+                <button type="button" class="btn btn-success" ng-if="Modal.Weight[2] == 1 && Modal.Weight[3] == 0" ng-click="Modal.WeightSave()">Next</button>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-2 col-xs-6" ng-if="AxelSetups.Selected.axel_3_max != ''">
+            <div class="form-group">
+                <button type="button" class="btn btn-success" ng-if="Modal.Weight[3] == 1 && Modal.Weight[4] == 0" ng-click="Modal.WeightSave()">Next</button>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-2 col-xs-6" ng-if="AxelSetups.Selected.axel_4_max != ''">
+            <div class="form-group">
+                <button type="button" class="btn btn-success" ng-if="Modal.Weight[4] == 1 && Modal.Weight[5] == 0" ng-click="Modal.WeightSave()">Next</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer bg-danger">
+
+    <button type="button" class="btn btn-white pull-left" ng-click="currentModal.dismiss();">Cancel</button>
+    <button type="button" class="btn btn-black pull-right" ng-click="currentModal.close(AxelSetups.Selected);">Done</button>
+
+</div>

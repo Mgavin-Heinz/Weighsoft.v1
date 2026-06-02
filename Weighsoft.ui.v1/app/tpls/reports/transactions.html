@@ -1,0 +1,344 @@
+<page-title ng-if="layoutOptions.pageTitles" title="Reprint" description="" data-ng-init="System.load()"></page-title>
+
+<div class="col-lg-12 col-md-12 hidden-print">
+    <div class="panel panel-color panel-danger">
+        <div class="panel-heading hidden-print">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <h2>Reprints</h2>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label for="company_id" class="control-label">Company</label>
+                    <select
+                        name="company_id"
+                        id="role_id"
+                        ng-model="System.HeaderSingle.company_id"
+                        class="form-control"
+                        ng-change="System.changeCompanyID()"
+                        ng-options="option.value as option.name for option in System.Companies"
+                    ></select>
+                </div>
+                <div>
+                    <div class="form-group" ng-if="System.HeaderSingle.company_id !== null">
+                        <label for="site_id" class="control-label">Site</label>
+                        <select name="site_id" id="site_id" ng-model="System.HeaderSingle.site_id" class="form-control" ng-change="System.SelectOnChange('site')">
+                            <option ng-repeat="option in System.Sites" value="{{option.value}}">{{option.name}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <div>
+                    <div class="form-group" ng-if="System.HeaderSingle.site_id !== null">
+                        <label for="workstation_id" class="control-label">Workstation</label>
+                        <select name="workstation_id" id="workstation_id" ng-model="System.HeaderSingle.workstation_id" class="form-control" ng-change="System.SelectOnChange('workstation')">
+                            <option ng-repeat="option in System.Workstations" value="{{option.value}}">{{option.name}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" ng-if="System.HeaderSingle.workstation_id !== null">
+                    <a href="javascript:void(0)" data-ng-click="System.addForm()" ng-hide="System.FormDisplay" class="btn btn-black pull-right">Add New</a>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="row" ng-if="System.FormDisplay">
+                <div class="col-md-6">
+                    <button class="btn btn-danger" ng-if="System.ScannedUser === null" ng-click="System.Fingerprint()">Scan Fingerprint</button>
+                    <button class="btn btn-danger" ng-if="System.ScannedUser === null && System.ScannedUser !== ''" ng-click="System.save(Single)">Save</button>
+                    <!--<button class="btn btn-danger" ng-click="System.next()">Next</button>-->
+                </div>
+                <div class="col-md-6">
+                    <button class="btn btn-black pull-right" ng-click="System.cancel()">Cancel</button>
+                </div>
+            </div>
+            <div class="row" ng-hide="System.FormDisplay">
+                <div class="col-sm-12">
+                    <table datatable="ng" class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Reg Number</th>
+                                <th>Weighbridge</th>
+                                <th>Status</th>
+                                <th>Updated At</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-ng-repeat="data in System.formData| filter: {status:'CLOSED'}">
+                                <td data-ng-bind="data.RegNumber"></td>
+                                <td data-ng-bind="data.weighbridge"></td>
+                                <td data-ng-bind="data.status"></td>
+                                <td data-ng-bind="data.updated_at"></td>
+                                <td>
+                                    <a href="javascript:void(0)" data-ng-click="System.viewData(data);" ng-if="data.status === 'CLOSED'" class="btn btn-black btn-sm btn-icon icon-left">Reprint</a>
+                                    <a href="javascript:void(0)" data-ng-click="System.viewData(data);" ng-if="data.status === 'VERIFY'" class="btn btn-black btn-sm btn-icon icon-left">Verify</a>
+                                    <a href="javascript:void(0)" data-ng-click="System.editForm(data);" ng-if="data.status === 'OPEN'" class="btn btn-danger btn-sm btn-icon icon-left">2nd Weighing</a>
+                                    <a href="javascript:void(0)" data-ng-click="System.deleteForm(data);" ng-if="data.status === 'OPEN'" class="btn btn-black btn-sm btn-icon icon-left">Delete</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12 col-md-12 hidden-screen">
+    <div class="col-sm-12 page-header">
+        <div class="row">
+            <h1 class="text-center">
+                <img ng-if="System.Setting.display_custom_header_img" src="assets\\images\\logos\\{{System.Setting.display_custom_header_img}}" width="230" />
+            </h1>
+            <span ng-bind-html="System.Setting.custom_header_text"></span>
+            <h3 class="text-center">{{System.ReportData.Settings}}</h3>
+        </div>
+        <div class="row">
+            <h3 class="col-sm-6">Transaction No:</h3>
+            <h3 class="col-sm-6">{{System.Single.id}}</h3>
+        </div>
+        <div class="row" ng-if="System.Setting.numberplate_1 == 'Yes'">
+            <div class="col-sm-6">
+                <p>Number Plate 1:</p>
+            </div>
+            <div class="col-sm-6">
+                <p>{{System.Single.RegNumber}}</p>
+            </div>
+        </div>
+        <div class="row" ng-if="System.Setting.numberplate_2 == 'Yes' && System.Single.RegNumber2.length > 0">
+            <div class="col-sm-6">
+                <p>Number Plate 2:</p>
+            </div>
+            <div class="col-sm-6">
+                <p>{{System.Single.RegNumber2}}</p>
+            </div>
+        </div>
+        <div class="row" ng-if="System.Setting.numberplate_3 == 'Yes' && System.Single.RegNumber3.length > 0">
+            <div class="col-sm-6">
+                <p>Number Plate 3:</p>
+            </div>
+            <div class="col-sm-6">
+                <p>{{System.Single.RegNumber3}}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <p ng-if="System.Setting.business_partner">Business Partner:</p>
+            </div>
+            <div class="col-sm-6">
+                <p ng-if="System.Setting.business_partner" ng-bind-html="System.ReportData.BusinessPartners"></p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <p ng-if="System.Setting.haulier">Haulier:</p>
+            </div>
+            <div class="col-sm-6">
+                <p ng-if="System.Setting.haulier" ng-bind-html="System.ReportData.Hauliers"></p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <p ng-if="System.Setting.use_product_list">Product:</p>
+            </div>
+            <div class="col-sm-6">
+                <p ng-if="System.Setting.use_product_list" ng-bind-html="System.ReportData.Products"></p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <p ng-if="System.Setting.user_defined_input1 != 'N'">{{System.Setting.user_defined_name1}}: {{System.Single.Custom1}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p ng-if="System.Setting.user_defined_input2 != 'N'">{{System.Setting.user_defined_name2}}: {{System.Single.Custom2}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p ng-if="System.Setting.user_defined_input3 != 'N'">{{System.Setting.user_defined_name3}}: {{System.Single.Custom3}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p ng-if="System.Setting.user_defined_input4 != 'N'">{{System.Setting.user_defined_name4}}: {{System.Single.Custom4}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p ng-if="System.Setting.user_defined_input5 != 'N'">{{System.Setting.user_defined_name5}}: {{System.Single.Custom5}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p ng-if="System.Setting.user_defined_input6 != 'N'">{{System.Setting.user_defined_name6}}: {{System.Single.Custom6}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p ng-if="System.Setting.user_defined_input7 != 'N'">{{System.Setting.user_defined_name7}}: {{System.Single.Custom7}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p ng-if="System.Setting.user_defined_input8 != 'N'">{{System.Setting.user_defined_name8}}: {{System.Single.Custom8}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p ng-if="System.Setting.user_defined_input9 != 'N'">{{System.Setting.user_defined_name9}}: {{System.Single.Custom9}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p ng-if="System.Setting.user_defined_input10 != 'N'">{{System.Setting.user_defined_name10}}: {{System.Single.Custom10}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p ng-if="System.Setting.user_defined_input11 != 'N'">{{System.Setting.user_defined_name11}}: {{System.Single.Custom11}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p ng-if="System.Setting.user_defined_input12 != 'N'">{{System.Setting.user_defined_name12}}: {{System.Single.Custom12}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p ng-if="System.Setting.user_defined_input13 != 'N'">{{System.Setting.user_defined_name13}}: {{System.Single.Custom13}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p ng-if="System.Setting.user_defined_input14 != 'N'">{{System.Setting.user_defined_name14}}: {{System.Single.Custom14}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p ng-if="System.Setting.user_defined_input15 != 'N'">{{System.Setting.user_defined_name15}}: {{System.Single.Custom15}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p ng-if="System.Setting.user_defined_input16 != 'N'">{{System.Setting.user_defined_name16}}: {{System.Single.Custom16}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p ng-if="System.Setting.user_defined_input17 != 'N'">{{System.Setting.user_defined_name17}}: {{System.Single.Custom17}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p ng-if="System.Setting.user_defined_input18 != 'N'">{{System.Setting.user_defined_name18}}: {{System.Single.Custom18}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p ng-if="System.Setting.user_defined_input19 != 'N'">{{System.Setting.user_defined_name19}}: {{System.Single.Custom19}}</p>
+            </div>
+            <div class="col-sm-6">
+                <p ng-if="System.Setting.user_defined_input20 != 'N'">{{System.Setting.user_defined_name20}}: {{System.Single.Custom20}}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <p>Time IN</p>
+            </div>
+            <div class="col-sm-3">
+                <p>{{System.Single.updated_at}}</p>
+            </div>
+            <div class="col-sm-3">
+                <p>1st Weight</p>
+            </div>
+            <div class="col-sm-2">
+                <p>{{System.Single.FirstWeight}}</p>
+            </div>
+            <div class="col-sm-1">
+                <p>{{System.Setting.MeasureTypes}}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <p>Time OUT</p>
+            </div>
+            <div class="col-sm-3">
+                <p>{{System.getDatetime}}</p>
+            </div>
+            <div class="col-sm-3">
+                <p>2nd Weight</p>
+            </div>
+            <div class="col-sm-2">
+                <p>{{System.Single.SecondWeight}}</p>
+            </div>
+            <div class="col-sm-1">
+                <p>{{System.Setting.MeasureTypes}}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <p>&nbsp;</p>
+            </div>
+            <div class="col-sm-3">
+                <p>Gross Weight</p>
+            </div>
+            <div class="col-sm-2" style="border-top: 1px solid #000000; border-bottom: 4px double #000000">
+                <p>{{(System.Single.SecondWeight - System.Single.FirstWeight) | makePositive}}</p>
+            </div>
+            <div class="col-sm-1">
+                <p>{{System.Setting.MeasureTypes}}</p>
+            </div>
+        </div>
+        <div class="row well" ng-if="Weight1 != undefined && Weight1 != 0">
+            <div class="col-sm-4" ng-if="Weight1 != undefined && Weight1 != 0">
+                <p><b>Steering Axle: </b>({{AxelSetups.Selected.steering_max}} {{System.Setting.MeasureTypes}})</p>
+            </div>
+            <div class="col-sm-4" ng-if="Weight2 != undefined && Weight2 != 0">
+                <p><b>1st Axle: </b>({{AxelSetups.Selected.axel_1_max}} {{System.Setting.MeasureTypes}})</p>
+            </div>
+            <div class="col-sm-4" ng-if="Weight3 != undefined && Weight3 != 0">
+                <p><b>2nd Axle: </b>({{AxelSetups.Selected.axel_2_max}} {{System.Setting.MeasureTypes}})</p>
+            </div>
+        </div>
+        <div class="row well" ng-if="Weight1 != undefined && Weight1 != 0">
+            <div class="col-sm-4" ng-if="Weight1 != undefined && Weight1 != 0">
+                <p>{{Weight1}} {{System.Setting.MeasureTypes}}</p>
+            </div>
+            <div class="col-sm-4" ng-if="Weight2 != undefined && Weight2 != 0">
+                <p>{{Weight2}} {{System.Setting.MeasureTypes}}</p>
+            </div>
+            <div class="col-sm-4" ng-if="Weight3 != undefined && Weight3 != 0">
+                <p>{{Weight3}} {{System.Setting.MeasureTypes}}</p>
+            </div>
+        </div>
+        <div class="row well" ng-if="Weight1 != undefined && Weight1 != 0">
+            <div class="col-sm-4" ng-if="Weight1 != undefined && Weight1 != 0">
+                <p>Passed</p>
+            </div>
+            <div class="col-sm-4" ng-if="Weight2 != undefined && Weight2 != 0">
+                <p>Passed</p>
+            </div>
+            <div class="col-sm-4" ng-if="Weight3 != undefined && Weight3 != 0">
+                <p>Passed</p>
+            </div>
+        </div>
+        <div class="row well" ng-if="Weight1 != undefined && Weight1 != 0">
+            <div class="col-sm-4" ng-if="Weight4 != undefined && Weight4 != 0">
+                <p><b>3rd Axle: </b>({{AxelSetups.Selected.axel_3_max}} {{System.Setting.MeasureTypes}})</p>
+            </div>
+            <div class="col-sm-4" ng-if="Weight5 != undefined && Weight5 != 0">
+                <p><b>4th Axle: </b>({{AxelSetups.Selected.axel_4_max}} {{System.Setting.MeasureTypes}})</p>
+            </div>
+            <div class="col-sm-4">
+                <p><b>Total: </b>({{AxelSetups.Selected.vehicle_max}} {{System.Setting.MeasureTypes}})</p>
+            </div>
+        </div>
+        <div class="row well" ng-if="Weight1 != undefined && Weight1 != 0">
+            <div class="col-sm-4" ng-if="Weight4 != undefined && Weight4 != 0">
+                <p>{{Weight4}} {{System.Setting.MeasureTypes}}</p>
+            </div>
+            <div class="col-sm-4" ng-if="Weight5 != undefined && Weight5 != 0">
+                <p>{{Weight5}} {{System.Setting.MeasureTypes}}</p>
+            </div>
+            <div class="col-sm-4">
+                <p>{{parsedweight}} {{System.Setting.MeasureTypes}}</p>
+            </div>
+        </div>
+        <div class="row well" ng-if="Weight1 != undefined && Weight1 != 0">
+            <div class="col-sm-4" ng-if="Weight4 != undefined && Weight4 != 0">
+                <p>Passed</p>
+            </div>
+            <div class="col-sm-4" ng-if="Weight5 != undefined && Weight5 != 0">
+                <p>Passed</p>
+            </div>
+            <div class="col-sm-4">
+                <p>Passed</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <p><b>Log on User</b></p>
+            </div>
+            <div class="col-sm-9">
+                <p>{{user_info.firstname}} {{user_info.lastname}}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div ng-if="System.Setting.use_cameras == 'Yes' && System.Setting.print_cameras_on_ticket == 'Yes'" ng-repeat="data in System.Cameras" class="col-sm-6">
+                <img ng-src="http://{{data.url}}" alt="camera" class="img-responsive" />
+            </div>
+        </div>
+        <div class="row">
+            <h1 class="text-center">
+                <img ng-if="System.Setting.display_custom_footer_img" ng-src="assets\\images\\logos\\{{System.Setting.display_custom_footer_img}}" width="230" />
+            </h1>
+            <span ng-bind-html="System.Setting.custom_footer_text"></span>
+        </div>
+    </div>
+</div>

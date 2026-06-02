@@ -1,0 +1,26 @@
+ALTER TABLE `weighsoft`.`axelsetups` ENGINE = InnoDB ;
+ALTER TABLE `weighsoft`.`axletypes` ENGINE = InnoDB ;
+ALTER TABLE `weighsoft`.`businesspartners` ENGINE = InnoDB ;
+ALTER TABLE `weighsoft`.`cameras` ENGINE = InnoDB ;
+ALTER TABLE `weighsoft`.`companies` ENGINE = InnoDB ;
+ALTER TABLE `weighsoft`.`contract_transactions` ENGINE = InnoDB ;
+ALTER TABLE `weighsoft`.`contracts` ENGINE = InnoDB ;
+ALTER TABLE `weighsoft`.`errorlog` ENGINE = InnoDB ;
+ALTER TABLE `weighsoft`.`exceptions` ENGINE = InnoDB ;
+ALTER TABLE `weighsoft`.`grades` ENGINE = InnoDB ;
+ALTER TABLE `weighsoft`.`hauliers` ENGINE = InnoDB ;
+ALTER TABLE `weighsoft`.`pallets` ENGINE = InnoDB ;
+ALTER TABLE `weighsoft`.`products` ENGINE = InnoDB ;
+ALTER TABLE `weighsoft`.`reporting` ENGINE = InnoDB ;
+ALTER TABLE `weighsoft`.`rfid_vehicles` ENGINE = InnoDB ;
+ALTER TABLE `weighsoft`.`settings` ENGINE = InnoDB ;
+ALTER TABLE `weighsoft`.`sites` ENGINE = InnoDB ;
+ALTER TABLE `weighsoft`.`tares` ENGINE = InnoDB ;
+ALTER TABLE `weighsoft`.`transactions` ENGINE = InnoDB ;
+ALTER TABLE `weighsoft`.`users` ENGINE = InnoDB ;
+ALTER TABLE `weighsoft`.`usertypes` ENGINE = InnoDB ;
+ALTER TABLE `weighsoft`.`weighingcameras` ENGINE = InnoDB ;
+ALTER TABLE `weighsoft`.`weighingheaders` ENGINE = InnoDB ;
+ALTER TABLE `weighsoft`.`weighingtransactions` ENGINE = InnoDB ;
+ALTER TABLE `weighsoft`.`workstations` ENGINE = InnoDB ;
+

@@ -1,0 +1,172 @@
+---
+description: API routing patterns, route definitions, and REST conventions
+globs: ["routes/api.php", "routes/web.php"]
+alwaysApply: false
+---
+
+# Routing and API Patterns
+
+## Route File Location
+
+**PRIMARY**: Use `routes/api.php` for all API routes.
+
+**DEPRECATED**: `app/Http/routes.php` is deprecated and should not be used for new routes.
+
+## Route Registration
+
+All API routes are registered in `routes/api.php`:
+
+```php
+<?php
+
+use App\Http\Controllers\CompanyController;
+use Illuminate\Support\Facades\Route;
+
+Route::group([], function () {
+    // Resource routes
+    Route::resource('company', 'CompanyController');
+    Route::resource('site', 'SiteController');
+    
+    // Custom routes
+    Route::post('contract/{id}/delete', [ContractsController::class, 'deleteWithReason']);
+    Route::post('timeAndDate', [TimeAndDateController::class, 'set']);
+    
+    // Authentication routes
+    Route::post('register', [AuthController::class, 'register']);
+    Route::post('authenticate', [AuthController::class, 'login']);
+});
+```
+
+## Resource Routes
+
+Use `Route::resource()` for standard CRUD operations:
+
+```php
+Route::resource('company', 'CompanyController');
+```
+
+This creates:
+- `GET /api/company` → `index()`
+- `POST /api/company` → `store()`
+- `GET /api/company/{id}` → `show($id)`
+- `PUT/PATCH /api/company/{id}` → `update($request, $id)`
+- `DELETE /api/company/{id}` → `destroy($id)`
+
+## Custom Routes
+
+For non-standard operations, define custom routes:
+
+```php
+// Delete with reason
+Route::post('contract/{id}/delete', [ContractsController::class, 'deleteWithReason']);
+
+// Custom action
+Route::post('timeAndDate', [TimeAndDateController::class, 'set']);
+
+// Get image
+Route::post('getImageFromIpString', [CameraController::class, 'getImageFromIpString']);
+```
+
+## Route Naming Conventions
+
+- Use **singular** for resource names: `company`, `site`, `user`
+- Use **plural** for collections: `pallets`, `tares`, `weighingheaders`
+- Use **camelCase** for route names: `weighingheaders`, `businesspartner`
+
+## Route Parameters
+
+### Standard Parameters
+
+```php
+// ID parameter
+Route::get('company/{id}', [CompanyController::class, 'show']);
+
+// Multiple parameters
+Route::post('contract/{id}/delete', [ContractsController::class, 'deleteWithReason']);
+```
+
+### Query Parameters
+
+Access via `$request` or `$_GET`:
+
+```php
+// In controller
+$companyId = $request->input('company_id');
+$siteId = $_GET['site_id'] ?? null;
+```
+
+## Route Groups
+
+Use route groups for organization:
+
+```php
+Route::group(['prefix' => 'api'], function () {
+    Route::resource('company', 'CompanyController');
+    // ... more routes
+});
+```
+
+## Middleware
+
+Authentication is handled by `JwtAuthController` constructor, which applies `auth:api` middleware.
+
+For additional middleware:
+
+```php
+Route::group(['middleware' => ['auth:api', 'custom']], function () {
+    // Routes requiring authentication and custom middleware
+});
+```
+
+## API Response Format
+
+All API responses should be JSON:
+
+```php
+// Success
+return response()->json($data);
+
+// Error
+return response()->json(['error' => 'Message'], 400);
+
+// Status
+return response()->json(['status' => true]);
+```
+
+## HTTP Methods
+
+- **GET**: Retrieve data (`index`, `show`)
+- **POST**: Create new resource (`store`) or custom actions
+- **PUT/PATCH**: Update resource (`update`)
+- **DELETE**: Delete resource (`destroy`)
+
+## Route Organization
+
+Group related routes:
+
+```php
+// Resource routes
+Route::resource('company', 'CompanyController');
+Route::resource('site', 'SiteController');
+
+// Custom actions
+Route::post('contract/{id}/delete', [ContractsController::class, 'deleteWithReason']);
+Route::post('weighingheaders/{id}/delete', [WeighingHeadersController::class, 'deleteWithReason']);
+
+// Authentication
+Route::post('register', [AuthController::class, 'register']);
+Route::post('authenticate', [AuthController::class, 'login']);
+Route::get('refresh', [AuthController::class, 'refreshToken']);
+```
+
+## Critical Rules
+
+1. **ALWAYS** use `routes/api.php` for API routes
+2. **DO NOT** use `app/Http/routes.php` for new routes
+3. **DO** use `Route::resource()` for standard CRUD
+4. **DO** use custom routes for non-standard operations
+5. **DO** use singular names for resources (`company`, not `companies`)
+6. **DO** return JSON responses
+7. **DO** use proper HTTP methods
+8. **DO** group related routes together
+9. **DO** use controller class references: `[Controller::class, 'method']`

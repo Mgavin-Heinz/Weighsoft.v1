@@ -1,0 +1,506 @@
+<div class="col-sm-12 page-header thermal-ticket">
+    <style>
+        .thermal-ticket .ticket-title {
+            font-weight: 700;
+            letter-spacing: 0.2px;
+        }
+
+        .thermal-ticket .weights-section {
+            margin-top: 6px;
+            margin-bottom: 6px;
+        }
+
+        .thermal-ticket .weights-block {
+            margin-bottom: 10px;
+        }
+
+        .thermal-ticket .weights-block p {
+            margin: 0 0 2px 0;
+            font-size: 12px;
+            line-height: 1.35;
+        }
+
+        /* 1st / 2nd weight: title left, value right, single line for value, ruled separator */
+        .thermal-ticket .weights-title-value-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: nowrap;
+            width: 100%;
+            gap: 8px;
+            border-top: 1px solid #000;
+            padding-top: 4px;
+            margin-top: 4px;
+            font-size: 12px;
+            line-height: 1.35;
+        }
+
+        .thermal-ticket .weights-tv-title {
+            flex: 1 1 auto;
+            min-width: 0;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .thermal-ticket .weights-tv-value {
+            flex: 0 0 auto;
+            text-align: right;
+            white-space: nowrap;
+            font-weight: 700;
+        }
+
+        .thermal-ticket .weights-summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: nowrap;
+            width: 100%;
+            margin: 3px 0;
+            gap: 8px;
+            font-size: 12px;
+            line-height: 1.3;
+        }
+
+        .thermal-ticket .weights-summary-label {
+            font-weight: 700;
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        /* Keep "Gross Weight" / "Nett" / amounts on one line (no "20." + "00 kg" split) */
+        .thermal-ticket .weights-summary-label-nowrap {
+            white-space: nowrap;
+        }
+
+        .thermal-ticket .weights-summary-value {
+            flex: 0 0 auto;
+            font-weight: 700;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .thermal-ticket .weights-summary {
+            border-top: 1px solid #000;
+            margin-top: 4px;
+            padding-top: 4px;
+        }
+
+        .thermal-ticket .weights-nett {
+            border-top: 1px solid #000;
+            border-bottom: 3px double #000;
+            padding-top: 2px;
+            padding-bottom: 2px;
+        }
+
+        .thermal-ticket .pricing-section {
+            border-top: 2px solid #000;
+            margin-top: 22px;
+            padding-top: 6px;
+        }
+
+        .thermal-ticket .pricing-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 8px;
+            margin: 2px 0;
+            font-size: 12px;
+            line-height: 1.35;
+        }
+
+        .thermal-ticket .pricing-label {
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .thermal-ticket .pricing-value {
+            font-weight: 700;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .thermal-ticket .pricing-total {
+            border-top: 1px solid #000;
+            border-bottom: 3px double #000;
+            padding-top: 2px;
+            padding-bottom: 2px;
+            margin-top: 4px;
+        }
+    </style>
+    <div class="row">
+        <h1 class="text-center">
+            <img ng-if="setting.ticket_header == 'Yes'" class="img-responsive"
+                ng-src="data:image/png;base64,{{setting.display_custom_header_img}}"/>
+        </h1>
+        <span ng-bind-html="reportData.Header"></span>
+        <div class="text-center" id="logo"><img ng-if="reportData.Company.display_custom_logo_img" ng-src="data:image/png;base64,{{reportData.Company.display_custom_logo_img}}" width="130" /></div>
+        <h3 class="text-center">{{reportData.Settings}}</h3>
+    </div>
+    <div class="row">
+        <h3 class="col-sm-12 ticket-title">Transaction No:</h3>
+        <h3 class="col-sm-12">{{weighingHeader.transaction}}</h3>
+    </div>
+    <div class="row" ng-if="setting.numberplate_1 == 'Yes'">
+        <div class="col-sm-12">
+            <p class="ticket-title">Number Plate 1:</p>
+        </div>
+        <div class="col-sm-12">
+            <p>{{weighingHeader.RegNumber}}</p>
+        </div>
+    </div>
+    <div class="row" ng-if="setting.numberplate_2 == 'Yes' && weighingHeader.RegNumber2.length > 0">
+        <div class="col-sm-12">
+            <p class="ticket-title">Number Plate 2:</p>
+        </div>
+        <div class="col-sm-12">
+            <p>{{weighingHeader.RegNumber2}}</p>
+        </div>
+    </div>
+    <div class="row" ng-if="setting.numberplate_3 == 'Yes' && weighingHeader.RegNumber3.length > 0">
+        <div class="col-sm-12">
+            <p class="ticket-title">Number Plate 3:</p>
+        </div>
+        <div class="col-sm-12">
+            <p>{{weighingHeader.RegNumber3}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <p class="ticket-title" ng-if="setting.business_partner">Business Partner:</p>
+        </div>
+        <div class="col-sm-12">
+            <p ng-if="setting.business_partner" ng-bind-html="reportData.BusinessPartners"></p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <p class="ticket-title" ng-if="setting.haulier">Haulier:</p>
+        </div>
+        <div class="col-sm-12">
+            <p ng-if="setting.haulier" ng-bind-html="reportData.Hauliers"></p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <p class="ticket-title" ng-if="setting.use_product_list">Product:</p>
+        </div>
+        <div class="col-sm-12">
+            <p ng-if="setting.use_product_list" ng-bind-html="reportData.Products"></p>
+        </div>
+    </div>
+    <div class="row" ng-if="setting.use_product_list && weighingHeader.product_grades_enabled == 'Yes'">
+        <div class="col-sm-12">
+            <p class="ticket-title">Grades:</p>
+        </div>
+        <div class="col-sm-12">
+            <p ng-bind-html="weighingHeader.grades"></p>
+        </div>
+    </div>
+    <div ng-if="reportData.Contract && reportData.Contract.promised > 0">
+        <div class="row">
+            <div class="col-sm-12">
+                <p class="ticket-title">Contract Name:</p>
+            </div>
+            <div class="col-sm-12">
+                <p ng-bind-html="reportData.Contract.name"></p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <p class="ticket-title">Initial Quantity :</p>
+            </div>
+            <div class="col-sm-12">
+                <p>{{ site.formatNumber(reportData.Contract.promised) }} {{reportData.Site.measure_type}}</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <p class="ticket-title">Delivered Quantity:</p>
+            </div>
+            <div class="col-sm-12">
+                <p>{{ site.formatNumber(reportData.Contract.delivered) }} {{reportData.Site.measure_type}}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <p class="ticket-title">Remaining Quantity:</p>
+            </div>
+            <div class="col-sm-12">
+                <p>{{ site.formatNumber(reportData.Contract.remaining) }} {{reportData.Site.measure_type}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="row" ng-if="weighingHeader.stockpile_nr">
+        <div class="col-sm-12">
+            <p><span class="ticket-title">Stockpile Nr:</span> {{weighingHeader.stockpile_nr}}</p>
+        </div>
+    </div>
+    <div class="row" ng-if="weighingHeader.destination">
+        <div class="col-sm-12">
+            <p><span class="ticket-title">Destination:</span> {{weighingHeader.destination}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <p ng-if="setting.user_defined_input1 != 'N' && setting.user_defined_rep1 != 'No'"><span class="ticket-title">{{setting.user_defined_name1}}:</span> {{weighingHeader.Custom1}}</p>
+        </div>
+        <div class="col-sm-12">
+            <p ng-if="setting.user_defined_input2 != 'N' && setting.user_defined_rep2 != 'No'"><span class="ticket-title">{{setting.user_defined_name2}}:</span> {{weighingHeader.Custom2}}</p>
+        </div>
+        <div class="col-sm-12">
+            <p ng-if="setting.user_defined_input3 != 'N' && setting.user_defined_rep3 != 'No'"><span class="ticket-title">{{setting.user_defined_name3}}:</span> {{weighingHeader.Custom3}}</p>
+        </div>
+        <div class="col-sm-12">
+            <p ng-if="setting.user_defined_input4 != 'N' && setting.user_defined_rep4 != 'No'"><span class="ticket-title">{{setting.user_defined_name4}}:</span> {{weighingHeader.Custom4}}</p>
+        </div>
+        <div class="col-sm-12">
+            <p ng-if="setting.user_defined_input5 != 'N' && setting.user_defined_rep5 != 'No'"><span class="ticket-title">{{setting.user_defined_name5}}:</span> {{weighingHeader.Custom5}}</p>
+        </div>
+        <div class="col-sm-12">
+            <p ng-if="setting.user_defined_input6 != 'N' && setting.user_defined_rep6 != 'No'"><span class="ticket-title">{{setting.user_defined_name6}}:</span> {{weighingHeader.Custom6}}</p>
+        </div>
+        <div class="col-sm-12">
+            <p ng-if="setting.user_defined_input7 != 'N' && setting.user_defined_rep7 != 'No'"><span class="ticket-title">{{setting.user_defined_name7}}:</span> {{weighingHeader.Custom7}}</p>
+        </div>
+        <div class="col-sm-12">
+            <p ng-if="setting.user_defined_input8 != 'N' && setting.user_defined_rep8 != 'No'"><span class="ticket-title">{{setting.user_defined_name8}}:</span> {{weighingHeader.Custom8}}</p>
+        </div>
+        <div class="col-sm-12">
+            <p ng-if="setting.user_defined_input9 != 'N' && setting.user_defined_rep9 != 'No'"><span class="ticket-title">{{setting.user_defined_name9}}:</span> {{weighingHeader.Custom9}}</p>
+        </div>
+        <div class="col-sm-12">
+            <p ng-if="setting.user_defined_input10 != 'N' && setting.user_defined_rep10 != 'No'"><span class="ticket-title">{{setting.user_defined_name10}}:</span> {{weighingHeader.Custom10}}
+            </p>
+        </div>
+        <div class="col-sm-12">
+            <p ng-if="setting.user_defined_input11 != 'N' && setting.user_defined_rep11 != 'No'"><span class="ticket-title">{{setting.user_defined_name11}}:</span> {{weighingHeader.Custom11}}
+            </p>
+        </div>
+        <div class="col-sm-12">
+            <p ng-if="setting.user_defined_input12 != 'N' && setting.user_defined_rep12 != 'No'"><span class="ticket-title">{{setting.user_defined_name12}}:</span> {{weighingHeader.Custom12}}
+            </p>
+        </div>
+        <div class="col-sm-12">
+            <p ng-if="setting.user_defined_input13 != 'N' && setting.user_defined_rep13 != 'No'"><span class="ticket-title">{{setting.user_defined_name13}}:</span> {{weighingHeader.Custom13}}
+            </p>
+        </div>
+        <div class="col-sm-12">
+            <p ng-if="setting.user_defined_input14 != 'N' && setting.user_defined_rep14 != 'No'"><span class="ticket-title">{{setting.user_defined_name14}}:</span> {{weighingHeader.Custom14}}
+            </p>
+        </div>
+        <div class="col-sm-12">
+            <p ng-if="setting.user_defined_input15 != 'N' && setting.user_defined_rep15 != 'No'"><span class="ticket-title">{{setting.user_defined_name15}}:</span> {{weighingHeader.Custom15}}
+            </p>
+        </div>
+        <div class="col-sm-12">
+            <p ng-if="setting.user_defined_input16 != 'N' && setting.user_defined_rep16 != 'No'"><span class="ticket-title">{{setting.user_defined_name16}}:</span> {{weighingHeader.Custom16}}
+            </p>
+        </div>
+        <div class="col-sm-12">
+            <p ng-if="setting.user_defined_input17 != 'N' && setting.user_defined_rep17 != 'No'"><span class="ticket-title">{{setting.user_defined_name17}}:</span> {{weighingHeader.Custom17}}
+            </p>
+        </div>
+        <div class="col-sm-12">
+            <p ng-if="setting.user_defined_input18 != 'N' && setting.user_defined_rep18 != 'No'"><span class="ticket-title">{{setting.user_defined_name18}}:</span> {{weighingHeader.Custom18}}
+            </p>
+        </div>
+        <div class="col-sm-12">
+            <p ng-if="setting.user_defined_input19 != 'N' && setting.user_defined_rep19 != 'No'"><span class="ticket-title">{{setting.user_defined_name19}}:</span> {{weighingHeader.Custom19}}
+            </p>
+        </div>
+        <div class="col-sm-12">
+            <p ng-if="setting.user_defined_input20 != 'N' && setting.user_defined_rep20 != 'No'"><span class="ticket-title">{{setting.user_defined_name20}}:</span> {{weighingHeader.Custom20}}
+            </p>
+        </div>
+    </div>
+    <div class="weights-section">
+        <div class="weights-block">
+            <p class="ticket-title">Time IN</p>
+            <p>{{weighingHeader.FirstDate}}</p>
+            <p class="ticket-title" ng-if="weighingHeader.FirstUser">Operator:</p>
+            <p ng-if="weighingHeader.FirstUser">{{weighingHeader.FirstUser}}</p>
+            <div class="weights-title-value-row">
+                <span class="weights-tv-title ticket-title" ng-if="reportData.tareSelected == true">1st Weight / Stored Tare</span>
+                <span class="weights-tv-title ticket-title" ng-if="reportData.tareSelected != true">1st Weight</span>
+                <span class="weights-tv-value">{{site.formatNumber(weighingHeader.FirstWeight)}}&nbsp;{{reportData.Site.measure_type}}</span>
+            </div>
+        </div>
+        <div class="weights-block">
+            <p class="ticket-title">Time OUT</p>
+            <p>{{weighingHeader.SecondDate}}</p>
+            <p class="ticket-title" ng-if="weighingHeader.user_name">Operator:</p>
+            <p ng-if="weighingHeader.user_name">{{weighingHeader.user_name}}</p>
+            <div class="weights-title-value-row">
+                <span class="weights-tv-title ticket-title">2nd Weight</span>
+                <span class="weights-tv-value">{{site.formatNumber(weighingHeader.SecondWeight)}}&nbsp;{{reportData.Site.measure_type}}</span>
+            </div>
+        </div>
+
+        <div class="weights-summary">
+            <div class="weights-summary-row">
+                <span class="weights-summary-label weights-summary-label-nowrap ticket-title">Gross Weight</span>
+                <span class="weights-summary-value">{{site.formatNumber(weighingHeader.FirstWeight - weighingHeader.SecondWeight)}}&nbsp;{{reportData.Site.measure_type}}</span>
+            </div>
+            <div class="weights-summary-row" ng-if="setting.enable_moisture == 'true'">
+                <span class="weights-summary-label ticket-title">Moisture {{ site.formatNumber(weighingHeader.moisture_deduction)}} %</span>
+                <span class="weights-summary-value">-&nbsp;{{site.formatNumber(reportData.moistureDeduction)}}&nbsp;{{reportData.Site.measure_type}}</span>
+            </div>
+            <div class="weights-summary-row" ng-if="setting.pallet_enabled == 'true'">
+                <span class="weights-summary-label ticket-title">{{ reportData.palletName }} @ {{ reportData.palletAmount }}</span>
+                <span class="weights-summary-value">-&nbsp;{{ site.formatNumber(reportData.palletCharges)}}&nbsp;{{reportData.Site.measure_type}}</span>
+            </div>
+        </div>
+    </div>
+    <!-- <div class="row" ng-if="setting.pallet_enabled == 'true'">
+            <div class="col-sm-12">
+                <p>&nbsp;</p>
+            </div>
+            <div class="col-sm-3">
+                <p>Pallet Name</p>
+            </div>
+            <div class="col-sm-2 right-side">
+                <p>{{ reportData.palletName }} </p>
+            </div>
+        </div>
+        <div class="row" ng-if="setting.pallet_enabled == 'true'">
+            <div class="col-sm-12">
+                <p>&nbsp;</p>
+            </div>
+            <div class="col-sm-3">
+                <p>Pallet Count</p>
+            </div>
+            <div class="col-sm-2 right-side">
+                <p>{{ reportData.palletCount | number:2}} </p>
+            </div>
+        </div> -->
+    <div class="weights-summary-row" ng-if="setting.enable_handling == 'true'">
+        <span class="weights-summary-label ticket-title">{{weighingHeader.handlingAlias}} {{ site.formatNumber(weighingHeader.handling_charges)}} %</span>
+        <span class="weights-summary-value">-&nbsp;{{site.formatNumber(reportData.handlingCharges)}}&nbsp;{{reportData.Site.measure_type}}</span>
+    </div>
+    <div class="weights-summary-row weights-nett">
+        <span class="weights-summary-label weights-summary-label-nowrap ticket-title">Nett</span>
+        <span class="weights-summary-value">{{site.formatNumber(reportData.nett)}}&nbsp;{{reportData.Site.measure_type}}</span>
+    </div>
+    <div ng-If="setting.first_can_axel == 'On_Inmotion' || setting.first_can_axel == 'Compulsory_Inmotion'
+        || setting.second_can_axel == 'On_Inmotion' || setting.second_can_axel == 'Compulsory_Inmotion'">
+        <div class="row well" ng-if="weighingHeader.Weight1 != undefined && weighingHeader.Weight1 != 0">
+            <div class="col-sm-4" ng-if="weighingHeader.Weight1 != undefined && weighingHeader.Weight1 != 0">
+                <p><b>Steer Axle: </b>({{site.formatNumber(axelSetups.Selected.steering_max)}} {{reportData.Site.measure_type}})
+                </p>
+            </div>
+            <div class="col-sm-4" ng-if="weighingHeader.Weight2 != undefined && weighingHeader.Weight2 != 0">
+                <p><b>1st Axle: </b>({{site.formatNumber(axelSetups.Selected.axel_1_max)}} {{reportData.Site.measure_type}})</p>
+            </div>
+            <div class="col-sm-4" ng-if="weighingHeader.Weight3 != undefined && weighingHeader.Weight3 != 0">
+                <p><b>2nd Axle: </b>({{site.formatNumber(axelSetups.Selected.axel_2_max)}} {{reportData.Site.measure_type}})</p>
+            </div>
+        </div>
+        <div class="row well" ng-if="weighingHeader.Weight1 != undefined && weighingHeader.Weight1 != 0">
+            <div class="col-sm-4" ng-if="weighingHeader.Weight1 != undefined && weighingHeader.Weight1 != 0">
+                <p>{{site.formatNumber(weighingHeader.Weight1)}} {{reportData.Site.measure_type}}</p>
+            </div>
+            <div class="col-sm-4" ng-if="weighingHeader.Weight2 != undefined && weighingHeader.Weight2 != 0">
+                <p>{{site.formatNumber(weighingHeader.Weight2)}} {{reportData.Site.measure_type}}</p>
+            </div>
+            <div class="col-sm-4" ng-if="weighingHeader.Weight3 != undefined && weighingHeader.Weight3 != 0">
+                <p>{{site.formatNumber(weighingHeader.Weight3)}} {{reportData.Site.measure_type}}</p>
+            </div>
+        </div>
+        <div class="row well" ng-if="weighingHeader.Weight1 != undefined && weighingHeader.Weight1 != 0">
+            <div class="col-sm-4" ng-if="weighingHeader.Weight1 != undefined && weighingHeader.Weight1 != 0">
+                <p>Passed</p>
+            </div>
+            <div class="col-sm-4" ng-if="weighingHeader.Weight2 != undefined && weighingHeader.Weight2 != 0">
+                <p>Passed</p>
+            </div>
+            <div class="col-sm-4" ng-if="weighingHeader.Weight3 != undefined && weighingHeader.Weight3 != 0">
+                <p>Passed</p>
+            </div>
+        </div>
+        <div class="row well" ng-if="weighingHeader.Weight1 != undefined && weighingHeader.Weight1 != 0">
+            <div class="col-sm-4" ng-if="weighingHeader.Weight4 != undefined && weighingHeader.Weight4 != 0">
+                <p><b>3rd Axle: </b>({{site.formatNumber(axelSetups.Selected.axel_3_max)}} {{reportData.Site.measure_type}})</p>
+            </div>
+            <div class="col-sm-4" ng-if="weighingHeader.Weight5 != undefined && weighingHeader.Weight5 != 0">
+                <p><b>4th Axle: </b>({{site.formatNumber(axelSetups.Selected.axel_4_max)}} {{reportData.Site.measure_type}})</p>
+            </div>
+            <div class="col-sm-4">
+                <p><b>Total: </b>({{site.formatNumber(axelSetups.Selected.vehicle_max)}} {{reportData.Site.measure_type}})</p>
+            </div>
+        </div>
+        <div class="row well" ng-if="weighingHeader.Weight1 != undefined && weighingHeader.Weight1 != 0">
+            <div class="col-sm-4" ng-if="weighingHeader.Weight4 != undefined && weighingHeader.Weight4 != 0">
+                <p>{{site.formatNumber(weighingHeader.Weight4)}} {{reportData.Site.measure_type}}</p>
+            </div>
+            <div class="col-sm-4" ng-if="weighingHeader.Weight5 != undefined && weighingHeader.Weight5 != 0">
+                <p>{{site.formatNumber(weighingHeader.Weight5)}} {{reportData.Site.measure_type}}</p>
+            </div>
+            <div class="col-sm-4">
+                <p>{{site.formatNumber(weighingHeader.weight)}} {{reportData.Site.measure_type}}</p>
+            </div>
+        </div>
+        <div class="row well" ng-if="weighingHeader.Weight1 != undefined && weighingHeader.Weight1 != 0">
+            <div class="col-sm-4" ng-if="weighingHeader.Weight4 != undefined && weighingHeader.Weight4 != 0">
+                <p>Passed</p>
+            </div>
+            <div class="col-sm-4" ng-if="weighingHeader.Weight5 != undefined && weighingHeader.Weight5 != 0">
+                <p>Passed</p>
+            </div>
+            <div class="col-sm-4">
+                <p>Passed</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2">
+                <p><b>First Weight:</b></p>
+            </div>
+            <div class="col-sm-2">
+                <p>{{weighingHeader.FirstUser}}</p>
+            </div>
+            <div class="col-sm-2" ng-if="weighingHeader.VerifyUser != null">
+                <p><b>Verify User:</b></p>
+            </div>
+            <div class="col-sm-2" ng-if="weighingHeader.VerifyUser != null">
+                <p>{{weighingHeader.VerifyUser}}</p>
+            </div>
+            <div class="col-sm-2" ng-if="weighingHeader.user_name != null">
+                <p><b>Second Weight:</b></p>
+            </div>
+            <div class="col-sm-2" ng-if="weighingHeader.user_name != null">
+                <p>{{weighingHeader.user_name}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div ng-if="setting.use_cameras == 'Yes' && setting.print_cameras_on_ticket == 'Yes' && weighingHeader.printcamera == 'Yes'"
+            ng-repeat="data in cameras" class="col-sm-12" ng-show="data.print_camera == 'true'">
+            <img alt="{{data.name}}" id="{{data.name}}" ng-src="{{data.src || data.ip_address}}" class="img-responsive" />
+        </div>
+    </div>
+    <div class="pricing-section" ng-if="setting.use_product_list && reportData.productPrice != null">
+        <div class="pricing-row">
+            <span class="pricing-label">{{reportData.productPriceLabel}}</span>
+            <span class="pricing-value">R {{reportData.productPrice | number:2}} / Ton</span>
+        </div>
+        <div class="pricing-row">
+            <span class="pricing-label">Excl. VAT</span>
+            <span class="pricing-value">R {{(reportData.pricingExclVat || 0) | number:2}}</span>
+        </div>
+        <div class="pricing-row">
+            <span class="pricing-label">VAT ({{(reportData.productVat || 0) | number:2}}%)</span>
+            <span class="pricing-value">R {{(reportData.pricingVat || 0) | number:2}}</span>
+        </div>
+        <div class="pricing-row pricing-total">
+            <span class="pricing-label">Total</span>
+            <span class="pricing-value">R {{(reportData.pricingFinal || 0) | number:2}}</span>
+        </div>
+    </div>
+    <div class="row">
+        <span ng-bind-html="reportData.Footer"></span>
+        <h1 class="text-center">
+            <img ng-if="setting.ticket_footer == 'Yes'" class="img-responsive"
+                ng-src="data:image/png;base64,{{setting.display_custom_footer_img}}">
+        </h1>
+    </div>
+</div>

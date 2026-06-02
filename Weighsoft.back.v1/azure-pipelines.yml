@@ -1,0 +1,27 @@
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+- template: vars.yml
+
+steps:
+- task: Docker@2
+  displayName: Login
+  inputs:
+    containerRegistry: 'weighsoft'
+    command: 'login'
+
+- task: CmdLine@2
+  displayName: Setup Buildx
+  inputs:
+    script: |
+      docker run --privileged --rm tonistiigi/binfmt --install arm64,arm
+      docker run --privileged --rm tonistiigi/binfmt
+      docker buildx create --use
+
+- task: CmdLine@2
+  displayName: Run Buildx
+  inputs:
+    script: |
+      ./build.sh

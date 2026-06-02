@@ -1,0 +1,47 @@
+<page-title ng-if="layoutOptions.pageTitles" title="Reprint" description="" data-ng-init="System.load()"></page-title>
+
+<div class="col-lg-12 col-md-12 hidden-print">
+  <div class="panel panel-color panel-danger">
+    <div class="panel-heading hidden-print">
+      <div class="col-md-4 col-sm-6 col-xs-12">
+        <h2>Reprints</h2>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="row" ng-if="System.FormDisplay">
+        <div class="col-md-4">
+          <button class="btn btn-danger" ng-if="System.FingerPrintVerify == 'Yes' && System.ScannedUser === null" ng-click="System.Fingerprint()">Scan
+            Fingerprint</button>
+          <button class="btn btn-danger" ng-if="System.FingerPrintVerify != 'Yes' || (System.ScannedUser !== null && System.ScannedUser !== '')"
+            ng-click="System.save()">Print</button>
+        </div>
+        <div class="col-md-4">
+          <label for="printcamera" class="col-md-6 control-label">Display Cameras</label>
+          <input id="printcamera" type="checkbox" class="iswitch-lg iswitch-danger" name="printcamera"
+            ng-model="System.Single.printcamera" ng-true-value="'Yes'" ng-false-value="'No'" />
+        </div>
+        <div class="col-md-4">
+          <button class="btn btn-black pull-right" ng-click="System.cancel()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="col-lg-12 col-md-12 hidden-screen">
+  <ticket-print site="System.Site" setting="System.Setting" report-data="System.ReportData"
+    weighing-header="System.Single" axel-setups="AxelSetups" cameras="System.cam"></ticket-print>
+  <div class="col-sm-12 page-header" ng-if="System.Setting.invoice_enabled==='true'">
+    <invoice-print single="System.Single" invoice="System.invoice" report-data="System.ReportData"
+      setting="System.Setting"> </invoice-print>
+  </div>
+</div>
+
+<div class="col-lg-12 col-md-12 hidden-print">
+  <ticket-print site="System.Site" setting="System.Setting" report-data="System.ReportData"
+    weighing-header="System.Single" axel-setups="AxelSetups" cameras="System.cam"></ticket-print>
+  <div class="col-sm-12 page-header invoice" ng-if="System.Setting.invoice_enabled==='true'">
+    <invoice-print single="System.Single" invoice="System.invoice" report-data="System.ReportData"
+      setting="System.Setting"> </invoice-print>
+  </div>
+</div>

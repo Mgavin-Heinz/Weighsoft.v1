@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__claude-flow__hive-mind_init",
+      "mcp__claude-flow__hive-mind_spawn",
+      "mcp__claude-flow__hive-mind_memory"
+    ]
+  }
+}

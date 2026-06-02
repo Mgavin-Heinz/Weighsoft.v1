@@ -1,0 +1,437 @@
+<div class="col-sm-12 page-header">
+    <div class="row">
+        <h1 class="text-center">
+            <img ng-if="setting.ticket_header == 'Yes'" class="img-responsive"
+                ng-src="data:image/png;base64,{{setting.display_custom_header_img}}"/>
+        </h1>
+        <span ng-bind-html="reportData.Header"></span>
+        <div class="text-center" id="logo"><img ng-if="reportData.Company.display_custom_logo_img" ng-src="data:image/png;base64,{{reportData.Company.display_custom_logo_img}}" width="130" /></div>
+        <h3 class="text-center">{{reportData.Settings}}</h3>
+    </div>
+    <div class="row">
+        <h3 class="col-sm-6">Transaction No:</h3>
+        <h3 class="col-sm-6">{{weighingHeader.transaction}}</h3>
+    </div>
+    <div class="row" ng-if="setting.numberplate_1 == 'Yes'">
+        <div class="col-sm-6">
+            <p>Number Plate 1:</p>
+        </div>
+        <div class="col-sm-6">
+            <p>{{weighingHeader.RegNumber}}</p>
+        </div>
+    </div>
+    <div class="row" ng-if="setting.numberplate_2 == 'Yes' && weighingHeader.RegNumber2.length > 0">
+        <div class="col-sm-6">
+            <p>Number Plate 2:</p>
+        </div>
+        <div class="col-sm-6">
+            <p>{{weighingHeader.RegNumber2}}</p>
+        </div>
+    </div>
+    <div class="row" ng-if="setting.numberplate_3 == 'Yes' && weighingHeader.RegNumber3.length > 0">
+        <div class="col-sm-6">
+            <p>Number Plate 3:</p>
+        </div>
+        <div class="col-sm-6">
+            <p>{{weighingHeader.RegNumber3}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <p ng-if="setting.business_partner">Business Partner:</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.business_partner" ng-bind-html="reportData.BusinessPartners"></p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <p ng-if="setting.haulier">Haulier:</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.haulier" ng-bind-html="reportData.Hauliers"></p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <p ng-if="setting.use_product_list">Product:</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.use_product_list" ng-bind-html="reportData.Products"></p>
+        </div>
+    </div>
+    <div class="row" ng-if="setting.use_product_list && weighingHeader.product_grades_enabled == 'Yes'">
+        <div class="col-sm-6">
+            <p>Grades:</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-bind-html="weighingHeader.grades"></p>
+        </div>
+    </div>
+    <div ng-if="reportData.Contract && reportData.Contract.promised > 0">
+        <div class="row">
+            <div class="col-sm-6">
+                <p>Contract Name:</p>
+            </div>
+            <div class="col-sm-6">
+                <p ng-bind-html="reportData.Contract.name"></p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <p>Initial Quantity :</p>
+            </div>
+            <div class="col-sm-6">
+                <p>{{ site.formatNumber(reportData.Contract.promised) }} {{reportData.Site.measure_type}}</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <p>Delivered Quantity:</p>
+            </div>
+            <div class="col-sm-6">
+                <p>{{ site.formatNumber(reportData.Contract.delivered) }} {{reportData.Site.measure_type}}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <p>Remaining Quantity:</p>
+            </div>
+            <div class="col-sm-6">
+                <p>{{ site.formatNumber(reportData.Contract.remaining) }} {{reportData.Site.measure_type}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="row" ng-if="weighingHeader.stockpile_nr">
+        <div class="col-sm-12">
+            <p><span class="ticket-title">Stockpile Nr:</span> {{weighingHeader.stockpile_nr}}</p>
+        </div>
+    </div>
+    <div class="row" ng-if="weighingHeader.destination">
+        <div class="col-sm-12">
+            <p><span class="ticket-title">Destination:</span> {{weighingHeader.destination}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input1 != 'N' && setting.user_defined_rep1 != 'No'">{{setting.user_defined_name1}}: {{weighingHeader.Custom1}}</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input2 != 'N' && setting.user_defined_rep2 != 'No'">{{setting.user_defined_name2}}: {{weighingHeader.Custom2}}</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input3 != 'N' && setting.user_defined_rep3 != 'No'">{{setting.user_defined_name3}}: {{weighingHeader.Custom3}}</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input4 != 'N' && setting.user_defined_rep4 != 'No'">{{setting.user_defined_name4}}: {{weighingHeader.Custom4}}</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input5 != 'N' && setting.user_defined_rep5 != 'No'">{{setting.user_defined_name5}}: {{weighingHeader.Custom5}}</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input6 != 'N' && setting.user_defined_rep6 != 'No'">{{setting.user_defined_name6}}: {{weighingHeader.Custom6}}</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input7 != 'N' && setting.user_defined_rep7 != 'No'">{{setting.user_defined_name7}}: {{weighingHeader.Custom7}}</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input8 != 'N' && setting.user_defined_rep8 != 'No'">{{setting.user_defined_name8}}: {{weighingHeader.Custom8}}</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input9 != 'N' && setting.user_defined_rep9 != 'No'">{{setting.user_defined_name9}}: {{weighingHeader.Custom9}}</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input10 != 'N' && setting.user_defined_rep10 != 'No'">{{setting.user_defined_name10}}: {{weighingHeader.Custom10}}
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input11 != 'N' && setting.user_defined_rep11 != 'No'">{{setting.user_defined_name11}}: {{weighingHeader.Custom11}}
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input12 != 'N' && setting.user_defined_rep12 != 'No'">{{setting.user_defined_name12}}: {{weighingHeader.Custom12}}
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input13 != 'N' && setting.user_defined_rep13 != 'No'">{{setting.user_defined_name13}}: {{weighingHeader.Custom13}}
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input14 != 'N' && setting.user_defined_rep14 != 'No'">{{setting.user_defined_name14}}: {{weighingHeader.Custom14}}
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input15 != 'N' && setting.user_defined_rep15 != 'No'">{{setting.user_defined_name15}}: {{weighingHeader.Custom15}}
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input16 != 'N' && setting.user_defined_rep16 != 'No'">{{setting.user_defined_name16}}: {{weighingHeader.Custom16}}
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input17 != 'N' && setting.user_defined_rep17 != 'No'">{{setting.user_defined_name17}}: {{weighingHeader.Custom17}}
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input18 != 'N' && setting.user_defined_rep18 != 'No'">{{setting.user_defined_name18}}: {{weighingHeader.Custom18}}
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input19 != 'N' && setting.user_defined_rep19 != 'No'">{{setting.user_defined_name19}}: {{weighingHeader.Custom19}}
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input20 != 'N' && setting.user_defined_rep20 != 'No'">{{setting.user_defined_name20}}: {{weighingHeader.Custom20}}
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <p>Time IN</p>
+        </div>
+        <div class="col-sm-3">
+            <p>{{weighingHeader.FirstDate}}</p>
+        </div>
+        <div class="col-sm-3" ng-if="reportData.tareSelected == true">
+            <p>1st Weight / Stored Tare</p>
+        </div>
+        <div class="col-sm-3" ng-if="reportData.tareSelected != true">
+            <p>1st Weight</p>
+        </div>
+        <div class="col-sm-2 right-side">
+            <p>{{site.formatNumber(weighingHeader.FirstWeight)}}</p>
+        </div>
+        <div class="col-sm-1">
+            <p>{{reportData.Site.measure_type}}</p>
+        </div>
+    </div>
+    <div class="row" ng-if="weighingHeader.FirstUser">
+        <div class="col-sm-3">
+            <p>Operator</p>
+        </div>
+        <div class="col-sm-9">
+            <p>{{weighingHeader.FirstUser}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <p>Time OUT</p>
+        </div>
+        <div class="col-sm-3">
+            <p>{{weighingHeader.SecondDate}}</p>
+        </div>
+        <div class="col-sm-3">
+            <p>2nd Weight</p>
+        </div>
+        <div class="col-sm-2 right-side">
+            <p>{{site.formatNumber(weighingHeader.SecondWeight)}}</p>
+        </div>
+        <div class="col-sm-1">
+            <p>{{reportData.Site.measure_type}}</p>
+        </div>
+    </div>
+    <div class="row" ng-if="weighingHeader.user_name">
+        <div class="col-sm-3">
+            <p>Operator</p>
+        </div>
+        <div class="col-sm-9">
+            <p>{{weighingHeader.user_name}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <p>&nbsp;</p>
+        </div>
+        <div class="col-sm-3">
+            <p>Gross Weight</p>
+        </div>
+        <div class="col-sm-2 right-side" style="border-top: 1px solid">
+            <p>{{site.formatNumber(weighingHeader.FirstWeight - weighingHeader.SecondWeight)}}</p>
+        </div>
+        <div class="col-sm-1">
+            <p>{{reportData.Site.measure_type}}</p>
+        </div>
+    </div>
+    <div class="row" ng-if="setting.enable_moisture == 'true'">
+        <div class="col-sm-6">
+            <p>&nbsp;</p>
+        </div>
+        <div class="col-sm-3">
+            <p>Moisture {{ site.formatNumber(weighingHeader.moisture_deduction)}} %</p>
+        </div>
+        <div class="col-sm-2 right-side">
+            <p>- {{site.formatNumber(reportData.moistureDeduction)}}</p>
+        </div>
+        <div class="col-sm-1">
+            <p>{{reportData.Site.measure_type}}</p>
+        </div>
+    </div>
+    <div class="row" ng-if="setting.pallet_enabled == 'true'">
+        <div class="col-sm-6">
+            <p>&nbsp;</p>
+        </div>
+        <div class="col-sm-3">
+            <p>{{ reportData.palletName }} @ {{ reportData.palletAmount }}</p>
+        </div>
+        <div class="col-sm-2 right-side">
+            <p style="display: inline">- {{ site.formatNumber(reportData.palletCharges)}}</p>
+        </div>
+        <div class="col-sm-1">
+            <p>{{reportData.Site.measure_type}}</p>
+        </div>
+    </div>
+    <!-- <div class="row" ng-if="setting.pallet_enabled == 'true'">
+            <div class="col-sm-6">
+                <p>&nbsp;</p>
+            </div>
+            <div class="col-sm-3">
+                <p>Pallet Name</p>
+            </div>
+            <div class="col-sm-2 right-side">
+                <p>{{ reportData.palletName }} </p>
+            </div>
+        </div>
+        <div class="row" ng-if="setting.pallet_enabled == 'true'">
+            <div class="col-sm-6">
+                <p>&nbsp;</p>
+            </div>
+            <div class="col-sm-3">
+                <p>Pallet Count</p>
+            </div>
+            <div class="col-sm-2 right-side">
+                <p>{{ reportData.palletCount | number:2}} </p>
+            </div>
+        </div> -->
+    <div class="row" ng-if="setting.enable_handling == 'true'">
+        <div class="col-sm-6">
+            <p>&nbsp;</p>
+        </div>
+        <div class="col-sm-3">
+            <p>{{weighingHeader.handlingAlias}} {{ site.formatNumber(weighingHeader.handling_charges)}} %</p>
+        </div>
+        <div class="col-sm-2 right-side">
+            <p>- {{site.formatNumber(reportData.handlingCharges)}}</p>
+        </div>
+        <div class="col-sm-1">
+            <p>{{reportData.Site.measure_type}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <p>&nbsp;</p>
+        </div>
+        <div class="col-sm-3">
+            <p>Nett</p>
+        </div>
+        <div class="col-sm-2 right-side" style="border-top: 1px solid #000000; border-bottom: 4px double #000000">
+            <p>{{site.formatNumber(reportData.nett)}}</p>
+        </div>
+        <div class="col-sm-1">
+            <p>{{reportData.Site.measure_type}}</p>
+        </div>
+    </div>
+    <div ng-If="setting.first_can_axel == 'On_Inmotion' || setting.first_can_axel == 'Compulsory_Inmotion'
+        || setting.second_can_axel == 'On_Inmotion' || setting.second_can_axel == 'Compulsory_Inmotion'">
+        <div class="row well" ng-if="weighingHeader.Weight1 != undefined && weighingHeader.Weight1 != 0">
+            <div class="col-sm-4" ng-if="weighingHeader.Weight1 != undefined && weighingHeader.Weight1 != 0">
+                <p><b>Steer Axle: </b>({{site.formatNumber(axelSetups.Selected.steering_max)}} {{reportData.Site.measure_type}})
+                </p>
+            </div>
+            <div class="col-sm-4" ng-if="weighingHeader.Weight2 != undefined && weighingHeader.Weight2 != 0">
+                <p><b>1st Axle: </b>({{site.formatNumber(axelSetups.Selected.axel_1_max)}} {{reportData.Site.measure_type}})</p>
+            </div>
+            <div class="col-sm-4" ng-if="weighingHeader.Weight3 != undefined && weighingHeader.Weight3 != 0">
+                <p><b>2nd Axle: </b>({{site.formatNumber(axelSetups.Selected.axel_2_max)}} {{reportData.Site.measure_type}})</p>
+            </div>
+        </div>
+        <div class="row well" ng-if="weighingHeader.Weight1 != undefined && weighingHeader.Weight1 != 0">
+            <div class="col-sm-4" ng-if="weighingHeader.Weight1 != undefined && weighingHeader.Weight1 != 0">
+                <p>{{site.formatNumber(weighingHeader.Weight1)}} {{reportData.Site.measure_type}}</p>
+            </div>
+            <div class="col-sm-4" ng-if="weighingHeader.Weight2 != undefined && weighingHeader.Weight2 != 0">
+                <p>{{site.formatNumber(weighingHeader.Weight2)}} {{reportData.Site.measure_type}}</p>
+            </div>
+            <div class="col-sm-4" ng-if="weighingHeader.Weight3 != undefined && weighingHeader.Weight3 != 0">
+                <p>{{site.formatNumber(weighingHeader.Weight3)}} {{reportData.Site.measure_type}}</p>
+            </div>
+        </div>
+        <div class="row well" ng-if="weighingHeader.Weight1 != undefined && weighingHeader.Weight1 != 0">
+            <div class="col-sm-4" ng-if="weighingHeader.Weight1 != undefined && weighingHeader.Weight1 != 0">
+                <p>Passed</p>
+            </div>
+            <div class="col-sm-4" ng-if="weighingHeader.Weight2 != undefined && weighingHeader.Weight2 != 0">
+                <p>Passed</p>
+            </div>
+            <div class="col-sm-4" ng-if="weighingHeader.Weight3 != undefined && weighingHeader.Weight3 != 0">
+                <p>Passed</p>
+            </div>
+        </div>
+        <div class="row well" ng-if="weighingHeader.Weight1 != undefined && weighingHeader.Weight1 != 0">
+            <div class="col-sm-4" ng-if="weighingHeader.Weight4 != undefined && weighingHeader.Weight4 != 0">
+                <p><b>3rd Axle: </b>({{site.formatNumber(axelSetups.Selected.axel_3_max)}} {{reportData.Site.measure_type}})</p>
+            </div>
+            <div class="col-sm-4" ng-if="weighingHeader.Weight5 != undefined && weighingHeader.Weight5 != 0">
+                <p><b>4th Axle: </b>({{site.formatNumber(axelSetups.Selected.axel_4_max)}} {{reportData.Site.measure_type}})</p>
+            </div>
+            <div class="col-sm-4">
+                <p><b>Total: </b>({{site.formatNumber(axelSetups.Selected.vehicle_max)}} {{reportData.Site.measure_type}})</p>
+            </div>
+        </div>
+        <div class="row well" ng-if="weighingHeader.Weight1 != undefined && weighingHeader.Weight1 != 0">
+            <div class="col-sm-4" ng-if="weighingHeader.Weight4 != undefined && weighingHeader.Weight4 != 0">
+                <p>{{site.formatNumber(weighingHeader.Weight4)}} {{reportData.Site.measure_type}}</p>
+            </div>
+            <div class="col-sm-4" ng-if="weighingHeader.Weight5 != undefined && weighingHeader.Weight5 != 0">
+                <p>{{site.formatNumber(weighingHeader.Weight5)}} {{reportData.Site.measure_type}}</p>
+            </div>
+            <div class="col-sm-4">
+                <p>{{site.formatNumber(weighingHeader.weight)}} {{reportData.Site.measure_type}}</p>
+            </div>
+        </div>
+        <div class="row well" ng-if="weighingHeader.Weight1 != undefined && weighingHeader.Weight1 != 0">
+            <div class="col-sm-4" ng-if="weighingHeader.Weight4 != undefined && weighingHeader.Weight4 != 0">
+                <p>Passed</p>
+            </div>
+            <div class="col-sm-4" ng-if="weighingHeader.Weight5 != undefined && weighingHeader.Weight5 != 0">
+                <p>Passed</p>
+            </div>
+            <div class="col-sm-4">
+                <p>Passed</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2">
+                <p><b>First Weight:</b></p>
+            </div>
+            <div class="col-sm-2">
+                <p>{{weighingHeader.FirstUser}}</p>
+            </div>
+            <div class="col-sm-2" ng-if="weighingHeader.VerifyUser != null">
+                <p><b>Verify User:</b></p>
+            </div>
+            <div class="col-sm-2" ng-if="weighingHeader.VerifyUser != null">
+                <p>{{weighingHeader.VerifyUser}}</p>
+            </div>
+            <div class="col-sm-2" ng-if="weighingHeader.user_name != null">
+                <p><b>Second Weight:</b></p>
+            </div>
+            <div class="col-sm-2" ng-if="weighingHeader.user_name != null">
+                <p>{{weighingHeader.user_name}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div ng-if="setting.use_cameras == 'Yes' && setting.print_cameras_on_ticket == 'Yes' && weighingHeader.printcamera == 'Yes'"
+            ng-repeat="data in cameras" class="col-sm-6" ng-show="data.print_camera == 'true'">
+            <img alt="{{data.name}}" id="{{data.name}}" ng-src="{{data.src || data.ip_address}}" class="img-responsive" />
+        </div>
+    </div>
+    <div class="row">
+        <span ng-bind-html="reportData.Footer"></span>
+        <h1 class="text-center">
+            <img ng-if="setting.ticket_footer == 'Yes'" class="img-responsive"
+                ng-src="data:image/png;base64,{{setting.display_custom_footer_img}}">
+        </h1>
+    </div>
+</div>

@@ -1,0 +1,10 @@
+ vm.calculatePalletCharges = function () {
+            vm.palletCharges = 0;
+            const palletCount = vm.Single.pallet_count ? parseFloat(vm.Single.pallet_count) : 0;
+            if (palletCount > 0)
+            {
+                vm.palletCharges = vm.selected_pallet.amount * palletCount; //vm.selected_pallet is null
+                vm.Single.pallet_charges = vm.palletCharges;
+            }
+        };
+        // #endregion

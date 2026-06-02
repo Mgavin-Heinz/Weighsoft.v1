@@ -1,0 +1,324 @@
+---
+description: HTML template patterns, view conventions, and UI component usage
+globs: ["app/tpls/**/*.html"]
+alwaysApply: false
+---
+
+# Templates and Views Rules
+
+## Template Organization
+
+Templates are located in `app/tpls/` organized by feature:
+
+```
+app/tpls/
+  layout/           # Layout components (sidebar, header, footer)
+  companies/         # Company-related templates
+  weighing/          # Weighing-related templates
+  [feature]/         # Feature-specific templates
+```
+
+## Template Path Helper
+
+**ALWAYS** use `appHelper.templatePath()` in route definitions and directives:
+
+```javascript
+// ✅ CORRECT
+templateUrl: appHelper.templatePath('companies/list')
+templateUrl: appHelper.templatePath('weighing/create')
+templateUrl: appHelper.templatePath('layout/app-body')
+
+// ❌ WRONG
+templateUrl: 'app/tpls/companies/list.html'
+templateUrl: '/tpls/companies/list.html'
+templateUrl: './tpls/companies/list.html'
+```
+
+## Controller as Syntax in Templates
+
+**ALWAYS** use `controller as` syntax in templates:
+
+```html
+<!-- ✅ CORRECT -->
+<div ng-controller="CompaniesCtrl as System">
+  <div ng-repeat="company in System.companyList">
+    {{ company.name }}
+  </div>
+  <button ng-click="System.showAddForm()">Add</button>
+</div>
+
+<!-- ❌ WRONG -->
+<div ng-controller="CompaniesCtrl">
+  <div ng-repeat="company in companyList">
+    {{ company.name }}
+  </div>
+  <button ng-click="showAddForm()">Load</button>
+</div>
+```
+
+## Common Template Patterns
+
+### List View Template
+
+```html
+<div ng-controller="CompaniesCtrl as System">
+  <page-title title="Companies" description="Manage companies"></page-title>
+  
+  <div class="panel panel-default" ng-if="!System.isEditing">
+    <div class="panel-heading">
+      <button class="btn btn-primary" ng-click="System.showAddForm()">
+        <i class="fa fa-plus"></i> Add Company
+      </button>
+    </div>
+    <div class="panel-body">
+      <table datatable="ng" class="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="company in System.companyList">
+            <td>{{ company.name }}</td>
+            <td>
+              <button ng-click="System.showEditForm(company)">Edit</button>
+              <button ng-click="System.deleteCompany(company)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <!-- Form view -->
+  <div class="panel panel-default" ng-if="System.isEditing">
+    <!-- Form content -->
+  </div>
+</div>
+```
+
+### Form Template
+
+```html
+<div ng-controller="CompaniesCtrl as System">
+  <form name="companyForm" ng-submit="System.saveForm(companyForm)" novalidate>
+    <div class="form-group">
+      <label>Company Name</label>
+      <input 
+        type="text" 
+        class="form-control" 
+        ng-model="System.companyInfo.name"
+        name="name"
+        required>
+      <span ng-if="companyForm.name.$error.required" class="text-danger">
+        Name is required
+      </span>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Save</button>
+    <button type="button" class="btn btn-default" ng-click="System.cancel()">
+      Cancel
+    </button>
+  </form>
+</div>
+```
+
+## Layout Components
+
+### Page Title Directive
+
+```html
+<page-title 
+  title="Companies" 
+  description="Manage your companies">
+</page-title>
+```
+
+### Sidebar Menu
+
+```html
+<sidebar-menu></sidebar-menu>
+```
+
+### Footer
+
+```html
+<site-footer></site-footer>
+```
+
+## DataTables Integration
+
+### Standard DataTable Pattern
+
+```html
+<table datatable="ng" class="table table-striped">
+  <thead>
+    <tr>
+      <th>Column 1</th>
+      <th>Column 2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="item in System.list">
+      <td>{{ item.field1 }}</td>
+      <td>{{ item.field2 }}</td>
+    </tr>
+  </tbody>
+</table>
+```
+
+**Note**: DataTables assets must be loaded in route `resolve`:
+
+```javascript
+resolve: {
+  deps: function ($ocLazyLoad) {
+    return $ocLazyLoad.load([
+      ASSETS.tables.datatables,
+    ]);
+  },
+}
+```
+
+## Form Validation
+
+### Angular Form Validation
+
+```html
+<form name="myForm" ng-submit="System.saveForm(myForm)" novalidate>
+  <div class="form-group" ng-class="{'has-error': myForm.name.$invalid && myForm.name.$touched}">
+    <label>Name</label>
+    <input 
+      type="text" 
+      class="form-control" 
+      ng-model="System.data.name"
+      name="name"
+      required
+      minlength="3">
+    <span ng-if="myForm.name.$error.required && myForm.name.$touched" class="help-block">
+      Name is required
+    </span>
+    <span ng-if="myForm.name.$error.minlength && myForm.name.$touched" class="help-block">
+      Name must be at least 3 characters
+    </span>
+  </div>
+  
+  <button 
+    type="submit" 
+    class="btn btn-primary"
+    ng-disabled="myForm.$invalid">
+    Save
+  </button>
+</form>
+```
+
+### Validation in Controller
+
+```javascript
+vm.saveForm = function(formData) {
+  if (!formData.$valid) {
+    return;  // Form validation errors will be shown
+  }
+  // Proceed with save
+};
+```
+
+## Directives in Templates
+
+### Custom Directives
+
+```html
+<!-- Print directive -->
+<ticket-print
+  site="System.site"
+  setting="System.setting"
+  report-data="System.ReportData"
+  weighing-header="System.weighingHeader">
+</ticket-print>
+
+<!-- Invoice directive -->
+<invoice-print
+  site="System.site"
+  report-data="System.ReportData">
+</invoice-print>
+```
+
+## Bootstrap Components
+
+### Panels
+
+```html
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Title</h3>
+  </div>
+  <div class="panel-body">
+    Content
+  </div>
+</div>
+```
+
+### Buttons
+
+```html
+<button class="btn btn-primary">Primary</button>
+<button class="btn btn-default">Default</button>
+<button class="btn btn-danger">Danger</button>
+```
+
+### Forms
+
+```html
+<div class="form-group">
+  <label>Field Label</label>
+  <input type="text" class="form-control" ng-model="System.data.field">
+</div>
+```
+
+## Conditional Rendering
+
+### ng-if vs ng-show
+
+- Use `ng-if` for expensive operations or when DOM presence matters
+- Use `ng-show` for simple show/hide
+
+```html
+<!-- ✅ Use ng-if for form views -->
+<div ng-if="System.isEditing">
+  <!-- Form content -->
+</div>
+
+<!-- ✅ Use ng-show for simple toggles -->
+<div ng-show="System.hasData">
+  <!-- Content -->
+</div>
+```
+
+## Filters in Templates
+
+### Common Filters
+
+```html
+<!-- Date formatting -->
+{{ System.date | date:'yyyy-MM-dd' }}
+
+<!-- Currency -->
+{{ System.amount | currency }}
+
+<!-- Custom filters -->
+{{ System.list | propsFilter:searchProps }}
+{{ System.number | makePositive }}
+```
+
+## Critical Rules
+
+1. **ALWAYS** use `controller as` syntax: `ng-controller="Ctrl as System"`
+2. **ALWAYS** prefix variables with controller alias: `System.data`, `System.list`
+3. **ALWAYS** use `appHelper.templatePath()` for template URLs
+4. **ALWAYS** use `name` attribute on forms for validation
+5. **ALWAYS** check `formData.$valid` before submission
+6. **ALWAYS** load DataTables assets in route `resolve` if using datatables
+7. **DO** use `ng-if` for conditional form views
+8. **DO** use Bootstrap classes for styling
+9. **DO NOT** hardcode template paths
+10. **DO NOT** use `$scope` variables directly in templates

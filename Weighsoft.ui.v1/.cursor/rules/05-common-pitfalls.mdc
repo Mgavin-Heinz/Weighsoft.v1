@@ -1,0 +1,269 @@
+---
+description: Common mistakes, pitfalls to avoid, and critical warnings
+alwaysApply: true
+---
+
+# Common Pitfalls and Critical Warnings
+
+## Framework Confusion
+
+### ⚠️ CRITICAL: This is AngularJS 1.x, NOT Angular 2+
+
+**NEVER** suggest or implement:
+- TypeScript
+- Angular 2+ syntax or patterns
+- ES6 modules (import/export)
+- Component-based architecture
+- RxJS Observables
+- Angular CLI commands
+- Modern Angular patterns
+
+**ALWAYS** use:
+- AngularJS 1.4.8 patterns
+- Dependency injection (function parameters)
+- AngularJS directives, controllers, services
+- Restangular (not HttpClient)
+- UI Router (not Angular Router)
+
+## API Call Mistakes
+
+### ❌ WRONG: Using $http directly
+
+```javascript
+// ❌ NEVER DO THIS
+$http.get('/api/company').then(function(response) {
+  vm.companies = response.data;
+});
+
+// ✅ ALWAYS DO THIS
+Restangular.all('company').getList().then(function(companies) {
+  vm.companies = companies;
+});
+```
+
+### ❌ WRONG: Not handling errors
+
+```javascript
+// ❌ WRONG - No error handling
+vm.baseData.getList().then(function(data) {
+  vm.list = data;
+});
+
+// ✅ CORRECT - Always handle errors
+vm.baseData.getList().then(function(data) {
+  vm.list = data;
+  $rootScope.Loaded();
+}, function(response) {
+  $rootScope.Error(response);
+});
+```
+
+### ❌ WRONG: Not showing/hiding loading states
+
+```javascript
+// ❌ WRONG - No loading state
+vm.baseData.getList().then(function(data) {
+  vm.list = data;
+});
+
+// ✅ CORRECT - Always manage loading state
+$rootScope.Start();
+vm.baseData.getList().then(function(data) {
+  vm.list = data;
+  $rootScope.Loaded();
+}, function(response) {
+  $rootScope.Error(response);  // Also hides loading
+});
+```
+
+## Controller Mistakes
+
+### ❌ WRONG: Using $scope for data
+
+```javascript
+// ❌ WRONG
+.controller('BadCtrl', function($scope) {
+  $scope.data = {};
+  $scope.loadData = function() {};
+});
+
+// ✅ CORRECT
+.controller('GoodCtrl', function($scope, $rootScope, Restangular) {
+  const vm = this;
+  vm.data = {};
+  vm.loadData = function() {};
+});
+```
+
+### ❌ WRONG: Not using 'use strict'
+
+```javascript
+// ❌ WRONG
+angular.module('xenon.controllers')
+  .controller('MyCtrl', function() {
+    // ...
+  });
+
+// ✅ CORRECT
+'use strict';
+angular.module('xenon.controllers')
+  .controller('MyCtrl', function() {
+    // ...
+  });
+```
+
+## Routing Mistakes
+
+### ❌ WRONG: Using window.location or $location.path()
+
+```javascript
+// ❌ WRONG
+window.location.href = '/app/company';
+$location.path('/app/company');
+
+// ✅ CORRECT
+$state.go('app.company');
+```
+
+### ❌ WRONG: Hardcoding template paths
+
+```javascript
+// ❌ WRONG
+templateUrl: 'app/tpls/companies/list.html'
+templateUrl: '/tpls/companies/list.html'
+
+// ✅ CORRECT
+templateUrl: appHelper.templatePath('companies/list')
+```
+
+## State Management Mistakes
+
+### ❌ WRONG: Not preserving state across navigation
+
+```javascript
+// ❌ WRONG - State lost on navigation
+vm.addForm = function() {
+  $state.go('app.weigh_create', {
+    company_id: vm.companyId
+  });
+  // site_id and workstation_id lost!
+};
+
+// ✅ CORRECT - Preserve all state
+vm.addForm = function() {
+  $rootScope.Params = {
+    company_id: vm.companyId,
+    site_id: vm.siteId,
+    workstation_id: vm.workstationId
+  };
+  $state.go('app.weigh_create', {
+    company_id: vm.companyId,
+    site_id: vm.siteId,
+    workstation_id: vm.workstationId
+  });
+};
+```
+
+## Template Mistakes
+
+### ❌ WRONG: Not using controller as syntax in templates
+
+```html
+<!-- ❌ WRONG -->
+<div ng-controller="CompaniesCtrl">
+  {{ companyList }}
+  <button ng-click="loadData()">Load</button>
+</div>
+
+<!-- ✅ CORRECT -->
+<div ng-controller="CompaniesCtrl as System">
+  {{ System.companyList }}
+  <button ng-click="System.loadData()">Load</button>
+</div>
+```
+
+## Naming Convention Mistakes
+
+### ❌ WRONG: Using hyphens in JavaScript identifiers
+
+```javascript
+// ❌ WRONG
+const company-list = [];
+function load-data() {}
+
+// ✅ CORRECT
+const company_list = [];  // For route names, file names
+const companyList = [];   // For JavaScript variables
+function loadData() {}
+```
+
+### ❌ WRONG: Inconsistent naming
+
+```javascript
+// ❌ WRONG - Mixed conventions
+const routeName = 'company';  // underscore
+const companyList = [];       // camelCase
+const is_editing = false;     // underscore (inconsistent)
+
+// ✅ CORRECT - Consistent conventions
+const routeName = 'company';  // underscore for route names
+const companyList = [];       // camelCase for variables
+const isEditing = false;      // camelCase for variables
+```
+
+## Memory Leaks
+
+### ⚠️ WARNING: Clean up intervals and watchers
+
+```javascript
+// ✅ CORRECT - Clean up intervals
+vm.cancel = function() {
+  if (vm.Cameras && vm.Cameras.length > 0) {
+    vm.Cameras.forEach(function(mapData) {
+      if (angular.isDefined(mapData.CameraTick)) {
+        clearInterval(mapData.CameraTick);
+      }
+    });
+  }
+  $state.go('app.company');
+};
+```
+
+## Form Validation Mistakes
+
+### ❌ WRONG: Not checking form validity
+
+```javascript
+// ❌ WRONG
+vm.saveForm = function() {
+  vm.baseData.post(vm.data);
+};
+
+// ✅ CORRECT
+vm.saveForm = function(formData) {
+  if (!formData.$valid) {
+    return;
+  }
+  $rootScope.Start();
+  vm.baseData.post(vm.data).then(function() {
+    $rootScope.Loaded();
+  }, function(response) {
+    $rootScope.Error(response);
+  });
+};
+```
+
+## Critical Rules Summary
+
+1. **NEVER** use $http - always use Restangular
+2. **ALWAYS** handle errors in promises
+3. **ALWAYS** show/hide loading states
+4. **ALWAYS** use `controller as` syntax with `vm`
+5. **ALWAYS** use `$state.go()` for navigation
+6. **ALWAYS** use `appHelper.templatePath()` for templates
+7. **ALWAYS** use `'use strict'` in controller files
+8. **ALWAYS** preserve state when navigating
+9. **ALWAYS** clean up intervals and watchers
+10. **ALWAYS** validate forms before submission
+11. **NEVER** suggest Angular 2+ patterns or TypeScript
+12. **NEVER** use $scope for data binding (use vm)

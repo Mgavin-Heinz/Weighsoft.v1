@@ -1,0 +1,338 @@
+<!-- ESP32 Control Panel - Collapsible Fixed Sidebar -->
+<div class="esp32-control-sidebar" ng-if="ctrl.hasWorkstation() && ctrl.hasAnyControls()" ng-class="{'collapsed': ctrl.isCollapsed}">
+    <div class="panel panel-default panel-color-header">
+        <div class="panel-heading" ng-click="ctrl.toggleCollapse()" style="cursor: pointer;">
+            <h3 class="panel-title">
+                <i class="fa" ng-class="ctrl.isCollapsed ? 'fa-toggle-off' : 'fa-toggle-on'" title="{{ ctrl.isCollapsed ? 'Show controls' : 'Hide controls' }}"></i> Controls
+                <span class="pull-right">
+                    <i class="fa" ng-class="ctrl.isCollapsed ? 'fa-chevron-left' : 'fa-chevron-right'" aria-hidden="true"></i>
+                </span>
+            </h3>
+        </div>
+        <div class="panel-body" ng-show="!ctrl.isCollapsed">
+            <div ng-if="ctrl.loading" class="text-center">
+                <i class="fa fa-spinner fa-spin"></i>
+                <p class="small">Loading...</p>
+            </div>
+
+            <div ng-if="!ctrl.loading">
+                
+                <!-- ============================================ -->
+                <!-- COMBINED CONTROLS (Primary) -->
+                <!-- ============================================ -->
+                
+                <!-- Incoming Combined -->
+                <div ng-if="ctrl.hasIncomingControls()" class="form-group combined-control">
+                    <label class="control-label"><strong><i class="fa fa-sign-in"></i> Incoming</strong></label>
+                    <div class="btn-group btn-group-justified">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-success btn-combined" ng-click="ctrl.openIncoming()">
+                                <i class="fa fa-unlock"></i> Open
+                            </button>
+                        </div>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-danger btn-combined" ng-click="ctrl.closeIncoming()">
+                                <i class="fa fa-lock"></i> Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exiting Combined -->
+                <div ng-if="ctrl.hasExitingControls()" class="form-group combined-control">
+                    <label class="control-label"><strong><i class="fa fa-sign-out"></i> Exiting</strong></label>
+                    <div class="btn-group btn-group-justified">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-success btn-combined" ng-click="ctrl.openExiting()">
+                                <i class="fa fa-unlock"></i> Open
+                            </button>
+                        </div>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-danger btn-combined" ng-click="ctrl.closeExiting()">
+                                <i class="fa fa-lock"></i> Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================ -->
+                <!-- ADVANCED CONTROLS (Collapsible) -->
+                <!-- ============================================ -->
+                
+                <div class="advanced-controls-section">
+                    <div class="advanced-toggle" ng-click="ctrl.toggleAdvanced()">
+                        <small>
+                            <i class="fa" ng-class="ctrl.showAdvanced ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
+                            Advanced Controls
+                        </small>
+                    </div>
+
+                    <div ng-show="ctrl.showAdvanced" class="advanced-controls-body">
+                        
+                        <!-- Incoming Boom -->
+                        <div ng-if="ctrl.workstation.incoming_boom_ip" class="form-group">
+                            <label class="control-label"><small>Incoming Boom</small></label>
+                            <div class="btn-group btn-group-sm btn-group-justified">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-success btn-xs" ng-click="ctrl.controlIncomingBoom('open')">
+                                        <i class="fa fa-arrow-up"></i> Open
+                                    </button>
+                                </div>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-danger btn-xs" ng-click="ctrl.controlIncomingBoom('close')">
+                                        <i class="fa fa-arrow-down"></i> Close
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Exiting Boom -->
+                        <div ng-if="ctrl.workstation.exiting_boom_ip" class="form-group">
+                            <label class="control-label"><small>Exiting Boom</small></label>
+                            <div class="btn-group btn-group-sm btn-group-justified">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-success btn-xs" ng-click="ctrl.controlExitingBoom('open')">
+                                        <i class="fa fa-arrow-up"></i> Open
+                                    </button>
+                                </div>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-danger btn-xs" ng-click="ctrl.controlExitingBoom('close')">
+                                        <i class="fa fa-arrow-down"></i> Close
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Incoming Red Light -->
+                        <div ng-if="ctrl.workstation.incoming_red_light_ip" class="form-group">
+                            <label class="control-label"><small>Incoming Red Light</small></label>
+                            <div class="btn-group btn-group-sm btn-group-justified">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-danger btn-xs" ng-click="ctrl.controlIncomingRedLight('on')">
+                                        <i class="fa fa-circle"></i> On
+                                    </button>
+                                </div>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-xs" ng-click="ctrl.controlIncomingRedLight('off')">
+                                        <i class="fa fa-circle-o"></i> Off
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Incoming Green Light -->
+                        <div ng-if="ctrl.workstation.incoming_green_light_ip" class="form-group">
+                            <label class="control-label"><small>Incoming Green Light</small></label>
+                            <div class="btn-group btn-group-sm btn-group-justified">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-success btn-xs" ng-click="ctrl.controlIncomingGreenLight('on')">
+                                        <i class="fa fa-circle"></i> On
+                                    </button>
+                                </div>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-xs" ng-click="ctrl.controlIncomingGreenLight('off')">
+                                        <i class="fa fa-circle-o"></i> Off
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Exiting Red Light -->
+                        <div ng-if="ctrl.workstation.exiting_red_light_ip" class="form-group">
+                            <label class="control-label"><small>Exiting Red Light</small></label>
+                            <div class="btn-group btn-group-sm btn-group-justified">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-danger btn-xs" ng-click="ctrl.controlExitingRedLight('on')">
+                                        <i class="fa fa-circle"></i> On
+                                    </button>
+                                </div>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-xs" ng-click="ctrl.controlExitingRedLight('off')">
+                                        <i class="fa fa-circle-o"></i> Off
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Exiting Green Light -->
+                        <div ng-if="ctrl.workstation.exiting_green_light_ip" class="form-group">
+                            <label class="control-label"><small>Exiting Green Light</small></label>
+                            <div class="btn-group btn-group-sm btn-group-justified">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-success btn-xs" ng-click="ctrl.controlExitingGreenLight('on')">
+                                        <i class="fa fa-circle"></i> On
+                                    </button>
+                                </div>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-xs" ng-click="ctrl.controlExitingGreenLight('off')">
+                                        <i class="fa fa-circle-o"></i> Off
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Workstation Info -->
+                <div class="text-center" style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #e0e0e0;">
+                    <small class="text-muted">
+                        <i class="fa fa-desktop"></i> {{ctrl.workstation.workstation_name}}
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.esp32-control-sidebar {
+    position: fixed;
+    top: 110px;
+    right: 15px;
+    width: 240px;
+    z-index: 999;
+    max-height: calc(100vh - 130px);
+    overflow-y: auto;
+    transition: transform 0.3s ease-in-out;
+}
+
+.esp32-control-sidebar.collapsed {
+    transform: translateX(calc(100% - 50px)); /* Only show part of the heading */
+}
+
+.esp32-control-sidebar .panel {
+    margin-bottom: 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+}
+
+.esp32-control-sidebar .panel-heading {
+    padding: 10px 15px;
+}
+
+.esp32-control-sidebar .panel-title {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.esp32-control-sidebar .panel-body {
+    padding: 15px;
+}
+
+.esp32-control-sidebar .form-group {
+    margin-bottom: 12px;
+}
+
+.esp32-control-sidebar .form-group:last-of-type {
+    margin-bottom: 0;
+}
+
+.esp32-control-sidebar .control-label {
+    font-size: 12px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.esp32-control-sidebar .btn-group-sm .btn {
+    padding: 5px 10px;
+    font-size: 11px;
+}
+
+.esp32-control-sidebar .alert {
+    padding: 10px;
+    margin-bottom: 0;
+}
+
+.esp32-control-sidebar .small {
+    font-size: 11px;
+}
+
+/* Combined Control Buttons (Primary) */
+.esp32-control-sidebar .combined-control {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+}
+
+.esp32-control-sidebar .btn-combined {
+    padding: 10px 12px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.esp32-control-sidebar .btn-combined i {
+    margin-right: 5px;
+}
+
+/* Advanced Controls Section */
+.esp32-control-sidebar .advanced-controls-section {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px dashed #ccc;
+}
+
+.esp32-control-sidebar .advanced-toggle {
+    cursor: pointer;
+    color: #666;
+    margin-bottom: 10px;
+    padding: 5px 0;
+}
+
+.esp32-control-sidebar .advanced-toggle:hover {
+    color: #333;
+}
+
+.esp32-control-sidebar .advanced-toggle i {
+    margin-right: 5px;
+    width: 10px;
+}
+
+.esp32-control-sidebar .advanced-controls-body {
+    padding-top: 5px;
+}
+
+.esp32-control-sidebar .advanced-controls-body .form-group {
+    margin-bottom: 8px;
+}
+
+.esp32-control-sidebar .advanced-controls-body .control-label {
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 3px;
+}
+
+.esp32-control-sidebar .advanced-controls-body .btn-xs {
+    padding: 3px 8px;
+    font-size: 10px;
+}
+
+/* Smooth scrollbar styling */
+.esp32-control-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.esp32-control-sidebar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.esp32-control-sidebar::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+.esp32-control-sidebar::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Hide sidebar on tablets and mobile */
+@media (max-width: 991px) {
+    .esp32-control-sidebar {
+        display: none;
+    }
+}
+
+/* Print: hide sidebar */
+@media print {
+    .esp32-control-sidebar {
+        display: none !important;
+    }
+}
+</style>

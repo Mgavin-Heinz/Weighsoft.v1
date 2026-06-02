@@ -1,0 +1,969 @@
+<page-title ng-if="layoutOptions.pageTitles" title="Settings" description="" data-ng-init="System.load()"></page-title>
+
+<div class="col-lg-12 col-md-12">
+    <div class="panel panel-color panel-danger">
+        <div class="panel-heading">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <h2>Weighing Types</h2>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label for="company_id" class="control-label">Company</label>
+                    <select id="company_id" name="company_id" ng-model="System.HeaderSingle.company_id"
+                        class="form-control" ng-change="System.onSelectChange('company')"
+                        ng-options="option.value as option.name for option in System.companyList"></select>
+                </div>
+                <div class="form-group">
+                    <label for="site_id" class="control_label">Site</label>
+                    <select id="site_id" name="site_id" ng-model="System.HeaderSingle.site_id" class="form-control"
+                        ng-change="System.onSelectChange('site')"
+                        ng-options="option.value as option.name for option in System.siteList"></select>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label for="workstation_id" class="control-label">Workstation</label>
+                    <select id="workstation_id" name="workstation_id" ng-model="System.HeaderSingle.workstation_id"
+                        class="form-control" ng-change="System.onSelectChange('workstation')"
+                        ng-options="option.value as option.name for option in System.workstationList"></select>
+                </div>
+                <div class="form-group" ng-if="System.HeaderSingle.workstation_id">
+                    <button data-ng-click="System.addForm()" ng-hide="System.FormDisplay"
+                        class="btn btn-black pull-right">
+                        Add New
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-sm-12" ng-if="System.FormDisplay">
+                    <div class="row row-border">
+                        <div class="col-md-12 col-sm-12 col-xs-12 well">
+                            <div class="form-group">
+                                <label for="name" class="col-md-4 control-label">Name</label>
+                                <div class="col-md-4">
+                                    <input id="name" type="" class="form-control" name="name"
+                                        ng-model="System.Single.name" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-border">
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="haulier" class="col-md-6 control-label">Haulier</label>
+                            <div class="col-md-6">
+                                <input id="haulier" type="checkbox" class="iswitch-lg iswitch-danger" name="haulier"
+                                    ng-model="System.Single.haulier" ng-true-value="'Yes'" ng-false-value="'No'" />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="use_product_list" class="col-md-6 control-label">Use Product List</label>
+                            <div class="col-md-6">
+                                <input id="use_product_list" type="checkbox" class="iswitch-lg iswitch-danger"
+                                    name="use_product_list" ng-model="System.Single.use_product_list"
+                                    ng-true-value="'Yes'" ng-false-value="'No'" />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="stored_tares" class="col-md-6 control-label">Tares</label>
+                            <div class="col-md-6">
+                                <select id="stored_tares" class="form-control" name="stored_tares"
+                                    ng-model="System.Single.stored_tares">
+                                    <option value="None">None</option>
+                                    <option value="Manual">Manual</option>
+                                    <option value="Stored">Stored</option>
+                                    <option value="Both">Both</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="stored_tares" class="col-md-6 control-label">Number Plate 1</label>
+                            <div class="col-md-6">
+                                <input id="numberplate_1" type="checkbox" class="iswitch-lg iswitch-danger"
+                                    name="numberplate_1" ng-model="System.Single.numberplate_1" ng-true-value="'Yes'"
+                                    ng-false-value="'No'" />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.numberplate_1 == 'Yes'">
+                            <label for="stored_tares" class="col-md-6 control-label">NP Recog on 1</label>
+                            <div class="col-md-6">
+                                <input id="numberplate_recognition" type="checkbox" class="iswitch-lg iswitch-danger"
+                                    name="numberplate_recognition" ng-model="System.Single.numberplate_recognition"
+                                    ng-true-value="'Yes'" ng-false-value="'No'" />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.numberplate_1 == 'Yes'">
+                            <label for="stored_tares" class="col-md-6 control-label">Number Plate 2</label>
+                            <div class="col-md-6">
+                                <input id="numberplate_2" type="checkbox" class="iswitch-lg iswitch-danger"
+                                    name="numberplate_2" ng-model="System.Single.numberplate_2" ng-true-value="'Yes'"
+                                    ng-false-value="'No'" />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.numberplate_2 == 'Yes'">
+                            <label for="stored_tares" class="col-md-6 control-label">Number Plate 3</label>
+                            <div class="col-md-6">
+                                <input id="numberplate_3" type="checkbox" class="iswitch-lg iswitch-danger"
+                                    name="numberplate_3" ng-model="System.Single.numberplate_3" ng-true-value="'Yes'"
+                                    ng-false-value="'No'" />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="business_partner" class="col-md-6 control-label">Business Partner</label>
+                            <div class="col-md-6">
+                                <input id="business_partner" type="checkbox" class="iswitch-lg iswitch-danger"
+                                    name="business_partner" ng-model="System.Single.business_partner"
+                                    ng-true-value="'Yes'" ng-false-value="'No'" />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="contract" class="col-md-6 control-label">Enable Contracts</label>
+                            <div class="col-md-6">
+                                <input id="contract" type="checkbox" class="iswitch-lg iswitch-danger" name="contract"
+                                    ng-model="System.Single.contract_enabled" ng-true-value="'true'"
+                                    ng-false-value="'false'" />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="type_of_weighing" class="col-md-6 control-label">Type of Weighing</label>
+                            <div class="col-md-6">
+                                <select id="type_of_weighing" class="form-control" name="type_of_weighing"
+                                    ng-model="System.Single.type_of_weighing">
+                                    <option value="1">Single</option>
+                                    <option value="2">Double</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="pallet" class="col-md-6 control-label">Enable Pallets</label>
+                            <div class="col-md-6">
+                                <input id="pallet" type="checkbox" class="iswitch-lg iswitch-danger" name="pallet"
+                                    ng-model="System.Single.pallet_enabled" ng-true-value="'true'"
+                                    ng-false-value="'false'" />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="pallet" class="col-md-6 control-label">Enable Tares</label>
+                            <div class="col-md-6">
+                                <input id="tares" type="checkbox" class="iswitch-lg iswitch-danger" name="tares"
+                                    ng-model="System.Single.tares_enabled" ng-true-value="'true'"
+                                    ng-false-value="'false'" />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="invoice" class="col-md-6 control-label">Invoice</label>
+                            <div class="col-md-6">
+                                <input id="invoice" type="checkbox" class="iswitch-lg iswitch-danger" name="invoice"
+                                    ng-model="System.Single.invoice_enabled" ng-true-value="'true'"
+                                    ng-false-value="'false'" />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="first_can_axel" class="col-md-6 control-label">First weight Axel</label>
+                            <div class="col-md-6">
+                                <select id="first_can_axel" class="form-control" name="first_can_axel"
+                                    ng-model="System.Single.first_can_axel">
+                                    <option value="Off">Off</option>
+                                    <option value="On_Cumulative">On Cumulative</option>
+                                    <option value="On_Compulsory">Compulsory Cumulative</option>
+                                    <option value="On_Inmotion">On Inmotion</option>
+                                    <option value="Compulsory_Inmotion">Compulsory Inmotion</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.type_of_weighing == 2">
+                            <label for="second_can_axel" class="col-md-6 control-label">Second weight Axel</label>
+                            <div class="col-md-6">
+                                <select id="second_can_axel" class="form-control" name="second_can_axel"
+                                    ng-model="System.Single.second_can_axel">
+                                    <option value="Off">Off</option>
+                                    <option value="On_Cumulative">On Cumulative</option>
+                                    <option value="Compulsory_Cumulative">Compulsory Cumulative</option>
+                                    <option value="On_Inmotion">On Inmotion</option>
+                                    <option value="Compulsory_Inmotion">Compulsory Inmotion</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.type_of_weighing == 2">
+                            <label for="goods_type" class="col-md-6 control-label">Goods Type</label>
+                            <div class="col-md-6">
+                                <select id="goods_type" class="form-control" name="goods_type"
+                                    ng-model="System.Single.goods_type">
+                                    <option value="1">Receiving Goods</option>
+                                    <option value="2">Dispatching Goods</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="print_ticket" class="col-md-6 control-label">Print Ticket</label>
+                            <div class="col-md-6">
+                                <select id="print_ticket" class="form-control" name="print_ticket"
+                                    ng-model="System.Single.print_ticket">
+                                    <option value="1">First Weight</option>
+                                    <option value="2">Second Weight</option>
+                                    <option value="B">Both Weights</option>
+                                    <option value="N">None</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="reprint" class="col-md-6 control-label">Reprint Tickets</label>
+                            <div class="col-md-6">
+                                <input id="reprint" type="checkbox" class="iswitch-lg iswitch-danger" name="reprint"
+                                    ng-model="System.Single.reprint" ng-true-value="'Yes'" ng-false-value="'No'" />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="ticket_template" class="col-md-6 control-label">Ticket Template</label>
+                            <div class="col-md-6">
+                                <select id="ticket_template" class="form-control" name="ticket_template"
+                                    ng-model="System.Single.ticket_template">
+                                    <option value="normal">Normal Ticket</option>
+                                    <option value="thermal">Thermal Ticket (72mm)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="custom_fields" class="col-md-6 control-label">Use Custom Fields</label>
+                            <div class="col-md-6">
+                                <input id="custom_fields" type="checkbox" class="iswitch-lg iswitch-danger"
+                                    name="custom_fields" ng-model="System.Single.custom_fields" ng-true-value="'Yes'"
+                                    ng-false-value="'No'" />
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="enable_moisture" class="col-md-6 control-label">Enable Moisture</label>
+                            <div class="col-md-6">
+                                <input id="enable_moisture" type="checkbox" class="iswitch-lg iswitch-danger"
+                                    name="enable_moisture" ng-model="System.Single.enable_moisture"
+                                    ng-true-value="'true'" ng-false-value="'false'" />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="enable_handling" class="col-md-6 control-label">Enable
+                                {{System.handlingAlias}}</label>
+                            <div class="col-md-6">
+                                <input id="enable_handling" type="checkbox" class="iswitch-lg iswitch-danger"
+                                    name="enable_handling" ng-model="System.Single.enable_handling"
+                                    ng-true-value="'true'" ng-false-value="'false'" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-border well well-sm">
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.custom_fields">
+                            <label for="user_defined_input1" class="col-md-6">Input 1</label>
+                            <div class="col-md-6">
+                                <select name="user_defined_input1" id="user_defined_input1" class="form-control"
+                                    ng-model="System.Single.user_defined_input1"
+                                    ng-options="option.value as option.text for option in System.OptionTypes"></select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input1 != 'N'">
+                            <label for="user_defined_name1" class="col-md-6">Name 1</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_name1" class="form-control"
+                                    name="user_defined_name1" ng-model="System.Single.user_defined_name1" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12"
+                            ng-if="System.Single.user_defined_input1 != 'N' && (System.Single.user_defined_input1 == 'SO' || System.Single.user_defined_input1 == 'SC')">
+                            <label for="user_defined_val1" class="col-md-6">Values 1</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_val1" class="form-control"
+                                    name="user_defined_val1" ng-model="System.Single.user_defined_val1" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input1 != 'N'">
+                            <label for="user_defined_rep1" class="col-md-6">On Report 1</label>
+                            <div class="col-md-6">
+                                <input type="checkbox" id="user_defined_rep1" class="iswitch-lg iswitch-danger"
+                                    name="user_defined_rep1" ng-model="System.Single.user_defined_rep1"
+                                    ng-true-value="'Yes'" ng-false-value="'No'" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-border" ng-if="System.Single.user_defined_input1 != 'N' || System.Single.user_defined_input2 !== 'N'">
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="user_defined_input2" class="col-md-6">Input 2</label>
+                            <div class="col-md-6">
+                                <select name="user_defined_input2" id="user_defined_input2" class="form-control"
+                                    ng-model="System.Single.user_defined_input2"
+                                    ng-options="option.value as option.text for option in System.OptionTypes"></select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input2 != 'N'">
+                            <label for="user_defined_name2" class="col-md-6">Name 2</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_name2" class="form-control"
+                                    name="user_defined_name2" ng-model="System.Single.user_defined_name2" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12"
+                            ng-if="System.Single.user_defined_input2 != 'N' && (System.Single.user_defined_input2 == 'SO' || System.Single.user_defined_input2 == 'SC')">
+                            <label for="user_defined_val2" class="col-md-6">Values 2</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_val2" class="form-control"
+                                    name="user_defined_val2" ng-model="System.Single.user_defined_val2" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input2 != 'N'">
+                            <label for="user_defined_rep2" class="col-md-6">On Report 2</label>
+                            <div class="col-md-6">
+                                <input type="checkbox" id="user_defined_rep2" class="iswitch-lg iswitch-danger"
+                                    name="user_defined_rep2" ng-model="System.Single.user_defined_rep2"
+                                    ng-true-value="'Yes'" ng-false-value="'No'" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-border well well-sm" ng-if="System.Single.user_defined_input2 != 'N' || System.Single.user_defined_input3 !== 'N'">
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="user_defined_input3" class="col-md-6">Input 3</label>
+                            <div class="col-md-6">
+                                <select name="user_defined_input3" id="user_defined_input3" class="form-control"
+                                    ng-model="System.Single.user_defined_input3"
+                                    ng-options="option.value as option.text for option in System.OptionTypes"></select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input3 != 'N'">
+                            <label for="user_defined_name3" class="col-md-6">Name 3</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_name3" class="form-control"
+                                    name="user_defined_name3" ng-model="System.Single.user_defined_name3" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12"
+                            ng-if="System.Single.user_defined_input3 != 'N' && (System.Single.user_defined_input3 == 'SO' || System.Single.user_defined_input3 == 'SC')">
+                            <label for="user_defined_val3" class="col-md-6">Values 3</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_val3" class="form-control"
+                                    name="user_defined_val3" ng-model="System.Single.user_defined_val3" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input3 != 'N'">
+                            <label for="user_defined_rep3" class="col-md-6">On Report 3</label>
+                            <div class="col-md-6">
+                                <input type="checkbox" id="user_defined_rep3" class="iswitch-lg iswitch-danger"
+                                    name="user_defined_rep3" ng-model="System.Single.user_defined_rep3"
+                                    ng-true-value="'Yes'" ng-false-value="'No'" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-border" ng-if="System.Single.user_defined_input3 != 'N' || System.Single.user_defined_input4 !== 'N'">
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="user_defined_input4" class="col-md-6">Input 4</label>
+                            <div class="col-md-6">
+                                <select name="user_defined_input4" id="user_defined_input4" class="form-control"
+                                    ng-model="System.Single.user_defined_input4"
+                                    ng-options="option.value as option.text for option in System.OptionTypes"></select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input4 != 'N'">
+                            <label for="user_defined_name4" class="col-md-6">Name 4</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_name4" class="form-control"
+                                    name="user_defined_name4" ng-model="System.Single.user_defined_name4" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12"
+                            ng-if="System.Single.user_defined_input4 != 'N' && (System.Single.user_defined_input4 == 'SO' || System.Single.user_defined_input4 == 'SC')">
+                            <label for="user_defined_val4" class="col-md-6">Values 4</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_val4" class="form-control"
+                                    name="user_defined_val4" ng-model="System.Single.user_defined_val4" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input4 != 'N'">
+                            <label for="user_defined_rep4" class="col-md-6">On Report 4</label>
+                            <div class="col-md-6">
+                                <input type="checkbox" id="user_defined_rep4" class="iswitch-lg iswitch-danger"
+                                    name="user_defined_rep4" ng-model="System.Single.user_defined_rep4"
+                                    ng-true-value="'Yes'" ng-false-value="'No'" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-border well well-sm" ng-if="System.Single.user_defined_input4 != 'N' || System.Single.user_defined_input5 !== 'N'">
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="user_defined_input5" class="col-md-6">Input 5</label>
+                            <div class="col-md-6">
+                                <select name="user_defined_input5" id="user_defined_input5" class="form-control"
+                                    ng-model="System.Single.user_defined_input5"
+                                    ng-options="option.value as option.text for option in System.OptionTypes"></select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input5 != 'N'">
+                            <label for="user_defined_name5" class="col-md-6">Name 5</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_name5" class="form-control"
+                                    name="user_defined_name5" ng-model="System.Single.user_defined_name5" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12"
+                            ng-if="System.Single.user_defined_input5 != 'N' && (System.Single.user_defined_input5 == 'SO' || System.Single.user_defined_input5 == 'SC')">
+                            <label for="user_defined_val5" class="col-md-6">Values 5</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_val5" class="form-control"
+                                    name="user_defined_val5" ng-model="System.Single.user_defined_val5" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input5 != 'N'">
+                            <label for="user_defined_rep5" class="col-md-6">On Report 5</label>
+                            <div class="col-md-6">
+                                <input type="checkbox" id="user_defined_rep5" class="iswitch-lg iswitch-danger"
+                                    name="user_defined_rep5" ng-model="System.Single.user_defined_rep5"
+                                    ng-true-value="'Yes'" ng-false-value="'No'" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-border" ng-if="System.Single.user_defined_input5 != 'N' || System.Single.user_defined_input6 !== 'N'">
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="user_defined_input6" class="col-md-6">Input 6</label>
+                            <div class="col-md-6">
+                                <select name="user_defined_input6" id="user_defined_input6" class="form-control"
+                                    ng-model="System.Single.user_defined_input6"
+                                    ng-options="option.value as option.text for option in System.OptionTypes"></select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input6 != 'N'">
+                            <label for="user_defined_name6" class="col-md-6">Name 6</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_name6" class="form-control"
+                                    name="user_defined_name6" ng-model="System.Single.user_defined_name6" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12"
+                            ng-if="System.Single.user_defined_input6 != 'N' && (System.Single.user_defined_input6 == 'SO' || System.Single.user_defined_input6 == 'SC')">
+                            <label for="user_defined_val6" class="col-md-6">Values 6</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_val6" class="form-control"
+                                    name="user_defined_val6" ng-model="System.Single.user_defined_val6" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input6 != 'N'">
+                            <label for="user_defined_rep6" class="col-md-6">On Report 6</label>
+                            <div class="col-md-6">
+                                <input type="checkbox" id="user_defined_rep6" class="iswitch-lg iswitch-danger"
+                                    name="user_defined_rep6" ng-model="System.Single.user_defined_rep6"
+                                    ng-true-value="'Yes'" ng-false-value="'No'" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-border well well-sm" ng-if="System.Single.user_defined_input6 != 'N' || System.Single.user_defined_input7 !== 'N'">
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="user_defined_input7" class="col-md-6">Input 7</label>
+                            <div class="col-md-6">
+                                <select name="user_defined_input7" id="user_defined_input7" class="form-control"
+                                    ng-model="System.Single.user_defined_input7"
+                                    ng-options="option.value as option.text for option in System.OptionTypes"></select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input7 != 'N'">
+                            <label for="user_defined_name7" class="col-md-6">Name 7</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_name7" class="form-control"
+                                    name="user_defined_name7" ng-model="System.Single.user_defined_name7" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12"
+                            ng-if="System.Single.user_defined_input7 != 'N' && (System.Single.user_defined_input7 == 'SO' || System.Single.user_defined_input7 == 'SC')">
+                            <label for="user_defined_val7" class="col-md-6">Values 7</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_val7" class="form-control"
+                                    name="user_defined_val7" ng-model="System.Single.user_defined_val7" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input7 != 'N'">
+                            <label for="user_defined_rep7" class="col-md-6">On Report 7</label>
+                            <div class="col-md-6">
+                                <input type="checkbox" id="user_defined_rep7" class="iswitch-lg iswitch-danger"
+                                    name="user_defined_rep7" ng-model="System.Single.user_defined_rep7"
+                                    ng-true-value="'Yes'" ng-false-value="'No'" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-border" ng-if="System.Single.user_defined_input7 != 'N' || System.Single.user_defined_input8 !== 'N'">
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="user_defined_input8" class="col-md-6">Input 8</label>
+                            <div class="col-md-6">
+                                <select name="user_defined_input8" id="user_defined_input8" class="form-control"
+                                    ng-model="System.Single.user_defined_input8"
+                                    ng-options="option.value as option.text for option in System.OptionTypes"></select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input8 != 'N'">
+                            <label for="user_defined_name8" class="col-md-6">Name 8</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_name8" class="form-control"
+                                    name="user_defined_name8" ng-model="System.Single.user_defined_name8" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12"
+                            ng-if="System.Single.user_defined_input8 != 'N' && (System.Single.user_defined_input8 == 'SO' || System.Single.user_defined_input8 == 'SC')">
+                            <label for="user_defined_val8" class="col-md-6">Values 8</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_val8" class="form-control"
+                                    name="user_defined_val8" ng-model="System.Single.user_defined_val8" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input8 != 'N'">
+                            <label for="user_defined_rep8" class="col-md-6">On Report 8</label>
+                            <div class="col-md-6">
+                                <input type="checkbox" id="user_defined_rep8" class="iswitch-lg iswitch-danger"
+                                    name="user_defined_rep8" ng-model="System.Single.user_defined_rep8"
+                                    ng-true-value="'Yes'" ng-false-value="'No'" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-border well well-sm" ng-if="System.Single.user_defined_input8 != 'N' || System.Single.user_defined_input9 !== 'N'">
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="user_defined_input9" class="col-md-6">Input 9</label>
+                            <div class="col-md-6">
+                                <select name="user_defined_input9" id="user_defined_input9" class="form-control"
+                                    ng-model="System.Single.user_defined_input9"
+                                    ng-options="option.value as option.text for option in System.OptionTypes"></select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input9 != 'N'">
+                            <label for="user_defined_name9" class="col-md-6">Name 9</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_name9" class="form-control"
+                                    name="user_defined_name9" ng-model="System.Single.user_defined_name9" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12"
+                            ng-if="System.Single.user_defined_input9 != 'N' && (System.Single.user_defined_input9 == 'SO' || System.Single.user_defined_input9 == 'SC')">
+                            <label for="user_defined_val9" class="col-md-6">Values 9</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_val9" class="form-control"
+                                    name="user_defined_val9" ng-model="System.Single.user_defined_val9" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input9 != 'N'">
+                            <label for="user_defined_rep9" class="col-md-6">On Report 9</label>
+                            <div class="col-md-6">
+                                <input type="checkbox" id="user_defined_rep9" class="iswitch-lg iswitch-danger"
+                                    name="user_defined_rep9" ng-model="System.Single.user_defined_rep9"
+                                    ng-true-value="'Yes'" ng-false-value="'No'" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-border" ng-if="System.Single.user_defined_input9 != 'N' || System.Single.user_defined_input10 !== 'N'">
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="user_defined_input10" class="col-md-6">Input 10</label>
+                            <div class="col-md-6">
+                                <select name="user_defined_input10" id="user_defined_input10" class="form-control"
+                                    ng-model="System.Single.user_defined_input10"
+                                    ng-options="option.value as option.text for option in System.OptionTypes"></select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input10 != 'N'">
+                            <label for="user_defined_name10" class="col-md-6">Name 10</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_name10" class="form-control"
+                                    name="user_defined_name10" ng-model="System.Single.user_defined_name10" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12"
+                            ng-if="System.Single.user_defined_input10 != 'N' && (System.Single.user_defined_input10 == 'SO' || System.Single.user_defined_input10 == 'SC')">
+                            <label for="user_defined_val10" class="col-md-6">Values 10</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_val10" class="form-control"
+                                    name="user_defined_val10" ng-model="System.Single.user_defined_val10" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input10 != 'N'">
+                            <label for="user_defined_rep10" class="col-md-6">On Report 10</label>
+                            <div class="col-md-6">
+                                <input type="checkbox" id="user_defined_rep10" class="iswitch-lg iswitch-danger"
+                                    name="user_defined_rep10" ng-model="System.Single.user_defined_rep10"
+                                    ng-true-value="'Yes'" ng-false-value="'No'" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-border well well-sm" ng-if="System.Single.user_defined_input10 != 'N' || System.Single.user_defined_input11 !== 'N'">
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="user_defined_input11" class="col-md-6">Input 11</label>
+                            <div class="col-md-6">
+                                <select name="user_defined_input11" id="user_defined_input11" class="form-control"
+                                    ng-model="System.Single.user_defined_input11"
+                                    ng-options="option.value as option.text for option in System.OptionTypes"></select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input11 != 'N'">
+                            <label for="user_defined_name11" class="col-md-6">Name 11</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_name11" class="form-control"
+                                    name="user_defined_name11" ng-model="System.Single.user_defined_name11" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12"
+                            ng-if="System.Single.user_defined_input11 != 'N' && (System.Single.user_defined_input11 == 'SO' || System.Single.user_defined_input11 == 'SC')">
+                            <label for="user_defined_val11" class="col-md-6">Values 11</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_val11" class="form-control"
+                                    name="user_defined_val11" ng-model="System.Single.user_defined_val11" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input11 != 'N'">
+                            <label for="user_defined_rep11" class="col-md-6">On Report 11</label>
+                            <div class="col-md-6">
+                                <input type="checkbox" id="user_defined_rep11" class="iswitch-lg iswitch-danger"
+                                    name="user_defined_rep11" ng-model="System.Single.user_defined_rep11"
+                                    ng-true-value="'Yes'" ng-false-value="'No'" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-border" ng-if="System.Single.user_defined_input11 != 'N' || System.Single.user_defined_input12 !== 'N'">
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="user_defined_input12" class="col-md-6">Input 12</label>
+                            <div class="col-md-6">
+                                <select name="user_defined_input12" id="user_defined_input12" class="form-control"
+                                    ng-model="System.Single.user_defined_input12"
+                                    ng-options="option.value as option.text for option in System.OptionTypes"></select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input12 != 'N'">
+                            <label for="user_defined_name12" class="col-md-6">Name 12</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_name12" class="form-control"
+                                    name="user_defined_name12" ng-model="System.Single.user_defined_name12" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12"
+                            ng-if="System.Single.user_defined_input12 != 'N' && (System.Single.user_defined_input12 == 'SO' || System.Single.user_defined_input12 == 'SC')">
+                            <label for="user_defined_val12" class="col-md-6">Values 12</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_val12" class="form-control"
+                                    name="user_defined_val12" ng-model="System.Single.user_defined_val12" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input12 != 'N'">
+                            <label for="user_defined_rep12" class="col-md-6">On Report 12</label>
+                            <div class="col-md-6">
+                                <input type="checkbox" id="user_defined_rep12" class="iswitch-lg iswitch-danger"
+                                    name="user_defined_rep12" ng-model="System.Single.user_defined_rep12"
+                                    ng-true-value="'Yes'" ng-false-value="'No'" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-border well well-sm" ng-if="System.Single.user_defined_input12 != 'N' || System.Single.user_defined_input13 !== 'N'">
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="user_defined_input13" class="col-md-6">Input 13</label>
+                            <div class="col-md-6">
+                                <select name="user_defined_input13" id="user_defined_input13" class="form-control"
+                                    ng-model="System.Single.user_defined_input13"
+                                    ng-options="option.value as option.text for option in System.OptionTypes"></select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input13 != 'N'">
+                            <label for="user_defined_name13" class="col-md-6">Name 13</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_name10" class="form-control"
+                                    name="user_defined_name13" ng-model="System.Single.user_defined_name13" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12"
+                            ng-if="System.Single.user_defined_input13 != 'N' && (System.Single.user_defined_input13 == 'SO' || System.Single.user_defined_input13 == 'SC')">
+                            <label for="user_defined_val13" class="col-md-6">Values 13</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_val13" class="form-control"
+                                    name="user_defined_val13" ng-model="System.Single.user_defined_val13" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input13 != 'N'">
+                            <label for="user_defined_rep13" class="col-md-6">On Report 13</label>
+                            <div class="col-md-6">
+                                <input type="checkbox" id="user_defined_rep13" class="iswitch-lg iswitch-danger"
+                                    name="user_defined_rep13" ng-model="System.Single.user_defined_rep13"
+                                    ng-true-value="'Yes'" ng-false-value="'No'" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-border" ng-if="System.Single.user_defined_input13 != 'N' || System.Single.user_defined_input14 !== 'N'">
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="user_defined_input14" class="col-md-6">Input 14</label>
+                            <div class="col-md-6">
+                                <select name="user_defined_input14" id="user_defined_input14" class="form-control"
+                                    ng-model="System.Single.user_defined_input14"
+                                    ng-options="option.value as option.text for option in System.OptionTypes"></select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input14 != 'N'">
+                            <label for="user_defined_name14" class="col-md-6">Name 14</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_name14" class="form-control"
+                                    name="user_defined_name14" ng-model="System.Single.user_defined_name14" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12"
+                            ng-if="System.Single.user_defined_input14 != 'N' && (System.Single.user_defined_input14 == 'SO' || System.Single.user_defined_input14 == 'SC')">
+                            <label for="user_defined_val14" class="col-md-6">Values 14</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_val14" class="form-control"
+                                    name="user_defined_val14" ng-model="System.Single.user_defined_val14" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input14 != 'N'">
+                            <label for="user_defined_rep14" class="col-md-6">On Report 14</label>
+                            <div class="col-md-6">
+                                <input type="checkbox" id="user_defined_rep14" class="iswitch-lg iswitch-danger"
+                                    name="user_defined_rep14" ng-model="System.Single.user_defined_rep14"
+                                    ng-true-value="'Yes'" ng-false-value="'No'" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-border well well-sm" ng-if="System.Single.user_defined_input14 != 'N' || System.Single.user_defined_input15 !== 'N'">
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="user_defined_input10" class="col-md-6">Input 15</label>
+                            <div class="col-md-6">
+                                <select name="user_defined_input15" id="user_defined_input15" class="form-control"
+                                    ng-model="System.Single.user_defined_input15"
+                                    ng-options="option.value as option.text for option in System.OptionTypes"></select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input15 != 'N'">
+                            <label for="user_defined_name15" class="col-md-6">Name 15</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_name15" class="form-control"
+                                    name="user_defined_name15" ng-model="System.Single.user_defined_name15" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12"
+                            ng-if="System.Single.user_defined_input15 != 'N' && (System.Single.user_defined_input15 == 'SO' || System.Single.user_defined_input15 == 'SC')">
+                            <label for="user_defined_val15" class="col-md-6">Values 15</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_val15" class="form-control"
+                                    name="user_defined_val15" ng-model="System.Single.user_defined_val15" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input15 != 'N'">
+                            <label for="user_defined_rep15" class="col-md-6">On Report 15</label>
+                            <div class="col-md-6">
+                                <input type="checkbox" id="user_defined_rep15" class="iswitch-lg iswitch-danger"
+                                    name="user_defined_rep15" ng-model="System.Single.user_defined_rep15"
+                                    ng-true-value="'Yes'" ng-false-value="'No'" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-border" ng-if="System.Single.user_defined_input15 != 'N' || System.Single.user_defined_input16 !== 'N'">
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="user_defined_input16" class="col-md-6">Input 16</label>
+                            <div class="col-md-6">
+                                <select name="user_defined_input16" id="user_defined_input16" class="form-control"
+                                    ng-model="System.Single.user_defined_input16"
+                                    ng-options="option.value as option.text for option in System.OptionTypes"></select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input16 != 'N'">
+                            <label for="user_defined_name16" class="col-md-6">Name 16</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_name16" class="form-control"
+                                    name="user_defined_name16" ng-model="System.Single.user_defined_name16" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12"
+                            ng-if="System.Single.user_defined_input16 != 'N' && (System.Single.user_defined_input16 == 'SO' || System.Single.user_defined_input16 == 'SC')">
+                            <label for="user_defined_val16" class="col-md-6">Values 16</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_val16" class="form-control"
+                                    name="user_defined_val16" ng-model="System.Single.user_defined_val16" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input16 != 'N'">
+                            <label for="user_defined_rep16" class="col-md-6">On Report 16</label>
+                            <div class="col-md-6">
+                                <input type="checkbox" id="user_defined_rep16" class="iswitch-lg iswitch-danger"
+                                    name="user_defined_rep16" ng-model="System.Single.user_defined_rep16"
+                                    ng-true-value="'Yes'" ng-false-value="'No'" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-border well well-sm" ng-if="System.Single.user_defined_input16 != 'N' || System.Single.user_defined_input17 !== 'N'">
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input16 != 'N'">
+                            <label for="user_defined_input17" class="col-md-6">Input 17</label>
+                            <div class="col-md-6">
+                                <select name="user_defined_input17" id="user_defined_input17" class="form-control"
+                                    ng-model="System.Single.user_defined_input17"
+                                    ng-options="option.value as option.text for option in System.OptionTypes"></select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input17 != 'N'">
+                            <label for="user_defined_name17" class="col-md-6">Name 17</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_name17" class="form-control"
+                                    name="user_defined_name17" ng-model="System.Single.user_defined_name17" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12"
+                            ng-if="System.Single.user_defined_input17 != 'N' && (System.Single.user_defined_input17 == 'SO' || System.Single.user_defined_input17 == 'SC')">
+                            <label for="user_defined_val17" class="col-md-6">Values 17</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_val17" class="form-control"
+                                    name="user_defined_val17" ng-model="System.Single.user_defined_val17" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input17 != 'N'">
+                            <label for="user_defined_rep17" class="col-md-6">On Report 17</label>
+                            <div class="col-md-6">
+                                <input type="checkbox" id="user_defined_rep17" class="iswitch-lg iswitch-danger"
+                                    name="user_defined_rep17" ng-model="System.Single.user_defined_rep17"
+                                    ng-true-value="'Yes'" ng-false-value="'No'" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-border" ng-if="System.Single.user_defined_input17 != 'N' || System.Single.user_defined_input18 !== 'N'">
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="user_defined_input18" class="col-md-6">Input 18</label>
+                            <div class="col-md-6">
+                                <select name="user_defined_input18" id="user_defined_input18" class="form-control"
+                                    ng-model="System.Single.user_defined_input18"
+                                    ng-options="option.value as option.text for option in System.OptionTypes"></select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input18 != 'N'">
+                            <label for="user_defined_name18" class="col-md-6">Name 18</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_name18" class="form-control"
+                                    name="user_defined_name18" ng-model="System.Single.user_defined_name18" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12"
+                            ng-if="System.Single.user_defined_input18 != 'N' && (System.Single.user_defined_input18 == 'SO' || System.Single.user_defined_input18 == 'SC')">
+                            <label for="user_defined_val18" class="col-md-6">Values 18</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_val18" class="form-control"
+                                    name="user_defined_val18" ng-model="System.Single.user_defined_val18" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input18 != 'N'">
+                            <label for="user_defined_rep18" class="col-md-6">On Report 18</label>
+                            <div class="col-md-6">
+                                <input type="checkbox" id="user_defined_rep18" class="iswitch-lg iswitch-danger"
+                                    name="user_defined_rep18" ng-model="System.Single.user_defined_rep18"
+                                    ng-true-value="'Yes'" ng-false-value="'No'" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-border" ng-if="System.Single.user_defined_input18 != 'N' || System.Single.user_defined_input19 !== 'N'">
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="user_defined_input19" class="col-md-6">Input 19</label>
+                            <div class="col-md-6">
+                                <select name="user_defined_input19" id="user_defined_input19" class="form-control"
+                                    ng-model="System.Single.user_defined_input19"
+                                    ng-options="option.value as option.text for option in System.OptionTypes"></select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input19 != 'N'">
+                            <label for="user_defined_name19" class="col-md-6">Name 19</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_name19" class="form-control"
+                                    name="user_defined_name19" ng-model="System.Single.user_defined_name19" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12"
+                            ng-if="System.Single.user_defined_input19 != 'N' && (System.Single.user_defined_input19 == 'SO' || System.Single.user_defined_input19 == 'SC')">
+                            <label for="user_defined_val19" class="col-md-6">Values 19</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_val19" class="form-control"
+                                    name="user_defined_val19" ng-model="System.Single.user_defined_val19" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input19 != 'N'">
+                            <label for="user_defined_rep19" class="col-md-6">On Report 19</label>
+                            <div class="col-md-6">
+                                <input type="checkbox" id="user_defined_rep19" class="iswitch-lg iswitch-danger"
+                                    name="user_defined_rep19" ng-model="System.Single.user_defined_rep19"
+                                    ng-true-value="'Yes'" ng-false-value="'No'" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-border well well-sm" ng-if="System.Single.user_defined_input19 != 'N' || System.Single.user_defined_input20 !== 'N'">
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="user_defined_input20" class="col-md-6">Input 20</label>
+                            <div class="col-md-6">
+                                <select name="user_defined_input20" id="user_defined_input20" class="form-control"
+                                    ng-model="System.Single.user_defined_input20"
+                                    ng-options="option.value as option.text for option in System.OptionTypes"></select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input20 != 'N'">
+                            <label for="user_defined_name20" class="col-md-6">Name 20</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_name20" class="form-control"
+                                    name="user_defined_name20" ng-model="System.Single.user_defined_name20" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12"
+                            ng-if="System.Single.user_defined_input20 != 'N' && (System.Single.user_defined_input20 == 'SO' || System.Single.user_defined_input20 == 'SC')">
+                            <label for="user_defined_val20" class="col-md-6">Values 20</label>
+                            <div class="col-md-6"><input type="text" id="user_defined_val20" class="form-control"
+                                    name="user_defined_val20" ng-model="System.Single.user_defined_val20" /></div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.user_defined_input20 != 'N'">
+                            <label for="user_defined_rep20" class="col-md-6">On Report 20</label>
+                            <div class="col-md-6">
+                                <input type="checkbox" id="user_defined_rep20" class="iswitch-lg iswitch-danger"
+                                    name="user_defined_rep20" ng-model="System.Single.user_defined_rep20"
+                                    ng-true-value="'Yes'" ng-false-value="'No'" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-border">
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="export_AS400" class="col-md-6">Export AS400</label>
+                            <div class="col-md-6">
+                                <input type="text" id="export_AS400" class="form-control" name="export_AS400"
+                                    ng-model="System.Single.export_AS400" />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="moisture_deduction_level" class="col-md-6">Moisture Deduction Level</label>
+                            <div class="col-md-6">
+                                <input type="text" id="moisture_deduction_level" class="form-control"
+                                    name="moisture_deduction_level" ng-model="System.Single.moisture_deduction_level" />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="prefix" class="col-md-6">Ticket Number Prefix</label>
+                            <div class="col-md-6">
+                                <input type="text" id="prefix" class="form-control" name="prefix"
+                                    ng-model="System.Single.prefix" />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="silo_verification" class="col-md-6">Silo Verification</label>
+                            <div class="col-md-6">
+                                <input type="checkbox" id="silo_verification" class="iswitch-lg iswitch-danger"
+                                    name="silo_verification" ng-model="System.Single.silo_verification"
+                                    ng-true-value="'Yes'" ng-false-value="'No'" />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="use_cameras" class="col-md-6">Use Cameras</label>
+                            <div class="col-md-6">
+                                <input type="checkbox" id="use_cameras" class="iswitch-lg iswitch-danger"
+                                    name="use_cameras" ng-model="System.Single.use_cameras" ng-true-value="'Yes'"
+                                    ng-false-value="'No'" />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.use_cameras">
+                            <label for="display_cameras" class="col-md-6">Display Cameras</label>
+                            <div class="col-md-6">
+                                <input type="checkbox" id="display_cameras" class="iswitch-lg iswitch-danger"
+                                    name="display_cameras" ng-model="System.Single.display_cameras"
+                                    ng-true-value="'Yes'" ng-false-value="'No'" />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.use_cameras">
+                            <label for="print_cameras_on_ticket" class="col-md-6">Print Cameras</label>
+                            <div class="col-md-6">
+                                <input type="checkbox" id="print_cameras_on_ticket" class="iswitch-lg iswitch-danger"
+                                    name="print_cameras_on_ticket" ng-model="System.Single.print_cameras_on_ticket"
+                                    ng-true-value="'Yes'" ng-false-value="'No'" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-border well">
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="ticket_header" class="col-md-6">Display Header</label>
+                            <div class="col-md-6">
+                                <input type="checkbox" id="ticket_header" class="iswitch-lg iswitch-danger"
+                                    name="ticket_header" ng-model="System.Single.ticket_header" ng-true-value="'Yes'"
+                                    ng-false-value="'No'" />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.ticket_header == 'Yes'">
+                            <label for="display_custom_header_img" class="col-md-6">Header Image</label>
+                            <div class="col-md-6">
+                                <img ng-if="System.Single.display_custom_header_img" ng-src="data:image/png;base64,{{System.Single.display_custom_header_img}}" class="img-thumbnail" alt="Responsive image">
+                                <input type="file" nv-file-select="" uploader="headerUploader" />
+                                <button type="button" class="btn btn-default btn-xs" ng-if="System.Single.display_custom_header_img" data-ng-click="System.removeTicketHeaderImage()">
+                                    Remove Header Image
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-border well">
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="ticket_header" class="col-md-6">Display Footer</label>
+                            <div class="col-md-6">
+                                <input type="checkbox" id="ticket_footer" class="iswitch-lg iswitch-danger"
+                                    name="ticket_footer" ng-model="System.Single.ticket_footer" ng-true-value="'Yes'"
+                                    ng-false-value="'No'" />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12" ng-if="System.Single.ticket_footer == 'Yes'">
+                            <label for="display_custom_footer_img" class="col-md-6">Footer Image</label>
+                            <div class="col-md-6">
+                                <img ng-if="System.Single.display_custom_footer_img" ng-src="data:image/png;base64,{{System.Single.display_custom_footer_img}}" class="img-thumbnail" alt="Responsive image">
+                                <input type="file" nv-file-select="" uploader="footerUploader" />
+                                <button type="button" class="btn btn-default btn-xs" ng-if="System.Single.display_custom_footer_img" data-ng-click="System.removeTicketFooterImage()">
+                                    Remove Footer Image
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-border">
+                        <div class="col-md-6">
+                            <button class="btn btn-danger" ng-click="System.save(Single)">Save</button>
+                        </div>
+                        <div class="col-md-6">
+                            <button class="btn btn-black pull-right" ng-click="System.cancel()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" ng-hide="System.FormDisplay">
+                    <div class="col-sm-12">
+                        <table datatable="ng" class="table table-striped table-bordered" ng-if="System.hasData">
+                            <thead>
+                                <tr>
+                                    <th>Weighing Name</th>
+                                    <th>Company</th>
+                                    <th>Updated At</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr data-ng-repeat="data in System.formData">
+                                    <td data-ng-bind="data.name"></td>
+                                    <td data-ng-bind="data.company.name"></td>
+                                    <td data-ng-bind="data.updated_at"></td>
+                                    <td>
+                                        <a href="javascript:void(0)" data-ng-click="System.editForm(data)"
+                                            class="btn btn-black btn-sm btn-icon icon-left">Edit </a>
+                                        <a href="javascript:void(0)" data-ng-click="System.delete(data)"
+                                            class="btn btn-danger btn-sm btn-icon icon-left">Delete</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

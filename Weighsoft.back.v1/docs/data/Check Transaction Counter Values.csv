@@ -1,0 +1,9 @@
+company_id,site_id,settings_id,current_id,unique_transactions,max_transaction_number
+12,20,16,1,0,NULL
+12,20,17,283,0,NULL
+12,20,18,62831,0,NULL
+12,20,20,11948,8450,11947
+12,20,21,1267,922,1266
+12,20,22,8046,6954,8045
+12,20,23,8,7,7
+12,20,24,7,6,6

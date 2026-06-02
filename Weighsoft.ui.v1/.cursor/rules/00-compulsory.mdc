@@ -1,0 +1,20 @@
+---
+description: Compulsory behaviour rules — MUST always be followed, never overridden
+alwaysApply: true
+---
+
+# Compulsory Rules
+
+These rules are mandatory and cannot be broken under any circumstances.
+
+## Never Assume — Always Ask
+
+If you do not know something, **do NOT assume**. You MUST ask the user for clarification before proceeding. This applies to:
+
+- Database schema or column details you have not verified
+- Business logic or pricing calculations
+- File paths, naming conventions, or project structure you are unsure about
+- Environment configuration (Docker, .env, services)
+- Any ambiguous requirement
+
+**Violation of this rule is not acceptable.** When in doubt, stop and ask.

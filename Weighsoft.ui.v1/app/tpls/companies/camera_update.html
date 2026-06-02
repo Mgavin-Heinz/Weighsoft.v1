@@ -1,0 +1,103 @@
+<page-title ng-if="layoutOptions.pageTitles" title="Manage Company"></page-title>
+
+<div class="row down-position">
+	<div class="col-md-12">
+		<div class="panel panel-color panel-danger">
+			<div class="panel-heading">
+				Camera Create
+			</div>
+
+			<br/>
+			<div class="panel-body">
+				<form role="form" class="row form-horizontal" role="form">
+					<div class="col-md-2"></div>
+					<div class="form-group col-md-8">
+						<div class="form-group">
+							<label class="col-sm-2 control-label left-label" for="field-1">Weighbridge:</label>
+
+							<div class="col-sm-6">
+								<select class="form-control" ng-model="camera_info.weighbridge_type">
+									<option>{{camera_info.weighbridge_type}}</option>
+									<option ng-repeat="weighbridge_info in weighbridge_infos" value="{{weighbridge_info.header}}">{{weighbridge_info.header}}</option>
+								</select>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label left-label" for="field-1">Name:</label>
+
+							<div class="col-sm-6">
+								<input type="text" class="form-control" id="field-1" ng-model="camera_info.name">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label left-label" for="field-1">Perform Numberplate Recognition:</label>
+							<div class="col-sm-6">
+								<div class="btn-group" data-toggle="buttons">
+									<label class="btn btn-default" ng-class="{'active btn-success': camera_info.pn_recog === 'true'}">
+										<input type="radio" ng-model="camera_info.pn_recog" value="true"> Yes
+									</label>
+									<label class="btn btn-default" ng-class="{'active': camera_info.pn_recog === 'false'}">
+										<input type="radio" ng-model="camera_info.pn_recog" value="false"> No
+									</label>
+								</div>
+								<small class="text-muted" ng-if="camera_info.pn_recog === 'true'">NPR is active</small>
+								<small class="text-muted" ng-if="camera_info.pn_recog === 'false'">NPR is inactive</small>
+							</div>
+						</div>	
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label left-label" for="field-1">IP Address:</label>
+
+							<div class="col-sm-6">
+ 								<input type="text" ng-model='camera_info.ip_address' id="static_ip" name="static_ip" placeholder="Static IP" ng-model="device.static_ip" ng-pattern='/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/' ng-model-options="{ updateOn: 'blur' }">
+							</div>	
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label left-label" for="field-1">Camera active:</label>
+
+							<div class="col-sm-6">
+								<div class="btn-group" data-toggle="buttons">
+									<label class="btn btn-default" ng-class="{'active btn-success': camera_info.camera_active === 'true'}">
+										<input type="radio" ng-model="camera_info.camera_active" value="true"> Yes
+									</label>
+									<label class="btn btn-default" ng-class="{'active': camera_info.camera_active === 'false'}">
+										<input type="radio" ng-model="camera_info.camera_active" value="false"> No
+									</label>
+								</div>
+								<small class="text-muted" ng-if="camera_info.camera_active === 'true'">Camera is active</small>
+								<small class="text-muted" ng-if="camera_info.camera_active === 'false'">Camera is inactive</small>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label left-label" for="field-1">Print Camera:</label>
+
+							<div class="col-sm-6">
+								<div class="btn-group" data-toggle="buttons">
+									<label class="btn btn-default" ng-class="{'active btn-success': camera_info.print_camera === 'true'}">
+										<input type="radio" ng-model="camera_info.print_camera" value="true"> Yes
+									</label>
+									<label class="btn btn-default" ng-class="{'active': camera_info.print_camera === 'false'}">
+										<input type="radio" ng-model="camera_info.print_camera" value="false"> No
+									</label>
+								</div>
+								<small class="text-muted" ng-if="camera_info.print_camera === 'true'">Camera will print on ticket</small>
+								<small class="text-muted" ng-if="camera_info.print_camera === 'false'">Camera will not print on ticket</small>
+							</div>
+						</div>	
+
+						<br/><br/>
+						<div class="form-group col-md-12 left-btn">
+							<button class="btn btn-blue" ng-click="CameraUpdate();">Save</button>
+							<button class="btn btn-blue cancel" ng-click="CameraUpdateCancel()">Cancel</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+

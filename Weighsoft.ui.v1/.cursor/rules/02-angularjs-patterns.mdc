@@ -1,0 +1,205 @@
+---
+description: AngularJS patterns, controller conventions, and coding standards
+globs: ["**/*.js", "app/js/**"]
+alwaysApply: false
+---
+
+# AngularJS Patterns and Conventions
+
+## Controller Patterns
+
+### Controller as Syntax (REQUIRED)
+
+**ALWAYS** use `controller as` syntax with `vm` (ViewModel) pattern:
+
+```javascript
+// ✅ CORRECT
+angular
+  .module('xenon.controllers')
+  .controller('CompaniesCtrl', function($scope, $rootScope, $state, Restangular) {
+    const vm = this;  // ALWAYS use 'vm' for ViewModel
+    $rootScope.Start();
+    
+    vm.baseData = Restangular.all('company');
+    vm.isEditing = false;
+    
+    vm.showAddForm = function() {
+      vm.isEditing = true;
+      vm.companyInfo = {};
+    };
+    
+    vm.initialize = function() {
+      loadData();
+    };
+  });
+
+// ❌ WRONG - Don't use $scope for data
+.controller('BadCtrl', function($scope) {
+  $scope.data = {};  // WRONG
+  $scope.loadData = function() {};  // WRONG
+});
+```
+
+### Controller Naming
+
+- Controllers end with `Ctrl`: `CompaniesCtrl`, `WeighingCtrl`, `UserCtrl`
+- Use PascalCase for controller names
+- Match controller name to route/state name when possible
+
+### Controller Structure Template
+
+```javascript
+'use strict';
+angular
+  .module('xenon.controllers')
+  .controller('FeatureCtrl', function($scope, $rootScope, $state, Restangular, /* other deps */) {
+    $rootScope.Start();  // Show loading overlay
+    const vm = this;
+    const routeName = 'feature';  // API route name
+    
+    // Initialize Restangular base
+    vm.baseData = Restangular.all(routeName);
+    
+    // View state
+    vm.isEditing = false;
+    vm.data = {};
+    vm.list = [];
+    
+    // Private functions
+    function loadData() {
+      $rootScope.Start();
+      vm.baseData.getList().then(function(data) {
+        vm.list = data;
+        $rootScope.Loaded();
+      }, function(response) {
+        $rootScope.Error(response);
+      });
+    }
+    
+    // Public functions (exposed on vm)
+    vm.showAddForm = function() {
+      vm.isEditing = true;
+      vm.data = {};
+    };
+    
+    vm.saveForm = function(formData) {
+      if (!formData.$valid) return;
+      
+      $rootScope.Start();
+      var promise = typeof vm.data.id === 'undefined' 
+        ? vm.baseData.post(vm.data)
+        : vm.data.save();
+        
+      promise.then(function() {
+        vm.isEditing = false;
+        loadData();
+      }, function(response) {
+        $rootScope.Error(response);
+      });
+    };
+    
+    vm.deleteItem = function(item) {
+      if (!confirm('Are you sure?')) return;
+      $rootScope.Start();
+      Restangular.one(routeName, item.id).get().then(function(data) {
+        data.remove().then(function() {
+          loadData();
+        }, function(response) {
+          $rootScope.Error(response);
+        });
+      });
+    };
+    
+    vm.cancel = function() {
+      vm.isEditing = false;
+      $state.go('app.feature');
+    };
+    
+    vm.initialize = function() {
+      loadData();
+    };
+  });
+```
+
+## Dependency Injection
+
+**ALWAYS** use array notation for dependency injection in production code:
+
+```javascript
+// ✅ CORRECT - Array notation (minification-safe)
+.controller('MyCtrl', ['$scope', '$state', 'Restangular', function($scope, $state, Restangular) {
+  // ...
+}]);
+
+// ⚠️ ACCEPTABLE - Function notation (only if not minified)
+// This codebase uses function notation, but be aware of minification issues
+.controller('MyCtrl', function($scope, $state, Restangular) {
+  // ...
+});
+```
+
+## Scope Usage
+
+- **DO** use `$rootScope` for:
+  - `$rootScope.Start()` - Show loading overlay
+  - `$rootScope.Loaded()` - Hide loading overlay
+  - `$rootScope.Error(response)` - Show error notification
+  - `$rootScope.Message(message, type)` - Show success/info notification
+  - Global state: `$rootScope.authenticated`, `$rootScope.token`
+  
+- **DO NOT** use `$scope` for data binding - use `vm` instead
+- **DO** use `$scope` only for:
+  - `$scope.$watch()` if absolutely necessary
+  - Event listeners: `$scope.$on()`
+  - Form validation: `formData.$valid`, `formData.$error`
+
+## Loading States
+
+**ALWAYS** use the standard loading pattern:
+
+```javascript
+// Start loading
+$rootScope.Start();
+
+// On success
+$rootScope.Loaded();
+
+// On error
+$rootScope.Error(response);
+```
+
+## Error Handling
+
+**ALWAYS** handle errors in Restangular promises:
+
+```javascript
+vm.baseData.getList().then(
+  function(successData) {
+    vm.list = successData;
+    $rootScope.Loaded();
+  },
+  function(errorResponse) {
+    $rootScope.Error(errorResponse);  // Shows toastr error
+  }
+);
+```
+
+## Form Validation
+
+Use Angular form validation:
+
+```javascript
+vm.saveForm = function(formData) {
+  if (!formData.$valid) {
+    return;  // Form validation will show errors
+  }
+  // Proceed with save
+};
+```
+
+## Common Patterns to Follow
+
+1. **Initialize pattern**: Always have an `initialize()` or `loadData()` function
+2. **CRUD operations**: Follow the pattern in the template above
+3. **State management**: Use `$state.go()` for navigation, never `window.location`
+4. **Data loading**: Always show/hide loading overlay with `$rootScope.Start()` / `$rootScope.Loaded()`

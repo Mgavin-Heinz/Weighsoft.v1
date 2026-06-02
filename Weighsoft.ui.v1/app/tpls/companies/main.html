@@ -1,0 +1,39 @@
+<page-title ng-if="layoutOptions.pageTitles" title="Companies"></page-title>
+
+<div class="row down-position">
+
+	<div class="col-md-10">
+		<button class="btn btn-primary btn-lg" ng-click="CreateCompany();">New Company</button>
+
+		<br/><br/>
+		<div class="panel panel-color panel-danger">
+			<div class="panel-body">
+				<table class="table table-bordered table-striped" id="example-2">
+					<thead>
+						<tr>
+							<th>Code</th>
+							<th>Name</th>
+							<th>Active</th>
+							<th>Manage</th>
+						</tr>
+					</thead>
+					
+					<tbody class="middle-align">
+					
+						<tr ng-repeat="companies_info in companies_infos">
+							<td>{{companies_info.code}}</td>
+							<td>{{companies_info.registered_name}}</td>
+							<td><div class="label label-secondary">Active</div></td>
+							<td>
+								<button ng-click="ManageCompany(companies_info.id);" class="btn btn-secondary btn-sm btn-icon icon-left">
+									Manage
+								</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				
+			</div>
+		</div>
+	</div>
+</div>

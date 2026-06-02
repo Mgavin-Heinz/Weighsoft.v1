@@ -1,0 +1,299 @@
+---
+description: Laravel controller patterns, conventions, and coding standards
+globs: ["app/Http/Controllers/**/*.php"]
+alwaysApply: false
+---
+
+# Controller Patterns and Conventions
+
+## Controller Base Classes
+
+### Authenticated Controllers
+
+**ALL API controllers** (except AuthController) MUST extend `JwtAuthController`:
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Company;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+
+class CompanyController extends JwtAuthController
+{
+    private Company $model;
+
+    public function __construct() {
+        parent::__construct();
+        $this->model = new Company();
+    }
+
+    // Controller methods...
+}
+```
+
+### Available Properties
+
+When extending `JwtAuthController`, you automatically have:
+- `$this->user` - The authenticated user (from JWT token)
+- `$this->error($message, $code)` - Helper for error responses
+
+## Standard CRUD Controller Pattern
+
+### Index (List) Method
+
+```php
+public function index(): JsonResponse
+{
+    $companyId = $this->user->company_id;
+    
+    // Role-based filtering (role_id 1 and 2 are admins)
+    if (!$companyId || ($this->user->role_id == 1) || ($this->user->role_id == 2)) {
+        $companies = $this->model::all();
+    } else {
+        $companies = [Company::find($companyId)];
+    }
+    
+    return response()->json($companies);
+}
+```
+
+### Store (Create) Method
+
+```php
+public function store(Request $request): JsonResponse
+{
+    $item = $request->all();
+    
+    // Validation
+    $validator = Validator::make($item, [
+        'code' => 'required',
+        'registered_name' => 'required'
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json($validator->errors(), 422);
+    }
+    
+    // Set defaults for optional fields
+    if (!isset($item['tel'])) {
+        $item['tel'] = '';
+    }
+    // ... more defaults
+    
+    // Create
+    $company = $this->model->create($item);
+    return response()->json($company);
+}
+```
+
+### Show (Get Single) Method
+
+```php
+public function show($id): JsonResponse
+{
+    $company = $this->model->find($id);
+    
+    if (!$company) {
+        return response()->json([
+            'message' => 'Invalid company ID.',
+        ], 404);
+    }
+    
+    // Load relationships
+    $sites = Site::where('company_id', $company->id)->get();
+    $company->site = $sites;
+    
+    return response()->json($company);
+}
+```
+
+### Update Method
+
+```php
+public function update(Request $request, $id): JsonResponse
+{
+    $item = $request->all();
+    
+    // Validation
+    $validator = Validator::make($item, [
+        'code' => 'required',
+        'registered_name' => 'required'
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json($validator->errors(), 422);
+    }
+    
+    $company = $this->model->find($id);
+    if (!$company) {
+        return response()->json(['status' => false, 'message' => 'Company ID not found'], 404);
+    }
+    
+    // Set defaults
+    $item['tel'] = $item['tel'] ?: '';
+    // ... more defaults
+    
+    $company->update($item);
+    return response()->json($company);
+}
+```
+
+### Destroy (Delete) Method
+
+```php
+public function destroy($id): JsonResponse
+{
+    $item = $this->model->find($id);
+
+    if (!$item) {
+        return response()->json(['status' => false, 'message' => 'Company ID not found'], 404);
+    }
+
+    $item->delete();  // Soft delete if model uses SoftDeletes
+    return response()->json(['status' => true]);
+}
+```
+
+## Controller with Services
+
+For complex operations, use Services:
+
+```php
+class WeighingHeadersController extends JwtAuthController
+{
+    private weighingHeaders $model;
+    private WeighingHeaderService $headerService;
+
+    public function __construct(
+        WeighingHeaderService $headerService
+    ) {
+        parent::__construct();
+        $this->model = new weighingHeaders();
+        $this->headerService = $headerService;
+    }
+
+    public function index(): JsonResponse
+    {
+        // Delegate to service
+        $weighingHeaders = $this->headerService->getWeighingHeaders(
+            $companyId, $siteId, $workstationId, $status, 
+            $pageStart, $pageSize, $orderByCol, $orderByDir, $searchTerm
+        );
+        
+        return response()->json($weighingHeaders[0]);
+    }
+}
+```
+
+## Response Patterns
+
+### Success Responses
+
+```php
+// Simple data
+return response()->json($data);
+
+// With status
+return response()->json($data, 200);
+
+// Status object
+return response()->json(['status' => true, 'data' => $data]);
+```
+
+### Error Responses
+
+```php
+// Validation errors
+return response()->json($validator->errors(), 422);
+
+// Not found
+return response()->json(['message' => 'Resource not found'], 404);
+
+// Custom error
+return response()->json(['status' => false, 'message' => 'Error message'], 400);
+
+// Using helper method
+return $this->error('Error message', 400);
+```
+
+## Request Data Handling
+
+### Getting Request Data
+
+```php
+// All data
+$data = $request->all();
+
+// Specific field
+$id = $request->input('id');
+
+// With default
+$pageSize = $request->input('pageSize', 500);
+
+// From GET parameters
+$companyId = $_GET['company_id'] ?? null;
+```
+
+### Setting Defaults
+
+```php
+// Check and set defaults
+if (!isset($item['field'])) {
+    $item['field'] = '';
+}
+
+// Or use null coalescing
+$item['field'] = $item['field'] ?? '';
+$item['field'] = $item['field'] ?: '';  // Empty string becomes ''
+```
+
+## Database Transactions
+
+Use transactions for multi-step operations:
+
+```php
+use Illuminate\Support\Facades\DB;
+
+$result = DB::transaction(function () use ($data) {
+    // Multiple database operations
+    $header = $this->headerService->insertWeighingHeader($data);
+    $transaction = $this->transactionService->createWeighingTransaction($data);
+    
+    return $header;
+}, 4);  // Retry 4 times on deadlock
+
+return response()->json($result);
+```
+
+## Logging
+
+Use Laravel's Log facade:
+
+```php
+use Illuminate\Support\Facades\Log;
+
+// Info logging
+Log::info('Message', ['data' => $data]);
+Log::info(print_r($data, true));
+
+// Error logging
+Log::error($e->getMessage());
+Log::error("{$e->getMessage()}\n{$e->getTraceAsString()}");
+```
+
+## Critical Rules
+
+1. **ALWAYS** extend `JwtAuthController` for authenticated endpoints
+2. **ALWAYS** call `parent::__construct()` in constructor
+3. **ALWAYS** validate request data before processing
+4. **ALWAYS** return proper HTTP status codes
+5. **ALWAYS** handle not found cases (404)
+6. **ALWAYS** use Services for complex business logic
+7. **ALWAYS** use database transactions for multi-step operations
+8. **DO** use `response()->json()` for JSON responses
+9. **DO** set defaults for optional fields
+10. **DO** use try-catch for error handling when appropriate

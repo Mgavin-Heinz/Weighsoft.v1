@@ -1,0 +1,261 @@
+---
+description: Common mistakes, pitfalls to avoid, and critical warnings
+alwaysApply: true
+---
+
+# Common Pitfalls and Critical Warnings
+
+## Framework Confusion
+
+### ⚠️ CRITICAL: This is Laravel 8, NOT Laravel 9+
+
+**NEVER** suggest or implement:
+- Laravel 9+ features or syntax
+- PHP 8.4+ features
+- Breaking changes from Laravel 8
+- Modern PHP attributes (PHP 8.0+)
+- Enum types (unless explicitly approved)
+
+**ALWAYS** use:
+- Laravel 8 patterns and conventions
+- PHP 8.3 compatible code
+- Established patterns in the codebase
+
+## UUID Handling Mistakes
+
+### ❌ WRONG: Direct UUID Comparison
+
+```php
+// ❌ NEVER DO THIS
+$weighingHeader = weighingHeaders::where('id', $id)->first();
+
+// ✅ ALWAYS DO THIS
+$weighingHeader = weighingHeaders::whereRaw("id = UUID_TO_BIN(?, TRUE)", [$id])->first();
+```
+
+### ❌ WRONG: Not Converting UUID in Results
+
+```php
+// ❌ WRONG - UUID not converted
+$weighingHeader = weighingHeaders::whereRaw("id = UUID_TO_BIN(?, TRUE)", [$id])->first();
+
+// ✅ CORRECT - Convert UUID
+$weighingHeader = weighingHeaders::whereRaw("id = UUID_TO_BIN(?, TRUE)", [$id])
+    ->first(["weighingheaders.*", DB::raw("BIN_TO_UUID(id, TRUE) as id2")]);
+
+if (!empty($weighingHeader)) {
+    $weighingHeader['id'] = $weighingHeader['id2'];
+    unset($weighingHeader['id2']);
+}
+```
+
+## Controller Mistakes
+
+### ❌ WRONG: Not Extending JwtAuthController
+
+```php
+// ❌ WRONG
+class CompanyController extends Controller
+{
+    // Missing authentication
+}
+
+// ✅ CORRECT
+class CompanyController extends JwtAuthController
+{
+    public function __construct() {
+        parent::__construct();  // REQUIRED
+        $this->model = new Company();
+    }
+}
+```
+
+### ❌ WRONG: Not Calling parent::__construct()
+
+```php
+// ❌ WRONG
+public function __construct() {
+    $this->model = new Company();
+    // Missing parent::__construct()
+}
+
+// ✅ CORRECT
+public function __construct() {
+    parent::__construct();  // REQUIRED
+    $this->model = new Company();
+}
+```
+
+### ❌ WRONG: Not Validating Requests
+
+```php
+// ❌ WRONG - No validation
+public function store(Request $request): JsonResponse
+{
+    $company = $this->model->create($request->all());
+    return response()->json($company);
+}
+
+// ✅ CORRECT - Always validate
+public function store(Request $request): JsonResponse
+{
+    $validator = Validator::make($request->all(), [
+        'code' => 'required',
+        'registered_name' => 'required'
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json($validator->errors(), 422);
+    }
+    
+    $company = $this->model->create($request->all());
+    return response()->json($company);
+}
+```
+
+## Service Mistakes
+
+### ❌ WRONG: HTTP Concerns in Services
+
+```php
+// ❌ WRONG - Service returning HTTP response
+public function getWeighingHeaders(...): JsonResponse
+{
+    return response()->json($data);
+}
+
+// ✅ CORRECT - Service returns data
+public function getWeighingHeaders(...): array
+{
+    return [$data, $count];
+}
+```
+
+### ❌ WRONG: Request Validation in Services
+
+```php
+// ❌ WRONG - Validation in service
+public function createWeighingHeader(Request $request)
+{
+    $validator = Validator::make($request->all(), [...]);
+    // ...
+}
+
+// ✅ CORRECT - Validation in controller
+public function store(Request $request): JsonResponse
+{
+    $validator = Validator::make($request->all(), [...]);
+    // Then call service
+    $result = $this->headerService->insertWeighingHeader($data);
+}
+```
+
+## Database Mistakes
+
+### ❌ WRONG: Not Using Transactions
+
+```php
+// ❌ WRONG - No transaction
+public function update(Request $request, $id): JsonResponse
+{
+    $header = $this->headerService->updateWeighingHeader($id, $data);
+    $transaction = $this->transactionService->createWeighingTransaction($data);
+    // If second fails, first is already saved - inconsistent state!
+}
+
+// ✅ CORRECT - Use transaction
+public function update(Request $request, $id): JsonResponse
+{
+    $result = DB::transaction(function () use ($id, $data) {
+        $header = $this->headerService->updateWeighingHeader($id, $data);
+        $transaction = $this->transactionService->createWeighingTransaction($data);
+        return $header;
+    });
+    
+    return response()->json($result);
+}
+```
+
+### ❌ WRONG: Not Handling Not Found
+
+```php
+// ❌ WRONG - No not found check
+public function show($id): JsonResponse
+{
+    $company = $this->model->find($id);
+    return response()->json($company);  // Returns null if not found
+}
+
+// ✅ CORRECT - Check and return 404
+public function show($id): JsonResponse
+{
+    $company = $this->model->find($id);
+    if (!$company) {
+        return response()->json(['message' => 'Company not found'], 404);
+    }
+    return response()->json($company);
+}
+```
+
+## Route Mistakes
+
+### ❌ WRONG: Using Deprecated routes.php
+
+```php
+// ❌ WRONG - Using deprecated file
+// In app/Http/routes.php
+Route::resource('company', 'CompanyController');
+
+// ✅ CORRECT - Use routes/api.php
+// In routes/api.php
+Route::resource('company', 'CompanyController');
+```
+
+### ❌ WRONG: Wrong HTTP Method
+
+```php
+// ❌ WRONG - DELETE for create action
+Route::delete('company/create', [CompanyController::class, 'store']);
+
+// ✅ CORRECT - POST for create
+Route::post('company', [CompanyController::class, 'store']);
+// Or use resource route
+Route::resource('company', 'CompanyController');
+```
+
+## Response Mistakes
+
+### ❌ WRONG: Not Returning JSON
+
+```php
+// ❌ WRONG - Returning array
+return $companies;
+
+// ✅ CORRECT - Return JSON response
+return response()->json($companies);
+```
+
+### ❌ WRONG: Wrong Status Codes
+
+```php
+// ❌ WRONG - 200 for error
+return response()->json(['error' => 'Not found'], 200);
+
+// ✅ CORRECT - Proper status code
+return response()->json(['error' => 'Not found'], 404);
+```
+
+## Critical Rules Summary
+
+1. **NEVER** compare UUIDs directly - always use `UUID_TO_BIN()` / `BIN_TO_UUID()`
+2. **ALWAYS** extend `JwtAuthController` for authenticated endpoints
+3. **ALWAYS** call `parent::__construct()` in controller constructor
+4. **ALWAYS** validate request data
+5. **ALWAYS** check for not found and return 404
+6. **ALWAYS** use transactions for multi-step operations
+7. **ALWAYS** return JSON responses with proper status codes
+8. **ALWAYS** use `routes/api.php` for API routes
+9. **DO NOT** put HTTP concerns in services
+10. **DO NOT** put validation in services
+11. **DO NOT** use Laravel 9+ features
+12. **DO NOT** use PHP 8.4+ features

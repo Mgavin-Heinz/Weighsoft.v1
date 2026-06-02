@@ -1,0 +1,60 @@
+<page-title ng-if="layoutOptions.pageTitles" title="Create Company"></page-title>
+
+<div class="row down-position">
+
+	<div class="col-md-12">
+		<div class="panel panel-color panel-danger">
+			<div class="panel-heading">
+				Work Station Create
+			</div>
+
+			<br/>
+			<button class="btn btn-primary left-btn" ng-click="WeighbridgeCreate();">New Weighbridge</button>
+
+			<div class="panel-body">
+				<form role="form" class="row form-horizontal" role="form">
+					<div class="form-group col-md-8">
+						<div class="form-group">
+							<label class="col-sm-3 control-label" for="field-1">Site:</label>
+
+							<div class="col-sm-6">
+								<select class="form-control" ng-model="point_info.site_type">
+									<option ng-repeat="site_info in site_infos" value="{{site_info.site_type}}">{{site_info.site_type}}</option>
+								</select>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label" for="field-1">Work Station:</label>
+
+							<div class="col-sm-6">
+								<input type="text" class="form-control" id="field-1" ng-model="point_info.point_type">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label" for="field-1">Name:</label>
+
+							<div class="col-sm-6">
+								<input type="text" class="form-control" id="field-1" ng-model="point_info.point_name">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label" for="field-1">Active:</label>
+							<div class="col-sm-6">
+								<input type="checkbox" checked class="iswitch iswitch-secondary" ng-model="point_info.point_active" ng-true-value="'true'" ng-false-value="'false'">
+							</div>
+						</div>	
+
+						<div class="form-group col-md-12 left-btn1">
+							<button class="btn btn-blue" ng-click="PointCreate();">Save</button>
+							<button class="btn btn-blue cancel" ng-click="PointCreateCancel()">Cancel</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>						
+

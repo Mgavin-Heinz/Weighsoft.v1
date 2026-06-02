@@ -1,0 +1,60 @@
+<page-title ng-if="layoutOptions.pageTitles" title="Sites"></page-title>
+
+<div class="row down-position">
+
+	<div class="col-md-10">
+		<form role="form" class="form-horizontal row" role="form">
+			<div class="col-md-6">
+				<button class="btn btn-primary btn-lg btn-adjust" ng-click="site_create();">New Site</button>
+			</div>
+		</form>
+		<br/>
+		<div class="panel panel-color panel-danger">
+			<div class="panel-body">
+				<table class="table table-bordered table-striped" id="example-2">
+					<thead>
+						<tr>
+							<th>Site</th>
+							<th>Work Stations</th>
+							<th>Company</th>
+							<th>Active</th>
+							<th>Manage</th>
+						</tr>
+					</thead>
+					
+					<tbody class="middle-align" ng-if="user_info.role=='Admin'">
+						<tr ng-repeat="site_info in site_infos">
+							<td>{{site_info.site_type}}</td>
+							<td><span ng-repeat="point_info in site_info.point">{{point_info.point_type}}   </span></td>
+							<td>{{site_info.company_type}}</td>
+							<td  ng-if="site_info.site_active == 'true'"><div class="label label-secondary">Active</div></td>
+							<td  ng-if="site_info.site_active != 'true'"><div class="label label-purple">InActive</div></td>
+							<td>
+								<button ng-click="SiteUpdate(site_info.id);" class="btn btn-secondary btn-sm btn-icon icon-left">
+									Manage
+								</button>
+							</td>
+						</tr>
+					</tbody>
+
+					<tbody class="middle-align" ng-if="user_info.role!='Admin'">
+						<tr ng-repeat="site_info in site_infos" ng-if="site_info.company_type == user_info.company_type">
+							<td>{{site_info.site_type}}</td>
+							<td><span ng-repeat="point_info in site_info.point">{{point_info.point_type}}   </span></td>
+							<td>{{site_info.company_type}}</td>
+							<td  ng-if="site_info.site_active == 'true'"><div class="label label-secondary">Active</div></td>
+							<td  ng-if="site_info.site_active != 'true'"><div class="label label-purple">InActive</div></td>
+							<td>
+								<button ng-click="SiteUpdate(site_info.id);" class="btn btn-secondary btn-sm btn-icon icon-left">
+									Manage
+								</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				
+			</div>
+		</div>
+		</div>
+	</div>
+</div>

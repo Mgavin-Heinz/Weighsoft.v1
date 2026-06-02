@@ -1,0 +1,175 @@
+<div id="page-wrap">
+    <div id="header">Receipt #{{single.transaction}}</div>
+    <div id="identity">
+        <div id="address">
+            {{reportData.Company.registered_name}}<br />
+            {{reportData.Company.street}}<br />
+            {{reportData.Company.suburb1}}<br />
+            {{reportData.Company.city1}}<br />
+            {{reportData.Company.postal_code1}}<br />
+            Phone: {{reportData.Company.cell || reportData.Company.tel}}<br />
+            VAT No #{{reportData.Company.vat_nr}}
+        </div>
+        <div id="logo"><img ng-if="reportData.Company.display_custom_logo_img" ng-src="data:image/png;base64,{{reportData.Company.display_custom_logo_img}}" width="130" /></div>
+    </div>
+
+    <div style="clear: both"></div>
+
+    <div id="customer">
+        <div id="customer-title">
+            {{invoice.businessPartner.name}}<br />
+            {{invoice.businessPartner.street}}<br />
+            {{invoice.businessPartner.suburb}}<br />
+            {{invoice.businessPartner.city}}<br />
+            {{invoice.businessPartner.postal_code}}<br />
+            VAT No # {{invoice.businessPartner.vat_nr}}
+        </div>
+        <table class="invoice" id="meta">
+            <tr>
+                <td class="meta-head">Invoice #</td>
+                <td>
+                    <div>{{single.transaction}}</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="meta-head">Date</td>
+                <td>
+                    <div id="date">{{todayDate | date:'yyyy-MM-dd'}}</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="meta-head">Amount Due</td>
+                <td>
+                    <div class="due">R {{invoice.amountDue | number : 2}}</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <table id="items">
+        <tr>
+            <th>Item</th>
+            <th>Description</th>
+            <th class="right">Unit Cost</th>
+            <th class="right">Quantity</th>
+            <th class="right">Price</th>
+        </tr>
+
+        <tr class="item-row" ng-repeat="item in invoice.productLines">
+            <td class="item-name">
+                <div>{{item.code}}</div>
+            </td>
+            <td class="description">
+                <div>{{item.desc}}</div>
+            </td>
+            <td>
+                <div class="cost pull-right"><span ng-if="item.type === 'HC' || item.type === 'MC' || item.type === 'PC'">-</span> R {{item.unitPrice | TwoOrFourDigits}}</div>
+            </td>
+            <td>
+                <div class="qty pull-right">
+                    <span>{{item.qty.value | number : 2}}</span>
+                    <span>{{ item.qty.symbol }} </span>
+                </div>
+            </td>
+            <td>
+                <span class="price pull-right"><span ng-if="item.type === 'HC' || item.type === 'MC' || item.type === 'PC'">- </span>R {{item.total | number : 2}}</span>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" class="blank"></td>
+            <td colspan="2" class="total-line">Subtotal</td>
+            <td class="total-value">
+                <div id="subtotal">R {{invoice.subTotal | number : 2}}</div>
+            </td>
+        </tr>
+        <tr ng-if="invoice.vat && invoice.vat > 0">
+            <td colspan="2" class="blank"></td>
+            <td colspan="2" class="total-line">VAT</td>
+            <td class="total-value">
+                <div id="total">R {{invoice.vat | number : 2}}</div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" class="blank"></td>
+            <td colspan="2" class="total-line">Total</td>
+
+            <td class="total-value">
+                <div id="paid">R {{invoice.total | number : 2}}</div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" class="blank"></td>
+            <td colspan="2" class="total-line balance">Balance Due</td>
+            <td class="total-value balance">
+                <div class="due">R {{invoice.balanceDue | number : 2}}</div>
+            </td>
+        </tr>
+    </table>
+    <br />
+    <div class="row">
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input1 != 'N'">{{setting.user_defined_name1}}: {{single.Custom1}}</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input2 != 'N'">{{setting.user_defined_name2}}: {{single.Custom2}}</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input3 != 'N'">{{setting.user_defined_name3}}: {{single.Custom3}}</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input4 != 'N'">{{setting.user_defined_name4}}: {{single.Custom4}}</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input5 != 'N'">{{setting.user_defined_name5}}: {{single.Custom5}}</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input6 != 'N'">{{setting.user_defined_name6}}: {{single.Custom6}}</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input7 != 'N'">{{setting.user_defined_name7}}: {{single.Custom7}}</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input8 != 'N'">{{setting.user_defined_name8}}: {{single.Custom8}}</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input9 != 'N'">{{setting.user_defined_name9}}: {{single.Custom9}}</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input10 != 'N'">{{setting.user_defined_name10}}: {{single.Custom10}}</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input11 != 'N'">{{setting.user_defined_name11}}: {{single.Custom11}}</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input12 != 'N'">{{setting.user_defined_name12}}: {{single.Custom12}}</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input13 != 'N'">{{setting.user_defined_name13}}: {{single.Custom13}}</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input14 != 'N'">{{setting.user_defined_name14}}: {{single.Custom14}}</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input15 != 'N'">{{setting.user_defined_name15}}: {{single.Custom15}}</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input16 != 'N'">{{setting.user_defined_name16}}: {{single.Custom16}}</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input17 != 'N'">{{setting.user_defined_name17}}: {{single.Custom17}}</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input18 != 'N'">{{setting.user_defined_name18}}: {{single.Custom18}}</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input19 != 'N'">{{setting.user_defined_name19}}: {{single.Custom19}}</p>
+        </div>
+        <div class="col-sm-6">
+            <p ng-if="setting.user_defined_input20 != 'N'">{{setting.user_defined_name20}}: {{single.Custom20}}</p>
+        </div>
+    </div>
+    <br />
+    <div id="terms">
+        <h5>Terms</h5>
+        <div>{{reportData.Company.terms}}</div>
+    </div>
+</div>

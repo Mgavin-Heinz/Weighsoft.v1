@@ -1,0 +1,30 @@
+FROM weighsoftsa/weighsoft-php-nginx-base:dev
+
+# Composer falls back to "source" installs when GitHub zip downloads fail.
+# Ensure git is available in the image so those installs can proceed.
+RUN apk add --no-cache git ca-certificates
+
+# install application dependencies
+WORKDIR /var/www/app
+COPY ./ ./
+RUN composer install --no-scripts --no-autoloader --ansi --no-interaction
+RUN composer update --no-scripts
+#RUN ls -al /var/www/app
+RUN composer dump-autoload -o
+RUN chown -R :www-data /var/www/app \
+    && chmod -R 775 /var/www/app/storage /var/www/app/bootstrap/cache
+COPY ./docker-build/cronjobs /tmp/cronjobs
+RUN dos2unix /tmp/cronjobs
+RUN touch /var/log/cron.log
+RUN (crontab -l ; cat /tmp/cronjobs)| crontab -
+EXPOSE 80
+COPY ./docker-build/supervisord.conf /etc/supervisord.conf
+# set application environment variables
+# ENV APP_NAME="Weighsoft Testing" \
+#     APP_ENV=test \
+#     APP_DEBUG=true
+ENV APP_NAME="Weighsoft" \
+    APP_ENV=production \
+    APP_DEBUG=false
+# run supervisor
+CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]

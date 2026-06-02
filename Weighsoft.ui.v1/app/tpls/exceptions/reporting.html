@@ -1,0 +1,307 @@
+<page-title ng-if="layoutOptions.pageTitles" title="Reporting Centre" description=""
+    data-ng-init="System.initialize()"></page-title>
+<div class="hidden-print">
+    <div class="panel panel-color panel-danger">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-md-4 col-sm-6 col-xs-12">
+                    <h2>Reporting Centre</h2>
+                </div>
+                <div class="col-md-4 col-sm-6 col-xs-12">
+                    <div>
+                        <label for="company_id" class="control-label">Company</label>
+                        <select name="company_id" id="company_id" class="form-control"
+                            ng-model="System.HeaderSingle.company_id"
+                            ng-options="option.value as option.name for option in System.Companies"
+                            ng-change="System.changeCompanyID()"></select>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 col-xs-12">
+                    <button type="button" data-ng-click="System.showAddForm()" ng-hide="System.isEditing"
+                        class="btn btn-black pull-right">Add New</button>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="row" ng-if="System.Status == 'List'">
+                <div class="col-sm-12">
+                    <table datatable="ng" class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-ng-repeat="data in System.Reports">
+                                <td data-ng-bind="data.name"></td>
+                                <td data-ng-bind="data.description"></td>
+                                <td>
+                                    <a href="javascript:void(0)" data-ng-click="System.editForm(data)"
+                                        class="btn btn-black btn-sm btn-icon icon-left">Edit </a>
+                                    <a href="javascript:void(0)" data-ng-click="System.runForm(data)"
+                                        class="btn btn-default btn-sm btn-icon icon-left">Run </a>
+                                    <a href="javascript:void(0)" data-ng-click="System.delete(data)"
+                                        class="btn btn-danger btn-sm btn-icon icon-left">Delete</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row" ng-if="System.Status == 'Form'">
+                <div class="col-sm-12">
+                    <h3>Report Name</h3>
+                    <input type="text" id="name" class="form-control" name="name" ng-model="System.Single.name" />
+                </div>
+                <div class="col-sm-12">
+                    <h3>Report Description</h3>
+                    <input type="text" id="description" class="form-control" name="description"
+                        ng-model="System.Single.description" />
+                </div>
+                <div class="col-sm-12">
+                    <h3>Report Type</h3>
+                    <ui-select ng-model="System.Single.jsondata.ReportType" theme="bootstrap" style="width: 800px"
+                        ng-change="System.SelectOnChange('ReportType')" title="Add Report Type">
+                        <ui-select-match placeholder="Select Report Type...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="report in System.Lists.ReportTypeList | filter: $select.search">
+                            <span ng-bind-html="report.name | highlight: $select.search"></span>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-sm-12" ng-if="System.Selectors.Groupings">
+                    <h3>Groupings</h3>
+                    <ui-select multiple ng-model="System.Single.jsondata.Groupings" theme="bootstrap"
+                        close-on-select="false" ng-change="System.SelectOnChange('Groupings')" style="width: 800px"
+                        title="Add Groupings">
+                        <ui-select-match placeholder="Add Groupings...">{{$item.name}}</ui-select-match>
+                        <ui-select-choices
+                            repeat="grouping.name as grouping in System.Lists.GroupingsList | propsFilter: {name: $select.search, value: $select.search}">
+                            <div ng-bind-html="grouping.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-sm-12" ng-if="System.Selectors.Filters">
+                    <h3>Filters</h3>
+                    <ui-select multiple ng-model="System.Single.jsondata.Filters" theme="bootstrap"
+                        close-on-select="false" ng-change="System.SelectOnChange('Filters')" style="width: 800px"
+                        title="Add Filters">
+                        <ui-select-match placeholder="Add Filters...">{{$item.name}}</ui-select-match>
+                        <ui-select-choices
+                            repeat="filter.name as filter in System.Lists.FiltersList | propsFilter: {name: $select.search, value: $select.search}">
+                            <div ng-bind-html="filter.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-sm-12" ng-if="System.Selectors.Columns">
+                    <h3>Columns</h3>
+                    <ui-select multiple ng-model="System.Single.jsondata.Columns" theme="bootstrap"
+                        close-on-select="false" ng-change="System.SelectOnChange('Columns')" style="width: 800px"
+                        title="Add Columns">
+                        <ui-select-match placeholder="Add Columns...">{{$item.name}}</ui-select-match>
+                        <ui-select-choices
+                            repeat="column.name as column in System.Lists.ColumnsList | propsFilter: {name: $select.search, value: $select.search}">
+                            <div ng-bind-html="column.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-sm-12" ng-if="System.Selectors.Totals">
+                    <h3>Totals</h3>
+                    <ui-select multiple ng-model="System.Single.jsondata.Totals" theme="bootstrap"
+                        close-on-select="false" ng-change="System.SelectOnChange('Totals')" style="width: 800px"
+                        title="Add totals">
+                        <ui-select-match placeholder="Add totals...">{{$item.name}}</ui-select-match>
+                        <ui-select-choices
+                            repeat="total.name as total in System.Lists.TotalList | propsFilter: {name: $select.search, value: $select.search}">
+                            <div ng-bind-html="total.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-sm-12">
+                    <h3>Show all deleted on report</h3>
+                    <div class="col-md-6">
+                        <input type="checkbox" id="show_deleted" class="iswitch-lg iswitch-danger"
+                            name="show_deleted" ng-model="System.Single.show_deleted" ng-true-value="'Yes'"
+                            ng-false-value="'No'" />
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="col-lg-8 col-sm-12">
+                        <h3>Email Address</h3>
+                        <textarea id="email" rows="3" class="form-control" name="email" ng-model="System.Single.email"></textarea>
+                    </div>
+                </div>
+                    <div class="col-lg-3 col-sm-12">
+                        <h3>Time Frame Override</h3>
+                        <input id="timeFrame" type="number" min="0" max="90" class="form-control" name="timeFrame"
+                            ng-model="System.Single.time_frame" />
+                    </div>
+                <div class="col-sm-12">
+                    <h3>Schedule</h3>
+                    <cron-selection ng-model="System.Single.schedule"></cron-selection>
+                    <span style="margin-right: 1rem">Selected Schedule</span><input disabled
+                        ng-model="System.Single.schedule" />
+                </div>
+                <div class="col-md-4">
+                    <h5>&nbsp;</h5>
+                    <button ng-if="System.Selectors.Actions" class="btn btn-danger" ng-click="System.save()">
+                        Save
+                    </button>
+                </div>
+                <div class="col-md-4">
+                    <h5>&nbsp;</h5>
+                    <button ng-if="System.Selectors.Actions" class="btn btn-danger" ng-click="System.email()">
+                        Email Now
+                    </button>
+                </div>
+                <div class="col-md-4">
+                    <h5>&nbsp;</h5>
+                    <button class="btn btn-black pull-right" ng-click="System.cancel()">Cancel</button>
+                </div>
+            </div>
+            <div class="row" ng-if="System.Status == 'Report'">
+                <div class="col-sm-6">
+                    <h2>{{System.Single.name}}</h2>
+                </div>
+                <div class="col-sm-6">
+                    <h4>{{System.Single.jsondata.ReportType.name}} Report</h4>
+                </div>
+                <div class="col-sm-12">
+                    <p>{{System.Single.description}}</p>
+                </div>
+            </div>
+            <div class="row" ng-if="System.Status == 'Report'">
+                <div class="col-sm-6" ng-if="System.Single.jsondata.Filters.includes('Site')">
+                    <label for="site_id" class="control-label">Site</label>
+                    <select name="site_id" id="site_id" class="form-control" ng-model="System.Filters.site_id"
+                        ng-options="option.value as option.name for option in System.Sites"
+                        ng-change="System.changeSiteID()"></select>
+                </div>
+                <div class="col-sm-6"
+                    ng-if="System.Single.jsondata.Filters.includes('Workstation') && System.SiteSelected">
+                    <label for="workstation_id" class="control-label">Workstation</label>
+                    <select name="workstation_id" id="workstation_id" class="form-control"
+                        ng-model="System.Filters.workstation_id"
+                        ng-options="option.value as option.name for option in System.Workstations track by option.id"
+                        ng-change="System.changeWorkstationID()"></select>
+                </div>
+                <div class="col-sm-6"
+                    ng-if="System.Single.jsondata.Filters.includes('Weighbridge') && System.SiteSelected">
+                    <label for="weighbridge_id" class="control-label">Weighbridge</label>
+                    <select name="weighbridge_id" id="weighbridge_id" class="form-control"
+                        ng-model="System.Filters.weighbridge_id"
+                        ng-options="option.value as option.name for option in System.Weighbridges track by option.id"
+                        ng-change="System.changeWeighbridgeID()"></select>
+                </div>
+                <div class="col-sm-6" ng-if="System.Single.jsondata.Filters.includes('Weighing Types')">
+                    <label for="weighingtypes_id" class="control-label">Weighing Types</label>
+                    <select name="weighingtypes_id" id="weighingtypes_id" class="form-control"
+                        ng-model="System.Filters.weighingtypes_id"
+                        ng-options="option.id as option.name for option in System.WeighingTypes"
+                        ng-change="System.changeWeighingTypeID()"></select>
+                </div>
+                <div class="col-sm-6" ng-if="System.Single.jsondata.Filters.includes('Exception Type')">
+                    <label for="exception_id" class="control-label">Exception Type</label>
+                    <select name="exception_id" id="exception_id" class="form-control"
+                        ng-model="System.Filters.exception_id"
+                        ng-options="option.code as option.description for option in System.Exceptions"
+                        ng-change="System.changeExceptionID()"></select>
+                </div>
+                <div class="col-sm-6" ng-if="System.Single.jsondata.Filters.includes('Product')">
+                    <label for="product_id" class="control-label">Product</label>
+                    <select name="product_id" id="product_id" class="form-control" ng-model="System.Filters.product_id"
+                        ng-options="option.value as option.name for option in System.Products"
+                        ng-change="System.changeProductID()"></select>
+                </div>
+                <div class="col-sm-6"
+                    ng-if="System.Single.jsondata.Filters.includes('Business Partner') && System.SiteSelected">
+                    <label for="businesspartner_id" class="control-label">Business Partner</label>
+                    <select name="businesspartner_id" id="businesspartner_id" class="form-control"
+                        ng-model="System.Filters.businesspartner_id"
+                        ng-options="option.value as option.name for option in System.BusinessPartners"
+                        ng-change="System.changeBusinessPartnerID()"></select>
+                </div>
+                <div class="col-sm-6" ng-if="System.Single.jsondata.Filters.includes('Haulier') && System.SiteSelected">
+                    <label for="haulier_id" class="control-label">Haulier</label>
+                    <select name="haulier_id" id="haulier_id" class="form-control" ng-model="System.Filters.haulier_id"
+                        ng-options="option.value as option.name for option in System.Hauliers"
+                        ng-change="System.changeHaulierID()"></select>
+                </div>
+                <div class="col-sm-6" ng-if="System.Single.jsondata.Filters.includes('Stockpile Nr')">
+                    <label for="stockpile_nr" class="control-label">Stockpile Nr</label>
+                    <input type="text" id="stockpile_nr" class="form-control" name="stockpile_nr"
+                        ng-model="System.Filters.stockpile_nr" placeholder="Exact match" />
+                </div>
+                <div class="col-sm-6" ng-if="System.Single.jsondata.Filters.includes('Destination')">
+                    <label for="destination" class="control-label">Destination</label>
+                    <input type="text" id="destination" class="form-control" name="destination"
+                        ng-model="System.Filters.destination" placeholder="Exact match" />
+                </div>
+            </div>
+            <div class="row" ng-if="System.Status == 'Report'">
+                <div class="col-sm-12" ng-if="System.Single.jsondata.Filters.includes('Date Range')">
+                    <label class="control-label" for="timeTracker">Date Range</label>
+                    <div class="input-group" style="display: flex">
+                        <span class="input-btn">
+                            <button class="btn btn-default" ng-click="System.dateClear()">Clear</button>
+                        </span>
+                        <input type="text" date-range-picker class="form-control date-picker"
+                            ng-model="System.FilterDates" options="System.dateOptions" />
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row" ng-if="System.Status == 'Report'">
+                <div class="col-md-6">
+                    <h5>&nbsp;</h5>
+                    <button class="btn btn-danger" ng-click="System.runReport()">Run Report</button>
+                </div>
+                <div class="col-md-6">
+                    <h5>&nbsp;</h5>
+                    <button class="btn btn-black pull-right" ng-click="System.cancel()">Cancel</button>
+                </div>
+            </div>
+            <div class="row" ng-if="System.Status == 'Report'">
+                <div class="col-md-12" ng-if="System.Table.nodata">
+                    <div class="well">No Data Found</div>
+                </div>
+                <div class="col-md-12" ng-if="System.Table.show">
+                    <!--                    
+                        <thead>
+                            <tr>
+                                <th>col1</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>col1</td>
+                            </tr>
+                        </tbody>-->
+                    <!--                    <table id="ReportTable" datatable="" 
+                                               dt-options="System.Table.dtOptions" dt-columns="showCase.dtColumns" dt-instance="System.Table.dtInstance" 
+                                               class="table table-striped table-bordered" >
+                                        </table>-->
+                    <table ng-if="System.Table.show" id="ReportTable" datatable="" dt-options="System.Table.dtOptions"
+                        class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th ng-repeat="column in System.Table.cols">{{column}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="row in System.Table.rows">
+                                <td ng-repeat="column in System.Table.cols">{{row[column]}}</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr ng-repeat="row in System.Table.foot">
+                                <td ng-repeat="column in System.Table.cols">{{row[column]}}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

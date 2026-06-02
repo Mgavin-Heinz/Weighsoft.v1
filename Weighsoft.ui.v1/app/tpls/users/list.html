@@ -1,0 +1,163 @@
+
+<style>
+    .picons {
+        width: 88px;
+        height: 88px;
+        border: 8px solid white;
+        line-height: 88px;
+        border-radius: 50%;
+        padding-left: 19px;
+        float: right;
+    }
+    .picons.check {
+        background: #63B76C;
+    }
+    .picons.gear {
+        background: #222;
+    }
+    .picons.exclamation {
+        background: #cc3f44;
+    }
+    .picons > i {
+        font-size: 36px !important;
+        color: #fff !important;
+    }
+    .picons > i.fa-exclamation {
+        margin-left: 10px;
+    }
+    .picons > i.fa-gear {
+        margin-left: 2px;
+    }
+</style>
+<page-title ng-if="layoutOptions.pageTitles" title="System Users" description="" data-ng-init="System.load()"></page-title>
+
+<div class="col-lg-12 col-md-12 ">
+    <div class="panel panel-color panel-danger">
+        <div class="panel-heading">
+            User Management
+            <a href="javascript:void(0)" data-ng-click="System.addForm()" ng-hide='System.FormDisplay' class="btn btn-black pull-right">Add New</a>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class='col-sm-12' ng-if="System.FormDisplay">
+                    <form class="form-horizontal" name="form" autocomplete="off">
+                        <fieldset>
+                            <!-- Form Name -->
+                            <legend>Add / Edit</legend>
+                            <!-- Text input-->
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="textinput">User Type</label>
+                                <div class="col-md-3">
+                                    <select name="role_id" id="role_id" ng-model="System.Single.role_id" class="form-control" ng-options="option.value as option.name for option in System.UserTypes">
+                                    </select>
+                                </div>
+                                <label class="col-md-3 control-label" for="textinput">Company</label>
+                                <div class="col-md-3">
+                                    <select name="company_id" id="company_id" ng-change="System.filterChange('company')" ng-model="System.Single.company_id" class="form-control" ng-options="option.value as option.name for option in System.Companies">
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div ng-if="businessPartner">
+                                <label class="col-md-3 control-label" for="textinput">Site</label>
+                                <div class="col-md-3">
+                                    <select name="site_id" id="site_id" ng-change="System.filterChange('site')" ng-model="System.Single.site_id" class="form-control" ng-options="option.value as option.name for option in System.Sites">
+                                    </select>
+                                </div>
+                                </div>
+                                <div ng-if="businessPartner">
+                                <label class="col-md-3 control-label" for="textinput">Workstation</label>
+                                <div class="col-md-3">
+                                    <select name="workstations_id" id="workstations_id" ng-model="System.Single.workstations_id" class="form-control" ng-options="option.value as option.name for option in System.Workstations">
+                                    </select>
+                                </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="textinput">Firstname</label>
+                                <div class="col-md-3">
+                                    <input name="firstname" id="firstname" ng-model="System.Single.firstname" class="form-control">
+                                </div>
+                                <label class="col-md-3 control-label" for="textinput">Lastname</label>
+                                <div class="col-md-3">
+                                    <input name="lastname" id="lastname" ng-model="System.Single.lastname" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="textinput">Email</label>
+                                <div class="col-md-3">
+                                    <input name="email" id="email" ng-model="System.Single.email" class="form-control">
+                                </div>
+                                <label class="col-md-3 control-label" for="textinput">Contact Num</label>
+                                <div class="col-md-3">
+                                    <input name="contact_num" id="contact_num" ng-model="System.Single.contact_num" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="textinput">Fingerprint</label>
+                                <div class="col-md-3">
+                                    <input name="fingerprint" id="fingerprint" ng-model="System.Single.fingerprint" class="form-control" ng-click="System.clearfingerprint()">
+                                </div>
+                                <label class="col-md-3 control-label" for="textinput">Password</label>
+                                <div class="col-md-3">
+                                    <input name="password" id="password" type="password" ng-model="System.Single.password" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    <button class="btn btn-danger" ng-click="System.save(Single)">Save</button>
+                                </div>
+                                <div class="col-md-5 text-center">
+                                    <button class="btn btn-danger" ng-click="System.Fingerprint()">Fingerprint</button>
+                                    <textarea name="" ng-bind="FingerServ" id="" cols="30" rows="3"></textarea>
+                                    <img src="{{fingerimg}}" alt="Embedded Image" height="100" width="100" >
+                                </div>
+                                <div class="col-md-3">
+                                    <button class="btn btn-black pull-right"  ng-click="System.cancel()">Cancel</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-4 col-md-offset-4">
+                                    <div class="picons {{F0}}"><i class="fa fa-{{F0}}"></i></div>
+                                    <div class="picons {{F1}}"><i class="fa fa-{{F1}}"></i></div>
+                                    <div class="picons {{F2}}"><i class="fa fa-{{F2}}"></i></div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+            <div class="row" ng-hide='System.FormDisplay'>
+                <div class="col-sm-12">
+                    <table datatable="ng" class="table table-striped table-bordered" ng-if="System.hasData">
+                        <thead>
+                            <tr>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Company</th>
+                                <th>Updated At</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr data-ng-repeat="data in System.formData">
+                                <td data-ng-bind="data.firstname"></td>
+                                <td data-ng-bind="data.lastname"></td>
+                                <td data-ng-bind="data.email"></td>
+                                <td data-ng-bind="data.role"></td>
+                                <td data-ng-bind="data.company"></td>
+                                <td data-ng-bind="data.updated_at"></td>
+                                <td><a href="javascript:void(0)" data-ng-click="System.editForm(data)" class="btn btn-black btn-sm btn-icon icon-left">Edit </a>
+                                    <a href="javascript:void(0)" data-ng-click="System.delete(data)" class="btn btn-danger btn-sm btn-icon icon-left">Delete</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

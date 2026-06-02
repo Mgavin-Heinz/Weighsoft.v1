@@ -1,0 +1,113 @@
+---
+description: Laravel architecture, project structure, and core patterns for Weighsoft Backend
+alwaysApply: true
+---
+
+# Weighsoft Backend Architecture Rules
+
+## Framework and Technology Stack
+
+This is a **Laravel 8** application with **PHP 8.3**. DO NOT suggest or implement Laravel 9+ patterns, modern PHP 8.4+ features, or breaking changes.
+
+### Core Dependencies
+- **Laravel**: 8.40
+- **PHP**: 8.3
+- **JWT Auth**: tymon/jwt-auth (dev-develop)
+- **Swagger/OpenAPI**: darkaonline/l5-swagger
+- **Database**: MySQL with UUID support
+
+## Project Structure
+
+```
+app/
+  Console/              # Artisan commands
+  Exceptions/           # Exception handlers
+  Http/
+    Controllers/        # All controllers
+    Middleware/         # Custom middleware
+    routes.php         # Legacy routes (deprecated - use routes/api.php)
+  Mail/                 # Mail classes
+  Models/               # Eloquent models
+  Providers/            # Service providers
+  Services/             # Business logic services
+database/
+  migrations/           # Database migrations
+  seeders/              # Database seeders
+routes/
+  api.php              # API routes (PRIMARY)
+  web.php              # Web routes
+  channels.php         # Broadcast channels
+  console.php          # Console routes
+```
+
+## Authentication Architecture
+
+**CRITICAL**: All API controllers (except AuthController) MUST extend `JwtAuthController`:
+
+```php
+// ✅ CORRECT
+class CompanyController extends JwtAuthController
+{
+    // Controller automatically has $this->user available
+}
+
+// ❌ WRONG
+class CompanyController extends Controller
+{
+    // Missing authentication
+}
+```
+
+## UUID Pattern
+
+**CRITICAL**: This application uses **UUIDs** for primary keys stored as BINARY(16) in MySQL.
+
+- **Database**: UUIDs stored as `BINARY(16)` using `UUID_TO_BIN()`
+- **API**: UUIDs returned as strings using `BIN_TO_UUID()`
+- **Queries**: Always use `UUID_TO_BIN()` and `BIN_TO_UUID()` functions
+
+```php
+// ✅ CORRECT - Querying with UUID
+$weighingHeader = weighingHeaders::whereRaw("id = UUID_TO_BIN(?, TRUE)", [$id])->first();
+
+// ✅ CORRECT - Selecting with UUID conversion
+->get(["weighingheaders.*", DB::raw("BIN_TO_UUID(id, TRUE) as id2")]);
+
+// ❌ WRONG - Direct UUID comparison
+$weighingHeader = weighingHeaders::where('id', $id)->first();
+```
+
+## Service Layer Pattern
+
+Complex business logic should be in **Services**, not Controllers:
+
+- Services located in `app/Services/`
+- Services handle complex queries, business rules, and data transformations
+- Controllers should be thin and delegate to services
+
+## Soft Deletes
+
+Many models use **SoftDeletes**:
+
+```php
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Company extends Model
+{
+    use SoftDeletes;
+    // ...
+}
+```
+
+When querying, soft-deleted records are automatically excluded unless using `withTrashed()` or `onlyTrashed()`.
+
+## Critical Architecture Rules
+
+1. **DO NOT** upgrade to Laravel 9+ without explicit approval
+2. **DO NOT** use PHP 8.4+ features
+3. **DO** extend `JwtAuthController` for all authenticated controllers
+4. **DO** use Services for complex business logic
+5. **DO** use UUID functions (`UUID_TO_BIN`, `BIN_TO_UUID`) for all UUID operations
+6. **DO** use SoftDeletes where appropriate
+7. **DO** use database transactions for multi-step operations
+8. **DO** use `routes/api.php` for API routes (not `app/Http/routes.php`)

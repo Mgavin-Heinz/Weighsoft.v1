@@ -1,0 +1,56 @@
+<form class="row">
+    <div class="col-md-12">
+        <h3>Add / Edit</h3>
+    </div>
+    <div class="form-group col-sm-12 col-md-6">
+        <label for="inputRegistrationNo" class="label label-danger">Registration No</label>
+        <input required type="text" class="form-control" id="inputRegistrationNo" placeholder="Name" ng-model="System.tareInfo.registration_no">
+    </div>
+    <div class="form-group col-sm-12 col-md-6">
+        <label for="inputexpirydate" class="label label-danger">Expiry Date</label>
+        <input required type="text" date-range-picker class="form-control date-picker" options="{singleDatePicker: true, locale: { format: 'YYYY-MM-DD'}}"
+            id="inputexpirydate" placeholder="YYYY-MM-DD" ng-model="System.tareInfo.expiry_date">
+    </div>
+    <div class="form-group col-sm-12 col-md-6">
+            <label for="selectweighbridgde" class="label label-danger">Weighbridge</label>
+            <ui-select name="selectweighbridgde" id="selectweighbridgde" ng-model="System.selected_weighbridge" theme="selectize"
+            on-select="System.setSelectedWeighBridge()">
+                <ui-select-match>{{$select.selected.name}}</ui-select-match>
+                <ui-select-choices repeat="option in System.Weighbridges | filter: $select.search">
+                    <div ng-bind-html="option.name | highlight: $select.search"></div>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+
+    <div class="form-group col-sm-12 col-md-6" ng-if="System.selected_weighbridge != null && System.WeighBridge.manual !== 'No'">
+        <label for="inputweight" class="label label-danger">Weight in KG</label>
+        <input required type="text" class="form-control" id="inputweight" placeholder="Tare weight in KG" ng-model="System.tareInfo.weight">
+    </div>
+
+    <div class="col-md-4 col-sm-6" ng-if="System.selected_weighbridge != null && System.WeighBridge.manual == 'No'" ng-click="System.ResetWeighing()">
+        <div class="xe-widget xe-counter-block xe-counter-block-danger">
+            <div class="xe-upper">
+                <div class="xe-icon">
+                    <i class="fa-list-alt"></i>
+                </div>
+                <div class="xe-label">
+                    <strong class="num">{{ System.formatTareScaleReading(System.weight) }}</strong>
+                    <span>Weight : {{System.weighttxt || '0'}}</span>
+                </div>
+            </div>
+            <div class="xe-lower">
+                <span></span>
+                <strong></strong>
+            </div>
+        </div>
+    </div>
+    
+    <div class="form-group col-sm-12">
+        <div class="col-sm-6">
+            <button class="btn btn-danger" ng-click="System.saveForm()">Save</button>
+        </div>
+        <div class="col-sm-6">
+            <button class="btn btn-black pull-right" ng-click="System.cancelEdit()">Cancel</button>
+        </div>
+    </div>
+</form>

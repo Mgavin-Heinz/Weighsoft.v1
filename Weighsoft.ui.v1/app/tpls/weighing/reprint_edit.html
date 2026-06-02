@@ -1,0 +1,216 @@
+<page-title ng-if="layoutOptions.pageTitles" title="Edit Reprint" description=""
+  data-ng-init="System.load()"></page-title>
+
+<div class="col-lg-12 col-md-12">
+  <div class="panel panel-color panel-danger">
+    <div class="panel-heading">
+      <div class="col-md-12">
+        <h2>Edit Transaction</h2>
+      </div>
+    </div>
+    <div class="panel-body">
+      <form class="form-horizontal">
+        <div class="row">
+          <div class="col-md-4" ng-if="System.Setting.numberplate_1 == 'Yes'">
+            <label>Number Plate 1</label>
+            <input type="text" class="form-control" ng-model="System.Single.RegNumber">
+          </div>
+          <div class="col-md-4" ng-if="System.Setting.numberplate_2 == 'Yes'">
+            <label>Number Plate 2</label>
+            <input type="text" class="form-control" ng-model="System.Single.RegNumber2">
+          </div>
+          <div class="col-md-4" ng-if="System.Setting.numberplate_3 == 'Yes'">
+            <label>Number Plate 3</label>
+            <input type="text" class="form-control" ng-model="System.Single.RegNumber3">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4" ng-if="System.Setting.business_partner == 'Yes'">
+            <label>Business Partner</label>
+            <ui-select ng-model="System.selected_businessPartner" theme="selectize"
+              ng-change="System.SelectOnChange('businesspartner')">
+              <ui-select-match>{{$select.selected.name}}</ui-select-match>
+              <ui-select-choices repeat="option in System.BusinessPartners | filter: $select.search">
+                <div ng-bind-html="option.name | highlight: $select.search"></div>
+              </ui-select-choices>
+            </ui-select>
+          </div>
+          <div class="col-md-4" ng-if="System.Setting.haulier == 'Yes'">
+            <label>Haulier</label>
+            <ui-select ng-model="System.selected_haulier" theme="selectize"
+              ng-change="System.SelectOnChange('haulier')">
+              <ui-select-match>{{$select.selected.name}}</ui-select-match>
+              <ui-select-choices repeat="option in System.Hauliers | filter: $select.search">
+                <div ng-bind-html="option.name | highlight: $select.search"></div>
+              </ui-select-choices>
+            </ui-select>
+          </div>
+          <div class="col-md-4" ng-if="System.Setting.use_product_list == 'Yes'">
+            <label>Product</label>
+            <ui-select ng-model="System.selected_product" theme="selectize"
+              ng-change="System.SelectOnChange('product')">
+              <ui-select-match>{{$select.selected.name}}</ui-select-match>
+              <ui-select-choices repeat="option in System.Products | filter: $select.search">
+                <div ng-bind-html="option.name | highlight: $select.search"></div>
+              </ui-select-choices>
+            </ui-select>
+          </div>
+        </div>
+
+        <!-- Grades -->
+        <div class="row" ng-if="System.selected_product && System.selected_product.grades_enabled == 'Yes'">
+          <div class="col-md-6">
+            <label>Product Grades</label>
+            <ui-select ng-model="System.Single.grades" theme="selectize">
+              <ui-select-match>{{$select.selected}}</ui-select-match>
+              <ui-select-choices repeat="option in System.selected_product.gradesArray | filter: $select.search">
+                <div ng-bind-html="option | highlight: $select.search"></div>
+              </ui-select-choices>
+            </ui-select>
+          </div>
+        </div>
+
+        <!-- Contracts -->
+        <div class="row" ng-if="System.Setting.business_partner == 'Yes' && System.selected_product">
+          <div class="col-md-6" ng-if="System.Contracts && System.Contracts.length">
+            <label>Contract</label>
+            <ui-select ng-model="System.selected_contract" theme="selectize"
+              ng-change="System.SelectOnChange('contract')">
+              <ui-select-match>{{$select.selected.name}}</ui-select-match>
+              <ui-select-choices repeat="option in System.Contracts | filter: $select.search">
+                <div ng-bind-html="option.name | highlight: $select.search"></div>
+              </ui-select-choices>
+            </ui-select>
+          </div>
+        </div>
+
+        <div class="row" ng-if="System.selected_contract">
+          <div class="col-md-4">
+            <label>Initial Quantity:</label>
+            <p>{{System.contractStatus.promised | number:0}}</p>
+          </div>
+          <div class="col-md-4">
+            <label>Delivered Quantity:</label>
+            <p>{{System.contractStatus.delivered | number:0}}</p>
+          </div>
+          <div class="col-md-4">
+            <label>Remaining Quantity:</label>
+            <p>{{System.contractStatus.remaining | number:0}}</p>
+          </div>
+        </div>
+        <div class="row" style="margin-top:15px;">
+          <div class="col-md-12">
+            <label>Custom Fields</label>
+            <div class="row" ng-repeat="i in [].constructor(20) track by $index"
+              ng-if="System.Setting['user_defined_input' + ($index+1)] != 'N'">
+              <div class="col-md-6" style="margin-top:8px;">
+                <label>{{ System.Setting['user_defined_name' + ($index+1)] || ('Custom ' + ($index+1)) }}</label>
+                <input type="text" class="form-control"
+                  ng-if="System.Setting['user_defined_input' + ($index+1)] == 'TO' || System.Setting['user_defined_input' + ($index+1)] == 'TC'"
+                  ng-model="System.Single['Custom' + ($index+1)]">
+                <ui-select
+                  ng-if="System.Setting['user_defined_input' + ($index+1)] == 'SO' || System.Setting['user_defined_input' + ($index+1)] == 'SC'"
+                  ng-model="System['selected_Custom' + ($index+1)]" theme="selectize">
+                  <ui-select-match>{{$select.selected.key}}</ui-select-match>
+                  <ui-select-choices
+                    repeat="option in System.Setting['user_defined_array' + ($index+1)] | filter: $select.search">
+                    <div ng-bind-html="option.value | highlight: $select.search"></div>
+                  </ui-select-choices>
+                </ui-select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:15px;">
+          <div class="col-md-3">
+            <label>1st Weight</label>
+            <input type="number" step="0.01" class="form-control" ng-model="System.Single.FirstWeight"
+              ng-change="System.updateNetWeight()">
+          </div>
+          <div class="col-md-3">
+            <label>2nd Weight</label>
+            <input type="number" step="0.01" class="form-control" ng-model="System.Single.SecondWeight"
+              ng-change="System.updateNetWeight()">
+          </div>
+          <div class="col-md-3" ng-if="System.Setting.enable_moisture === 'true'">
+            <label>Moisture %</label>
+            <input type="number" step="0.01" class="form-control" ng-model="System.Single.moisture_deduction"
+              ng-change="System.updateNetWeight()">
+          </div>
+          <div class="col-md-3" ng-if="System.Setting.enable_handling === 'true'">
+            <label>Handling %</label>
+            <input type="number" step="0.01" class="form-control" ng-model="System.Single.handling_charges"
+              ng-change="System.updateNetWeight()">
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:15px;"
+          ng-if="System.Setting.pallet_enabled === 'true' && System.Pallets.length">
+          <div class="col-md-6">
+            <label>Pallet</label>
+            <ui-select ng-model="System.selected_pallet" theme="selectize" ng-change="System.SelectOnChange('pallet')">
+              <ui-select-match>{{$select.selected.pallet_name}}</ui-select-match>
+              <ui-select-choices repeat="option in System.Pallets | filter: $select.search">
+                <div ng-bind-html="option.pallet_name | highlight: $select.search"></div>
+              </ui-select-choices>
+            </ui-select>
+          </div>
+          <div class="col-md-3">
+            <label>Pallet Count</label>
+            <input type="number" step="1" class="form-control" ng-model="System.Single.pallet_count"
+              ng-change="System.calculatePalletCharges(); System.updateNetWeight()">
+          </div>
+          <div class="col-md-3">
+            <label>Pallet Charges</label>
+            <input type="number" step="0.01" class="form-control" ng-model="System.Single.pallet_charges"
+              ng-change="System.updateNetWeight()">
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:15px;">
+          <div class="col-md-6 col-sm-6 col-xs-12">
+            <div class="form-group">
+              <label class="control-label">Total Weight (Gross):</label>
+              <p>{{ System.Site.formatNumber(System.Single.GrossWeight) }} {{System.Site.measure_type}}</p>
+            </div>
+          </div>
+          <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.enable_moisture === 'true'">
+            <div class="form-group">
+              <label class="control-label">Moisture Deduction:</label>
+              <p>{{ System.Site.formatNumber(System.moistureDeduction) }} {{System.Site.measure_type}}</p>
+            </div>
+          </div>
+          <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.enable_handling === 'true'">
+            <div class="form-group">
+              <label class="control-label">{{System.handlingAlias || 'Handling'}} Deduction:</label>
+              <p>{{ System.Site.formatNumber(System.handlingCharges) }} {{System.Site.measure_type}}</p>
+            </div>
+          </div>
+          <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.pallet_enabled === 'true'">
+            <div class="form-group">
+              <label class="control-label">Pallet Weight Deduction:</label>
+              <p>{{ System.Site.formatNumber(System.palletCharges) }} {{System.Site.measure_type}}</p>
+            </div>
+          </div>
+          <div class="col-md-6 col-sm-6 col-xs-12">
+            <div class="form-group">
+              <label class="control-label">Nett Weight:</label>
+              <p>{{ System.Site.formatNumber(System.nettWeight) }} {{System.Site.measure_type}}</p>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="row" style="margin-top:20px;">
+          <div class="col-md-6">
+            <button type="button" class="btn btn-success" ng-click="System.save()">Save</button>
+            <button type="button" class="btn btn-default" ng-click="System.cancel()">Cancel</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>

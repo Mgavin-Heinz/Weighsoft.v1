@@ -1,0 +1,180 @@
+---
+description: Version management and commit workflow for all code changes
+alwaysApply: true
+---
+
+# Version Control and Commit Workflow
+
+## CRITICAL: Always Update Versions and Commit Changes
+
+**EVERY code change MUST be followed by:**
+1. Version number update
+2. Git commit with descriptive message
+
+## Version Update Process
+
+### Frontend Version Files
+
+When making ANY changes to the frontend, update these files:
+
+1. **`build.bat`** - Update `set version=0.10.X` (increment patch version)
+2. **`build.sh`** - Update `version=0.10.X` (increment patch version)
+3. **`app/tpls/layout/page-title.html`** - Update all three version numbers:
+   ```html
+   <p class="description">Frontend Version: 0.10.X</br>Backend Version: 0.10.X</br>Connector Version: 0.10.X</p>
+   ```
+4. **`package.json`** - Update `"version": "1.3.X"` (increment independently but keep in sync)
+
+### Version Increment Rules:
+- **Patch (0.10.X)**: Bug fixes, small features, UI updates, configuration changes
+- **Minor (0.X.0)**: New features, new controllers, significant UI enhancements
+- **Major (X.0.0)**: Breaking changes, major refactoring, framework upgrades
+
+### Version Synchronization
+
+- **Frontend and Backend versions MUST match** (e.g., both 0.10.4)
+- **Connector version** in page-title.html should match Frontend/Backend
+- **package.json version** can increment independently but should be updated
+
+## Commit Workflow
+
+### Step 1: Stage All Changes
+
+```bash
+git add .
+```
+
+Or stage specific files:
+```bash
+git add path/to/file1 path/to/file2
+```
+
+### Step 2: Commit with Descriptive Message
+
+**Commit Message Format:**
+```
+[Type] Brief description
+
+- Detailed change 1
+- Detailed change 2
+- Version updated to 0.10.X
+```
+
+**Commit Types:**
+- `[Feature]` - New features, enhancements, new controllers
+- `[Fix]` - Bug fixes
+- `[Update]` - Updates to existing features
+- `[Refactor]` - Code refactoring
+- `[UI]` - UI/UX changes, template updates
+- `[Config]` - Configuration changes
+
+**Examples:**
+
+```
+[Feature] Add ESP32 boom and light control
+
+- Add ESP32 control service for boom/light devices
+- Add control buttons to weighing create/update screens
+- Update weighbridge form with IP configuration fields
+- Version updated to 0.10.4
+```
+
+```
+[Fix] Fix camera interval cleanup bug
+
+- Replace clearInterval with $interval.cancel for AngularJS intervals
+- Fix memory leak in weighing_create and weighing_update controllers
+- Version updated to 0.10.4
+```
+
+```
+[UI] Improve weighing form layout
+
+- Reorganize form fields for better UX
+- Add responsive design improvements
+- Update button styling
+- Version updated to 0.10.4
+```
+
+### Step 3: Verify Commit
+
+```bash
+git log -1
+```
+
+## Workflow Checklist
+
+**Before committing ANY changes:**
+
+- [ ] All code changes are complete and tested
+- [ ] Version numbers updated in all relevant files
+- [ ] Version numbers are synchronized (frontend = backend)
+- [ ] All files are staged (`git add .`)
+- [ ] Commit message follows format and includes version update note
+- [ ] Commit is created (`git commit -m "message"`)
+
+## Automated Version Update
+
+When the AI assistant makes changes, it MUST:
+
+1. **Identify all version files** that need updating
+2. **Increment version** appropriately (patch/minor/major)
+3. **Update all version files** in the same change set
+4. **Include version update** in commit message
+5. **Create the commit** automatically
+
+## Version File Locations
+
+### Frontend
+- `build.bat` - Line with `set version=`
+- `build.sh` - Line with `version=`
+- `app/tpls/layout/page-title.html` - Version display line
+- `package.json` - `"version"` field
+
+## Important Notes
+
+1. **NEVER commit without updating versions** - Every change requires a version bump
+2. **NEVER commit without a descriptive message** - Commit messages should explain what changed
+3. **ALWAYS synchronize versions** - Frontend and backend versions must match
+4. **ALWAYS include version update in commit message** - Makes it easy to track version changes
+5. **Version updates are part of the change** - Don't make separate commits for version updates
+
+## Example Complete Workflow
+
+```bash
+# 1. Make code changes (AI or developer)
+# ... edit files ...
+
+# 2. Update versions
+# Edit build.bat, build.sh, page-title.html, package.json
+
+# 3. Stage changes
+git add .
+
+# 4. Commit with message
+git commit -m "[Feature] Add ESP32 boom and light control
+
+- Add ESP32 control service for boom/light devices
+- Add control buttons to weighing create/update screens
+- Update weighbridge form with IP configuration fields
+- Version updated to 0.10.4"
+
+# 5. Verify
+git log -1
+```
+
+## Exceptions
+
+**DO NOT update versions for:**
+- Documentation-only changes (unless explicitly requested)
+- Comment-only changes
+- Whitespace/formatting-only changes
+
+**DO update versions for:**
+- Any code changes (even small fixes)
+- New controllers, services, or directives
+- Template changes
+- Configuration changes
+- New features
+- Bug fixes
+- Refactoring

@@ -1,0 +1,35 @@
+version: "3.7"
+services:
+  app:
+    image: weighsoftsa/weighsoft-backv1
+    container_name: weighsoftv1-back
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - "5000:80"
+    volumes:
+      - "../../app:/var/www/laravel/app"
+      - "../../config:/var/www/laravel/config"
+      - "./laravel:/var/www/laravel/storage/logs"
+    environment:
+      - TZ=Africa/Johannesburg
+
+  db:
+    image: weighsoftsa/weighsoft-db-v1
+    container_name: weighsoftv1-db
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    volumes:
+      - "./mysql:/var/lib/mysql"
+
+  ui:
+    image: weighsoftsa/weighsoft-ui-v1
+    container_name: weighsoftv1-ui
+    restart: unless-stopped
+    volumes:
+      - "../../../Weighsoft.ui.v1/app:/usr/share/nginx/html/app"
+      - "./env.js:/usr/share/nginx/html/app/js/env.js"
+    ports:
+      - "80:80"

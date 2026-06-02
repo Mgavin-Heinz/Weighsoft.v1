@@ -1,0 +1,156 @@
+<page-title ng-if="layoutOptions.pageTitles" title="Sites" description="" data-ng-init="System.initialize()">
+</page-title>
+<div class="col-lg-12 col-md-12 ">
+    <div class="panel panel-color panel-danger">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-md-4 col-sm-6 col-xs-12">
+                    <h2>Site Management</h2>
+                </div>
+                <div class="col-md-4 col-sm-6 col-xs-12">
+                    <div>
+                        <label for="company_id" class="control-label">Company</label>
+                        <select name="company_id" id="company_id" class="form-control" ng-model="System.HeaderSingle.company_id" ng-options="option.value as option.name for option in System.companyList" ng-change="System.changeCompanyID()"></select>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 col-xs-12">
+                    <button type="button" data-ng-click="System.showAddForm()" ng-hide='System.isEditing' class="btn btn-black pull-right">
+                        Add New
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div ng-if="System.isEditing">
+                <h3>Add / Edit</h3>
+                <div class="row row-border">
+                    <div class="form-group col-lg-6 col-sm-12">
+                        <label for="code" class="col-md-4 control-label">Code</label>
+                        <div class="col-md-4">
+                            <input id="code" type="" class="form-control" name="site_type" ng-model="System.siteInfo.site_type">
+                        </div>
+                    </div>
+                    <div class="form-group col-lg-6 col-sm-12">
+                        <label for="name" class="col-md-4 control-label">Name</label>
+                        <div class="col-md-4">
+                            <input id="name" type="" class="form-control" name="site_name" ng-model="System.siteInfo.site_name">
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6 col-sm-12">
+                        <label for="haulier" class="col-md-6 control-label">Active</label>
+                        <div class="col-md-6">
+                            <input id="site_active" type="checkbox" class="iswitch-lg iswitch-danger" name="site_active" ng-model="System.siteInfo.site_active" ng-true-value="'Yes'" ng-false-value="'No'">
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6 col-sm-12">
+                        <label for="finger_active" class="col-md-6 control-label">Fingerprint Verification Active</label>
+                        <div class="col-md-6">
+                            <input id="finger_active" type="checkbox" class="iswitch-lg iswitch-danger" name="finger_active" ng-model="System.siteInfo.finger_active" ng-true-value="'Yes'" ng-false-value="'No'">
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6 col-sm-12">
+                        <label for="override_silo" class="col-md-6 control-label">Silo Verification</label>
+                        <div class="col-md-6">
+                            <input id="override_silo" type="checkbox" class="iswitch-lg iswitch-danger" name="override_silo" ng-model="System.siteInfo.override_silo" ng-true-value="'Yes'" ng-false-value="'No'">
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6 col-sm-12">
+                        <label for="shared_workstation" class="col-md-6 control-label">Shared Workstation</label>
+                        <div class="col-md-6">
+                            <input id="shared_workstation" type="checkbox" class="iswitch-lg iswitch-danger" name="shared_workstation" ng-model="System.siteInfo.shared_workstation" ng-true-value="'Yes'" ng-false-value="'No'">
+                        </div>
+                    </div>
+                    <div class="form-group col-lg-6 col-sm-12">
+                        <label for="decimals" class="col-md-4 control-label">Decimals</label>
+                        <div class="col-md-4">
+                            <input id="decimals" min="0" max="4" type="number" class="form-control" name="decimals" ng-model="System.siteInfo.decimals">
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-border">
+                    <div class="form-group col-md-6 col-sm-12">
+                        <label for="measure_type" class="col-md-6">Measure Type</label>
+                        <div class="col-md-6">
+                            <select
+                                name="measure_type"
+                                id="measure_type"
+                                class="form-control"
+                                ng-model="System.siteInfo.measure_type"
+                                ng-options="option.value as option.text for option in System.MeasureTypes"
+                            ></select>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6 col-sm-12">
+                        <label for="deduct_flow" class="col-md-6">Deduct Flow</label>
+                        <div class="col-md-6">
+                            <select
+                                name="deduct_flow"
+                                id="deduct_flow"
+                                class="form-control"
+                                ng-model="System.siteInfo.deduct_flow"
+                                ng-options="option.value as option.text for option in System.DeductFlow"
+                            ></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-border">
+                    <div class="col-md-12 well">
+                        <div class="form-group" >
+                            <label for="custom_footer_text" class="col-md-3">Header Text</label>
+                            <div class="col-md-9">
+                                <text-angular ng-model="System.siteInfo.custom_header_text" ta-text-editor-class="form-content" ta-html-editor-class="form-content" ta-focussed-class="focussed"></text-angular>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 well">
+                        <div class="form-group" >
+                            <label for="custom_footer_text" class="col-md-3">Footer Text</label>
+                            <div class="col-md-9">
+                                <text-angular ng-model="System.siteInfo.custom_footer_text" ta-text-editor-class="form-content" ta-html-editor-class="form-content" ta-focussed-class="focussed"></text-angular>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-border">
+                    <div class="col-md-6">
+                        <button class="btn btn-danger" ng-click="System.saveForm()">Save</button>
+                    </div>
+                    <div class="col-md-6">
+                        <button class="btn btn-black pull-right"  ng-click="System.cancel()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+            <div ng-if="!System.isEditing">
+                <table datatable="ng" class="table table-striped table-bordered" ng-if="System.siteList.length">
+                    <thead>
+                        <tr>
+                            <th>Site Code</th>
+                            <th>Site Name</th>
+                            <th>Company</th>
+                            <th>Updated At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr data-ng-repeat="data in System.siteList">
+                            <td data-ng-bind="data.site_type"></td>
+                            <td data-ng-bind="data.site_name"></td>
+                            <td data-ng-bind="data.company"></td>
+                            <td data-ng-bind="data.updated_at"></td>
+                            <td>
+                                <button type="button" data-ng-click="System.showEditForm(data)" class="btn btn-black btn-sm btn-icon icon-left">
+                                    Edit
+                                </button>
+                                <button type="button" data-ng-click="System.deleteSite(data)" class="btn btn-danger btn-sm btn-icon icon-left">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

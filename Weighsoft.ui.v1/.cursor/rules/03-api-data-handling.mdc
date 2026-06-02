@@ -1,0 +1,231 @@
+---
+description: API calls, Restangular patterns, and data handling conventions
+globs: ["**/*.js", "app/js/**"]
+alwaysApply: false
+---
+
+# API and Data Handling Rules
+
+## Restangular Usage (REQUIRED)
+
+**ALWAYS** use Restangular for API calls. **NEVER** use `$http` directly.
+
+### Restangular Setup
+
+Restangular is configured in `app/js/routes.js`:
+- Base URL: `base + '/api'`
+- Default request params include authentication token
+- Response extractor returns response directly
+
+### Basic Restangular Patterns
+
+```javascript
+// ✅ CORRECT - Get all items
+vm.baseData = Restangular.all('company');
+vm.baseData.getList().then(function(companyList) {
+  vm.companyList = companyList;
+}, function(response) {
+  $rootScope.Error(response);
+});
+
+// ✅ CORRECT - Get single item
+Restangular.one('company', companyId).get().then(function(company) {
+  vm.company = company;
+}, function(response) {
+  $rootScope.Error(response);
+});
+
+// ✅ CORRECT - Create new item
+vm.baseData.post(vm.companyInfo).then(function(newCompany) {
+  vm.companyList.push(newCompany);
+  $rootScope.Loaded();
+}, function(response) {
+  $rootScope.Error(response);
+});
+
+// ✅ CORRECT - Update existing item
+Restangular.one('company', vm.companyInfo.id).get().then(function(company) {
+  company.name = vm.companyInfo.name;
+  company.save().then(function(updated) {
+    $rootScope.Loaded();
+  }, function(response) {
+    $rootScope.Error(response);
+  });
+});
+
+// ✅ CORRECT - Delete item
+Restangular.one('company', companyId).get().then(function(company) {
+  company.remove().then(function() {
+    loadData();
+  }, function(response) {
+    $rootScope.Error(response);
+  });
+});
+
+// ❌ WRONG - Don't use $http
+$http.get('/api/company').then(function(response) {
+  // WRONG - Use Restangular instead
+});
+```
+
+### Restangular Route Names
+
+- Route names are typically singular: `'company'`, `'site'`, `'user'`
+- Match the API endpoint exactly
+- Store route name in a constant: `const routeName = 'company';`
+
+### Restangular with Parameters
+
+```javascript
+// Query parameters
+Restangular.all('weighingheaders').getList({
+  company_id: vm.companyId,
+  site_id: vm.siteId
+}).then(function(data) {
+  vm.list = data;
+});
+
+// URL parameters
+Restangular.one('company', companyId).one('sites', siteId).get();
+```
+
+## Data Loading Patterns
+
+### Standard Load Pattern
+
+```javascript
+function loadData() {
+  $rootScope.Start();  // Show loading overlay
+  vm.baseData.getList().then(
+    function(data) {
+      vm.list = data;
+      $rootScope.Loaded();  // Hide loading overlay
+    },
+    function(response) {
+      $rootScope.Error(response);  // Shows error and hides loading
+    }
+  );
+}
+```
+
+### Loading Related Data
+
+```javascript
+// Load company, then load its sites
+Restangular.one('company', companyId).get().then(function(company) {
+  vm.company = company;
+  return company.getList('sites');  // Get related resources
+}).then(function(sites) {
+  vm.sites = sites;
+  $rootScope.Loaded();
+}, function(response) {
+  $rootScope.Error(response);
+});
+```
+
+## Error Handling
+
+### Standard Error Handling
+
+```javascript
+promise.then(
+  function(successData) {
+    // Handle success
+    $rootScope.Loaded();
+  },
+  function(errorResponse) {
+    // $rootScope.Error() handles:
+    // - Extracting error message from response
+    // - Showing toastr error notification
+    // - Hiding loading overlay
+    // - Handling token expiration (401)
+    $rootScope.Error(errorResponse);
+  }
+);
+```
+
+### Authentication Errors
+
+The app automatically handles 401 errors in `app.js`:
+- 401 responses trigger logout
+- Token validation errors trigger logout
+- DO NOT manually handle 401 - it's handled globally
+
+## Data Transformation
+
+### Before Sending to API
+
+```javascript
+// Transform data before POST/PUT
+var dataToSend = {
+  name: vm.companyInfo.name,
+  // Only send necessary fields
+};
+
+vm.baseData.post(dataToSend).then(function(result) {
+  // Handle success
+});
+```
+
+### After Receiving from API
+
+```javascript
+vm.baseData.getList().then(function(companyList) {
+  // Restangular objects have .save(), .remove(), .getList() methods
+  // You can transform if needed
+  vm.companyList = companyList.map(function(company) {
+    return {
+      id: company.id,
+      name: company.name,
+      // Transform as needed
+    };
+  });
+});
+```
+
+## File Uploads
+
+For file uploads, use the FileUploader service pattern:
+
+```javascript
+.controller('CompaniesCtrl', function($scope, $rootScope, $state, Restangular, FileUploader) {
+  const vm = this;
+  
+  vm.ImageUploaderSet = function() {
+    vm.uploadImageAsBase64 = function(file) {
+      const reader = new FileReader();
+      reader.onloadend = function() {
+        const base64String = reader.result.replace('data:', '').replace(/^.+,/, '');
+        vm.companyInfo.display_custom_logo_img = base64String;
+      };
+      reader.readAsDataURL(file);
+    };
+  };
+});
+```
+
+## State Persistence
+
+Use `$rootScope` or `$state.params` for state that needs to persist across navigation:
+
+```javascript
+// Store in $rootScope before navigation
+$rootScope.Params = {
+  company_id: vm.companyId,
+  site_id: vm.siteId
+};
+
+// Retrieve after navigation
+if ($rootScope.Params && $rootScope.Params.company_id) {
+  vm.companyId = $rootScope.Params.company_id;
+}
+```
+
+## Critical Rules
+
+1. **NEVER** use `$http` directly - always use Restangular
+2. **ALWAYS** handle errors in promise `.then()` callbacks
+3. **ALWAYS** show/hide loading overlay with `$rootScope.Start()` / `$rootScope.Loaded()`
+4. **ALWAYS** use `$rootScope.Error()` for error handling
+5. **DO NOT** manually handle 401 errors - they're handled globally
+6. **DO** use Restangular's built-in methods: `.get()`, `.getList()`, `.post()`, `.save()`, `.remove()`

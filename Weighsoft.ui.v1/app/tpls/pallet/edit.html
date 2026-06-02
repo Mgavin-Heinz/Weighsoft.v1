@@ -1,0 +1,23 @@
+<form class="row">
+        <div class="col-md-12">
+            <h3>Add / Edit</h3>
+        </div>
+        <div class="form-group col-sm-12 col-md-6">
+            <label for="inputName" class="label label-danger">Pallet Name</label>
+            <input required type="text" class="form-control" id="inputName" placeholder="Name" ng-model="System.palletInfo.pallet_name">
+        </div>
+
+        <div class="form-group col-sm-12 col-md-6">
+            <label for="inputamount" class="label label-danger">Amount in KG</label>
+            <input required type="text" class="form-control" id="inputamount" placeholder="Pallet Amount in KG" ng-model="System.palletInfo.amount">
+        </div>
+
+        <div class="form-group col-sm-12">
+            <div class="col-sm-6">
+                <button class="btn btn-danger" ng-click="System.saveForm()">Save</button>
+            </div>
+            <div class="col-sm-6">
+                <button class="btn btn-black pull-right" ng-click="System.cancelEdit()">Cancel</button>
+            </div>
+        </div>
+    </form>

@@ -1,0 +1,341 @@
+---
+description: Step-by-step guide for adding new features following existing patterns
+alwaysApply: false
+---
+
+# Adding New Features - Step-by-Step Guide
+
+## Overview
+
+This guide walks through adding a new feature to the Weighsoft Backend API, following all established patterns and conventions.
+
+## Step 1: Create the Model
+
+Create `app/Models/MyFeature.php`:
+
+```php
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class MyFeature extends Model
+{
+    use SoftDeletes;
+
+    protected $table = 'my_features';
+    
+    protected $fillable = [
+        'name',
+        'description',
+        'company_id',
+        'site_id',
+        // ... all fillable fields
+    ];
+
+    // Relationships
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo('App\Models\Company');
+    }
+}
+```
+
+## Step 2: Create the Controller
+
+Create `app/Http/Controllers/MyFeatureController.php`:
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\MyFeature;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+
+class MyFeatureController extends JwtAuthController
+{
+    private MyFeature $model;
+
+    public function __construct() {
+        parent::__construct();  // REQUIRED
+        $this->model = new MyFeature();
+    }
+
+    public function index(): JsonResponse
+    {
+        $companyId = $this->user->company_id;
+        
+        // Role-based filtering
+        if (!$companyId || ($this->user->role_id == 1) || ($this->user->role_id == 2)) {
+            $items = $this->model::all();
+        } else {
+            $items = $this->model::where('company_id', $companyId)->get();
+        }
+        
+        return response()->json($items);
+    }
+
+    public function store(Request $request): JsonResponse
+    {
+        $item = $request->all();
+        
+        // Validation
+        $validator = Validator::make($item, [
+            'name' => 'required',
+            'description' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        
+        // Set defaults
+        if (!isset($item['field'])) {
+            $item['field'] = '';
+        }
+        
+        // Create
+        $feature = $this->model->create($item);
+        return response()->json($feature);
+    }
+
+    public function show($id): JsonResponse
+    {
+        $item = $this->model->find($id);
+        
+        if (!$item) {
+            return response()->json(['message' => 'Item not found'], 404);
+        }
+        
+        return response()->json($item);
+    }
+
+    public function update(Request $request, $id): JsonResponse
+    {
+        $item = $request->all();
+        
+        // Validation
+        $validator = Validator::make($item, [
+            'name' => 'required',
+            'description' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        
+        $feature = $this->model->find($id);
+        if (!$feature) {
+            return response()->json(['status' => false, 'message' => 'Item not found'], 404);
+        }
+        
+        // Set defaults
+        $item['field'] = $item['field'] ?: '';
+        
+        $feature->update($item);
+        return response()->json($feature);
+    }
+
+    public function destroy($id): JsonResponse
+    {
+        $item = $this->model->find($id);
+
+        if (!$item) {
+            return response()->json(['status' => false, 'message' => 'Item not found'], 404);
+        }
+
+        $item->delete();
+        return response()->json(['status' => true]);
+    }
+}
+```
+
+## Step 3: Create the Migration
+
+Create migration file in `database/migrations/`:
+
+```php
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateMyFeaturesTable extends Migration
+{
+    public function up()
+    {
+        Schema::create('my_features', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->unsignedBigInteger('company_id')->nullable();
+            $table->unsignedBigInteger('site_id')->nullable();
+            // ... more columns
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists('my_features');
+    }
+}
+```
+
+Run migration:
+```bash
+php artisan migrate
+```
+
+## Step 4: Add the Route
+
+Add to `routes/api.php`:
+
+```php
+Route::group([], function () {
+    // ... existing routes
+    
+    Route::resource('myfeature', 'MyFeatureController');
+});
+```
+
+## Step 5: Create Service (If Needed)
+
+If the feature has complex business logic, create `app/Services/MyFeatureService.php`:
+
+```php
+<?php
+
+namespace App\Services;
+
+use App\Models\MyFeature;
+use Illuminate\Support\Facades\DB;
+
+class MyFeatureService
+{
+    public function getMyFeatures($companyId, $siteId, $filters): array
+    {
+        // Complex query logic
+        $sql = "SELECT ... FROM my_features WHERE ...";
+        $data = DB::select($sql, $parameters);
+        $count = DB::selectOne("SELECT count(1) as count FROM my_features WHERE ...", $filterParams);
+        
+        return [$data, $count->count];
+    }
+    
+    public function insertMyFeature($data)
+    {
+        // Complex insert logic
+        DB::insert("INSERT INTO my_features (...) VALUES (...)", $params);
+        return $this->getLastUpdatedItem();
+    }
+}
+```
+
+Then inject into controller:
+
+```php
+public function __construct(MyFeatureService $service) {
+    parent::__construct();
+    $this->model = new MyFeature();
+    $this->service = $service;
+}
+```
+
+## Step 6: Handle UUIDs (If Using UUIDs)
+
+If the feature uses UUIDs:
+
+### In Model
+```php
+// UUIDs are handled at database level, not in model
+```
+
+### In Controller/Service
+```php
+// Querying
+$item = MyFeature::whereRaw("id = UUID_TO_BIN(?, TRUE)", [$id])
+    ->first(["my_features.*", DB::raw("BIN_TO_UUID(id, TRUE) as id2")]);
+
+if (!empty($item)) {
+    $item['id'] = $item['id2'];
+    unset($item['id2']);
+}
+
+// Inserting
+DB::insert("INSERT INTO my_features (id, ...) VALUES (UUID_TO_BIN(UUID(), true), ...)", $params);
+```
+
+## Checklist for New Features
+
+- [ ] Model created with `$fillable` array
+- [ ] Model uses `SoftDeletes` if needed
+- [ ] Controller extends `JwtAuthController`
+- [ ] Controller calls `parent::__construct()`
+- [ ] Controller validates requests
+- [ ] Controller handles not found (404)
+- [ ] Controller returns JSON responses
+- [ ] Controller uses role-based filtering
+- [ ] Route added to `routes/api.php`
+- [ ] Migration created and run
+- [ ] Service created if complex logic needed
+- [ ] UUID handling implemented if using UUIDs
+- [ ] Database transactions used for multi-step operations
+- [ ] Error handling implemented
+
+## Common Patterns Reference
+
+### Pattern: Simple CRUD
+- See: `CompanyController`, `SiteController`
+- No service needed, direct model operations
+
+### Pattern: Complex Business Logic
+- See: `WeighingHeadersController` with `WeighingHeaderService`
+- Service handles complex queries and operations
+
+### Pattern: UUID Primary Keys
+- See: `weighingHeaders`, `weighingTransactions`
+- Use `UUID_TO_BIN()` / `BIN_TO_UUID()` functions
+
+### Pattern: Soft Delete with Reason
+- See: `deleteWithReason()` methods
+- Custom route: `Route::post('resource/{id}/delete', [Controller::class, 'deleteWithReason']);`
+
+## Step 6: Update Versions and Commit
+
+**CRITICAL: After completing any changes, you MUST:**
+
+1. **Update version numbers** in:
+   - `build.bat` - Increment `set version=0.10.X`
+   - `build.sh` - Increment `version=0.10.X`
+
+2. **Commit all changes** with a descriptive message:
+   ```bash
+   git add .
+   git commit -m "[Feature] Description of changes
+
+   - Change 1
+   - Change 2
+   - Version updated to 0.10.X"
+   ```
+
+See `09-version-control-commits.mdc` for detailed version and commit workflow.
+
+## Getting Help
+
+When adding a new feature:
+1. Look at similar existing features for patterns
+2. Follow the controller template above
+3. Check `02-controller-patterns.mdc` for controller patterns
+4. Check `03-models-database.mdc` for model patterns
+5. Check `04-services.mdc` if you need a service
+6. Check `07-common-pitfalls.mdc` to avoid mistakes
+7. **ALWAYS update versions and commit** (see `09-version-control-commits.mdc`)

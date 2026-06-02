@@ -1,0 +1,335 @@
+
+<page-title ng-if="layoutOptions.pageTitles" title="Settings" description="" data-ng-init="System.load()"></page-title>
+
+<div class="col-lg-12 col-md-12 ">
+    <div class="panel panel-color panel-danger">
+        <div class="panel-heading">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <h2>Site Settings</h2>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label for="company_id" class="control-label">Company</label>
+                    <select name="company_id" id="role_id" ng-model="System.HeaderSingle.company_id" class="form-control" ng-change="System.changeCompanyID()" ng-options="option.value as option.name for option in System.Companies">
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <fieldset id="axeltypes" ng-if="System.Forms.SetupTypes && System.FormDisplay">
+                    <legend >Axel Types<input type="button" class="btn btn-black pull-right" value="Setups" ng-click="System.DisplayForms('Setups')"></legend >
+                    <div class='col-md-4 col-sm-6' >
+                        <div class="input-group vcenter">
+                            <label class="label label-red">Single Steering</label>
+                            <input type="number" class="form-control" placeholder="Single Steering" aria-describedby="basic-addon1" ng-model="System.SysAxelSingle.Single_Steering">
+                            <span class="input-group-addon glyphicon-Single_Steering" id="basic-addon1"></span>
+                        </div>
+                    </div>
+                    <div class='col-md-4 col-sm-6' >
+                        <div class="input-group vcenter">
+                            <label class="label label-red">Double Steering</label>
+                            <input type="number" class="form-control" placeholder="Double Steering" aria-describedby="basic-addon1" ng-model="System.SysAxelSingle.Double_Steering">
+                            <span class="input-group-addon glyphicon-Double_Steering" id="basic-addon1"></span>
+                        </div>
+                    </div>
+                    <div class='col-md-4 col-sm-6' >
+                        <div class="input-group vcenter">
+                            <label class="label label-red">Triple Steering</label>
+                            <input type="number" class="form-control" placeholder="Triple Steering" aria-describedby="basic-addon1" ng-model="System.SysAxelSingle.Triple_Steering">
+                            <span class="input-group-addon glyphicon-Triple_Steering" id="basic-addon1"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-sm-6"></div>
+                    <div class='col-md-4 col-sm-6' >
+                        <div class="input-group vcenter">
+                            <label class="label label-red">Single Non-Steering</label>
+                            <input type="number" class="form-control" placeholder="Single Non-Steering" aria-describedby="basic-addon1" ng-model="System.SysAxelSingle.Single_Non_Steering">
+                            <span class="input-group-addon glyphicon-Single_Non_Steering" id="basic-addon1"></span>
+                        </div>
+                    </div>
+                    <div class='col-md-4 col-sm-6' >
+                        <div class="input-group vcenter">
+                            <label class="label label-red">Double Non-Steering</label>
+                            <input type="number" class="form-control" placeholder="Single Non-Steering" aria-describedby="basic-addon1" ng-model="System.SysAxelSingle.Double_Non_Steering">
+                            <span class="input-group-addon glyphicon-Double_Non_Steering" id="basic-addon1"></span>
+                        </div>
+                    </div>
+                    <div class='col-md-4 col-sm-6' >
+                        <div class="input-group vcenter">
+                            <label class="label label-red">Triple Non-Steering</label>
+                            <input type="number" class="form-control" placeholder="Single Non-Steering" aria-describedby="basic-addon1" ng-model="System.SysAxelSingle.Triple_Non_Steering">
+                            <span class="input-group-addon glyphicon-Triple_Non_Steering" id="basic-addon1"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-sm-6"></div>
+                    <div class='col-md-4 col-sm-6' >
+                        <div class="input-group vcenter">
+                            <label class="label label-red">Double Single Non-Steering</label>
+                            <input type="number" class="form-control" placeholder="Double Single Non-Steering" aria-describedby="basic-addon1" ng-model="System.SysAxelSingle.Double_Single_Non_Steering">
+                            <span class="input-group-addon glyphicon-Double_Single_Non_Steering" id="basic-addon1"></span>
+                        </div>
+                    </div>
+                    <div class='col-md-4 col-sm-6' >
+                        <div class="input-group vcenter">
+                            <label class="label label-red">Double Double Non-Steering</label>
+                            <input type="number" class="form-control" placeholder="Double Double Non-Steering" aria-describedby="basic-addon1" ng-model="System.SysAxelSingle.Double_Double_Non_Steering">
+                            <span class="input-group-addon glyphicon-Double_Double_Non_Steering" id="basic-addon1"></span>
+                        </div>
+                    </div>
+                    <div class='col-md-4 col-sm-6' >
+                        <div class="input-group vcenter">
+                            <label class="label label-red">Double Triple Non-Steering</label>
+                            <input type="number" class="form-control" placeholder="Double Triple Non-Steering" aria-describedby="basic-addon1" ng-model="System.SysAxelSingle.Double_Triple_Non_Steering">
+                            <span class="input-group-addon glyphicon-Double_Triple_Non_Steering" id="basic-addon1"></span>
+                        </div>
+                    </div>
+                    <div class='col-md-4 col-sm-6' >
+                        <div class="input-group vcenter">
+                            <label class="label label-red">Custom 1</label>
+                            <input type="number" class="form-control" placeholder="Custom 1" aria-describedby="basic-addon1" ng-model="System.SysAxelSingle.Custom_1">
+                            <span class="input-group-addon glyphicon-Custom_1" id="basic-addon1"></span>
+                        </div>
+                    </div>
+                    <div class='col-md-4 col-sm-6' >
+                        <div class="input-group vcenter">
+                            <label class="label label-red">Custom 2</label>
+                            <input type="number" class="form-control" placeholder="Custom 2" aria-describedby="basic-addon1" ng-model="System.SysAxelSingle.Custom_2">
+                            <span class="input-group-addon glyphicon-Custom_2" id="basic-addon1"></span>
+                        </div>
+                    </div>
+                    <div class='col-md-4 col-sm-6' >
+                        <div class="input-group vcenter">
+                            <label class="label label-red">Custom 3</label>
+                            <input type="number" class="form-control" placeholder="Custom 3" aria-describedby="basic-addon1" ng-model="System.SysAxelSingle.Custom_3">
+                            <span class="input-group-addon glyphicon-Custom_3" id="basic-addon1"></span>
+                        </div>
+                    </div>
+                    <form name="COMPSETTINGS" sf-schema="System.SysAxelSchema" sf-form="System.SysAxelform" sf-model="System.SysAxelSingle" ng-submit="System.save(COMPSETTINGS)" ></form>
+                </fieldset>
+                <fieldset id="axeltypes" ng-if="System.Forms.SetupAdd && System.FormDisplay">
+                    <legend>Axel Settings</legend>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <label for="input" class="label label-red">Name</label>
+                                <input type="text" class="form-control" ng-model="System.LoadingAxle.name"/>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <label for="input" class="label label-red">Total Weight</label>
+                                <span class="form-control">{{System.LoadingAxle.axel_sum}}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <label for="input" class="label label-red">Vehicle Max Weight</label>
+                                <input type="text" class="form-control" ng-model="System.LoadingAxle.vehicle_max" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <h4>Steering</h4>
+                            <span class="input-group-addon glyphicon-{{System.LoadingAxle.steering}}" id="basic-addon1"></span>
+                            <select class="form-control ng-dirty" ng-model="System.LoadingAxle.steering" ng-change="System.LoadingChange(1)">
+                                <option value="">Please Select..</option>
+                                <option value="Single_Steering">Single Steering</option>
+                                <option value="Double_Steering">Double Steering</option>
+                                <option value="Triple_Steering">Triple Steering</option>
+                                <option value="Single_Non_Steering">Single Non Steering</option>
+                                <option value="Double_Non_Steering">Double Non Steering</option>
+                                <option value="Triple_Non_Steering">Triple Non Steering</option>
+                                <option value="Double_Single_Non_Steering">Double Single Non Steering</option>
+                                <option value="Double_Double_Non_Steering">Double Double Non Steering</option>
+                                <option value="Double_Triple_Non_Steering">Double Triple Non Steering</option>
+                                <option value="Custom_1">Custom 1</option>
+                                <option value="Custom_2">Custom 2</option>
+                                <option value="Custom_3">Custom 3</option>
+                            </select>
+                            <div class="input-group">
+                                <label for="input" class="label label-red">Weight</label>
+                                <span class="form-control">{{System.LoadingAxle.steering_max}}</span>
+                            </div>
+
+                        </div>
+                        <div class="col-md-3">
+                            <h4>Axle 1</h4>
+                            <span class="input-group-addon glyphicon-{{System.LoadingAxle.axel_1}}" id="basic-addon1"></span>
+                            <select class="form-control ng-dirty" ng-model="System.LoadingAxle.axel_1" ng-change="System.LoadingChange(2)">
+                                <option value="">Please Select..</option>
+                                <option value="Single_Steering">Single Steering</option>
+                                <option value="Double_Steering">Double Steering</option>
+                                <option value="Triple_Steering">Triple Steering</option>
+                                <option value="Single_Non_Steering">Single Non Steering</option>
+                                <option value="Double_Non_Steering">Double Non Steering</option>
+                                <option value="Triple_Non_Steering">Triple Non Steering</option>
+                                <option value="Double_Single_Non_Steering">Double Single Non Steering</option>
+                                <option value="Double_Double_Non_Steering">Double Double Non Steering</option>
+                                <option value="Double_Triple_Non_Steering">Double Triple Non Steering</option>
+                                <option value="Custom_1">Custom 1</option>
+                                <option value="Custom_2">Custom 2</option>
+                                <option value="Custom_3">Custom 3</option>
+                            </select>
+                            <div class="input-group">
+                                <label for="input" class="label label-red">Weight</label>
+                                <span class="form-control">{{System.LoadingAxle.axel_1_max}}</span>
+                            </div>
+
+                        </div>
+                        <div class="col-md-2">
+                            <h4>Axle 2</h4>
+                            <span class="input-group-addon glyphicon-{{System.LoadingAxle.axel_2}}" id="basic-addon1"></span>
+                            <select class="form-control ng-dirty" ng-model="System.LoadingAxle.axel_2" ng-change="System.LoadingChange(3)">
+                                <option value="">Please Select..</option>
+                                <option value="Single_Steering">Single Steering</option>
+                                <option value="Double_Steering">Double Steering</option>
+                                <option value="Triple_Steering">Triple Steering</option>
+                                <option value="Single_Non_Steering">Single Non Steering</option>
+                                <option value="Double_Non_Steering">Double Non Steering</option>
+                                <option value="Triple_Non_Steering">Triple Non Steering</option>
+                                <option value="Double_Single_Non_Steering">Double Single Non Steering</option>
+                                <option value="Double_Double_Non_Steering">Double Double Non Steering</option>
+                                <option value="Double_Triple_Non_Steering">Double Triple Non Steering</option>
+                                <option value="Custom_1">Custom 1</option>
+                                <option value="Custom_2">Custom 2</option>
+                                <option value="Custom_3">Custom 3</option>
+                            </select>
+                            <div class="input-group">
+                                <label for="input" class="label label-red">Weight</label>
+                                <span class="form-control">{{System.LoadingAxle.axel_2_max}}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <h4>Axle 3</h4>
+                            <span class="input-group-addon glyphicon-{{System.LoadingAxle.axel_3}}" id="basic-addon1"></span>
+                            <select class="form-control ng-dirty" ng-model="System.LoadingAxle.axel_3" ng-change="System.LoadingChange(4)">
+                                <option value="">Please Select..</option>
+                                <option value="Single_Steering">Single Steering</option>
+                                <option value="Double_Steering">Double Steering</option>
+                                <option value="Triple_Steering">Triple Steering</option>
+                                <option value="Single_Non_Steering">Single Non Steering</option>
+                                <option value="Double_Non_Steering">Double Non Steering</option>
+                                <option value="Triple_Non_Steering">Triple Non Steering</option>
+                                <option value="Double_Single_Non_Steering">Double Single Non Steering</option>
+                                <option value="Double_Double_Non_Steering">Double Double Non Steering</option>
+                                <option value="Double_Triple_Non_Steering">Double Triple Non Steering</option>
+                                <option value="Custom_1">Custom 1</option>
+                                <option value="Custom_2">Custom 2</option>
+                                <option value="Custom_3">Custom 3</option>
+                            </select>
+                            <div class="input-group">
+                                <label for="input" class="label label-red">Weight</label>
+                                <span class="form-control">{{System.LoadingAxle.axel_3_max}}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <h4>Axle 4</h4>
+                            <span class="input-group-addon glyphicon-{{System.LoadingAxle.axel_4}}" id="basic-addon1"></span>
+                            <select class="form-control ng-dirty" ng-model="System.LoadingAxle.axel_4" ng-change="System.LoadingChange(5)">
+                                <option value="">Please Select..</option>
+                                <option value="Single_Steering">Single Steering</option>
+                                <option value="Double_Steering">Double Steering</option>
+                                <option value="Triple_Steering">Triple Steering</option>
+                                <option value="Single_Non_Steering">Single Non Steering</option>
+                                <option value="Double_Non_Steering">Double Non Steering</option>
+                                <option value="Triple_Non_Steering">Triple Non Steering</option>
+                                <option value="Double_Single_Non_Steering">Double Single Non Steering</option>
+                                <option value="Double_Double_Non_Steering">Double Double Non Steering</option>
+                                <option value="Double_Triple_Non_Steering">Double Triple Non Steering</option>
+                                <option value="Custom_1">Custom 1</option>
+                                <option value="Custom_2">Custom 2</option>
+                                <option value="Custom_3">Custom 3</option>
+                            </select>
+                            <div class="input-group">
+                                <label for="input" class="label label-red">Weight</label>
+                                <span class="form-control">{{System.LoadingAxle.axel_4_max}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="button" class="btn btn-black " value="Add" ng-click="System.DisplayForms('SaveNew')"><input type="button" class="btn btn-red pull-right " value="Cancel" ng-click="System.DisplayForms('Cancel')">
+                </fieldset>
+                <fieldset id="axeltypes" ng-if="System.Forms.SetupList && System.FormDisplay" >
+                    <legend>Axel Setups<input type="button" class="btn btn-black pull-right" value="Add" ng-click="System.DisplayForms('Add')"><input type="button" class="btn btn-black pull-right" value="Types" ng-click="System.DisplayForms('Types')"></legend>
+                    <table datatable="ng" class="table table-bordered table-striped" ng-if="System.hasData" dt-options="System.dtOptions">
+                        <colgroup>
+                            <col width="10%">
+                            <col width="12%">
+                            <col width="12%">
+                            <col width="12%">
+                            <col width="12%">
+                            <col width="12%">
+                            <col width="17%">
+                            <col width="12%">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Steering</th>
+                                <th>Axle 1</th>
+                                <th>Axle 2</th>
+                                <th>Axle 3</th>
+                                <th>Axle 4</th>
+                                <th>Total Max</th>
+                                <td></td>
+                        </thead>
+                        <tbody>
+
+                            <tr data-ng-repeat="data in System.SysSetupData">
+                                <td>
+                                    <h4>{{data.name}}</h4>
+                                    <input type="button" class="btn btn-black " value="Update" 
+                                    ng-click="System.AxelSetupOptions.UpdateSetups(data)">
+                                    <input type="button" class="btn btn-red " value="Delete" 
+                                    ng-click="System.AxelSetupOptions.DeleteSetups(data)">
+                                </td>
+                                <td>
+                                    <div class="input-group vcenter">
+                                        <label class="label label-red">{{data.steering}}</label>
+                                        <span class="input-group-addon glyphicon-{{data.steering}}" id="basic-addon1"></span>
+                                        <span class="form-control">{{data.steering_max}}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group vcenter">
+                                        <label class="label label-red">{{data.axel_1}}</label>
+                                        <span class="input-group-addon glyphicon-{{data.axel_1}}" id="basic-addon1"></span>
+                                        <span class="form-control">{{data.axel_1_max}}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group vcenter">
+                                        <label class="label label-red">{{data.axel_2}}</label>
+                                        <span class="input-group-addon glyphicon-{{data.axel_2}}" id="basic-addon1"></span>
+                                        <span class="form-control">{{data.axel_2_max}}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group vcenter">
+                                        <label class="label label-red">{{data.axel_3}}</label>
+                                        <span class="input-group-addon glyphicon-{{data.axel_3}}" id="basic-addon1"></span>
+                                        <span class="form-control">{{data.axel_3_max}}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group vcenter">
+                                        <label class="label label-red">{{data.axel_4}}</label>
+                                        <span class="input-group-addon glyphicon-{{data.axel_4}}" id="basic-addon1"></span>
+                                        <span class="form-control">{{data.axel_4_max}}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="form-control">{{data.vehicle_max}}</span>
+                                </td>
+                                <td></td>
+                            </tr>
+                    </table>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+</div>

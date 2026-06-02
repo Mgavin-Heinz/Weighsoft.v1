@@ -1,0 +1,42 @@
+#!/bin/sh
+set -e
+PHP_FPM_ERROR_LOG="/var/www/app/storage/logs/fpm-error.log"
+PHP_FPM_ACCESS_LOG="/var/www/app/storage/logs/fpm-access.log"
+PHP_ERROR_LOG="/var/www/app/storage/logs/php-error.log"
+PHP_ACCESS_LOG="/var/www/app/storage/logs/php-access.log"
+NGNIX_ERROR_LOG="/var/www/app/storage/logs/ngnix-error.log"
+NGNIX_ACCESS_LOG="/var/www/app/storage/logs/ngnix-access.log"
+LARAVEL_LOG="/var/www/app/storage/logs/laravel.log"
+
+mkdir -p $(dirname $PHP_FPM_ERROR_LOG)
+
+touch $PHP_FPM_ERROR_LOG
+touch $PHP_FPM_ACCESS_LOG
+touch $PHP_ERROR_LOG
+touch $PHP_ACCESS_LOG
+touch $NGNIX_ERROR_LOG
+touch $NGNIX_ACCESS_LOG
+touch $LARAVEL_LOG
+
+chmod 664 $PHP_FPM_ERROR_LOG
+chmod 664 $PHP_FPM_ACCESS_LOG
+chmod 664 $PHP_ERROR_LOG
+chmod 664 $PHP_ACCESS_LOG
+chmod 664 $NGNIX_ERROR_LOG
+chmod 664 $NGNIX_ACCESS_LOG
+chmod 664 $LARAVEL_LOG
+
+chown -R www-data:www-data $(dirname $PHP_FPM_ERROR_LOG)
+
+# write the php-fpm config
+{ \
+    echo listen = /var/run/php-fpm.sock; \
+    echo listen.owner = www-data; \
+    echo listen.group = www-data; \
+    echo pm.max_children = "$FPM_PM_MAX_CHILDREN"; \
+    echo pm.start_servers = "$FPM_PM_START_SERVERS"; \
+    echo pm.min_spare_servers = "$FPM_PM_MIN_SPARE_SERVERS"; \
+    echo pm.max_spare_servers = "$FPM_PM_MAX_SPARE_SERVERS"; \
+} > /usr/local/etc/php-fpm.d/zzz-app.conf
+
+exec "$@"

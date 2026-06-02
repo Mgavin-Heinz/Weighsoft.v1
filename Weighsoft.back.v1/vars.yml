@@ -1,0 +1,7 @@
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  release: 'server'
+  version: '0.10.52'
+  platform: 'linux/arm/v7,linux/amd64'

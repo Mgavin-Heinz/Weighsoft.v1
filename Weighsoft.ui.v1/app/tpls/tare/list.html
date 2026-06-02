@@ -1,0 +1,26 @@
+<div>
+    <table datatable="ng" class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Registration No.</th>
+                <th>Weight in KG</th>
+                <th>Expiry Date</th>
+
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr data-ng-repeat="data in System.tareList">
+                <td data-ng-bind="data.registration_no"></td>
+                <td data-ng-bind="data.weight"></td>
+                <td data-ng-bind="data.expiry_date"></td>
+
+                <td>
+                    <button type="button" ng-if="data.has_transaction" data-ng-click="System.showTransactions(data)" class="btn btn-black btn-sm btn-icon icon-left">View Transaction</button>
+                    <button type="button" ng-if="!data.has_transaction" data-ng-click="System.showEditForm(data)" class="btn btn-black btn-sm btn-icon icon-left">Edit&nbsp;&nbsp;</button>
+                    <button type="button" ng-if="!data.has_transaction" data-ng-click="System.deleteWeighbridge(data)" class="btn btn-danger btn-sm btn-icon icon-left">Delete</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

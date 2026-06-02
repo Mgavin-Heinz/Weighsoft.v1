@@ -1,0 +1,67 @@
+<nav class="navbar user-info-navbar" ng-class="{'mobile-is-visible': layoutOptions.userInfoNavVisible}" ng-click="mobileUserInfoToggle()" role="navigation"><!-- User Info, Notifications and Menu Bar -->
+
+  <!-- Left links for user info navbar -->
+  <ul class="user-info-menu left-links list-inline list-unstyled">
+
+    <li class="hidden-sm hidden-xs">
+      <a href="" ng-click="sidebarToggle()">
+        <i class="fa-bars"></i>
+      </a>
+    </li>
+
+  </ul>
+
+  <!-- Right links for user info navbar -->
+  <ul class="user-info-menu right-links list-inline list-unstyled">
+    <!-- Removed <li class="fullscreen">
+      <a href="#" ng-click="download()" title="Emso">
+        <i class="glyphicon glyphicon-download-alt"></i>
+      </a>
+    </li>
+    <li class="fullscreen">
+      <a href="#" ng-click="helpme()" title="Help">
+        <i class="glyphicon glyphicon-exclamation-sign"></i>
+      </a>
+    </li> -->
+    <li class="fullscreen">
+      <a href="" ng-click="reloadSite()" title="Reload">
+        <i class="glyphicon glyphicon-refresh"></i>
+      </a>
+    </li>
+    
+    <li class="fullscreen" ng-show="isFullscreenSupported">
+      <a href="" ng-click="goFullscreen()" title="Fullscreen">
+        <i ng-class="{'fa-expand': !isFullscreen, 'fa-compress': isFullscreen == true}"></i>
+      </a>
+    </li>
+
+    <li class="dropdown user-profile">
+      <a href="" class="dropdown-toggle" data-toggle="dropdown">
+        <img src="assets/images/admin_user.png" alt="user-image" class="img-circle img-inline userpic-32" width="28" />
+        <span>
+          {{user_info.firstname}} {{user_info.lastname}}
+          <i class="fa-angle-down"></i>
+        </span>
+      </a>
+
+      <ul class="dropdown-menu user-profile-menu list-unstyled">
+
+        <li>
+          <a ui-sref="app.users_edit">
+            <i class="fa-user"></i>
+            Profile
+          </a>
+        </li>
+        
+        <li class="last">
+          <a ui-sref="logout">
+            <i class="fa-lock"></i>
+            Logout
+          </a>
+        </li>
+      </ul>
+    </li>
+
+  </ul>
+
+</nav>

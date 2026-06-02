@@ -1,0 +1,200 @@
+<page-title ng-if="layoutOptions.pageTitles" title="Weighbridges" description=""
+    data-ng-init="System.initialize()"></page-title>
+<div class="col-lg-12 col-md-12 ">
+    <div class="panel panel-color panel-danger">
+        <div class="panel-heading">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <h2>Weighbridge Management</h2>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label for="company_id" class="control-label">Company</label>
+                    <!-- If the user does not have a company assigned to them, show a dropdown list of companies. -->
+                    <select name="company_id" id="role_id" ng-if="!System.User.company_id"
+                        ng-model="System.HeaderSingle.company_id" class="form-control"
+                        ng-options="option.value as option.name for option in System.companyList"
+                        ng-change="System.changeFilter('company')"></select>
+                    <!-- If the user has a company assigned to them, show the company name. -->
+                    <label class="form-control" for="company_name" ng-if="System.User.company_id">{{
+                        System.companyList.registered_name}}</label>
+                </div>
+                <div ng-if="businessPartner">
+                    <div class="form-group" ng-if="System.HeaderSingle.company_id !== null">
+                        <label for="site_id" class="control-label">Site</label>
+                        <select name="site_id" id="site_id" ng-model="System.HeaderSingle.site_id" class="form-control"
+                            ng-options="option.value as option.name for option in System.siteList"
+                            ng-change="System.changeFilter('site')"></select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <div ng-if="businessPartner">
+                    <div class="form-group" ng-if="System.HeaderSingle.site_id !== null">
+                        <label for="workstation_id" class="control-label">Workstation</label>
+                        <select name="workstation_id" id="workstation_id" ng-model="System.HeaderSingle.workstation_id"
+                            class="form-control"
+                            ng-options="option.value as option.name for option in System.workstationList"
+                            ng-change="System.changeFilter('workstation')"></select>
+                    </div>
+                </div>
+                <div class="form-group" ng-if="System.HeaderSingle.workstation_id !== null">
+                    <button type="button" data-ng-click="System.showAddForm()" ng-hide='System.isEditing'
+                        class="btn btn-black pull-right">
+                        Add New
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <form class="row" ng-if="System.isEditing">
+                <div class="col-md-12">
+                    <h3>Add / Edit</h3>
+                </div>
+                <div class="form-group col-sm-12 col-md-6">
+                    <label for="inputName" class="label label-danger">Weighbridge Name</label>
+                    <input type="text" class="form-control" id="inputName" placeholder="Name"
+                        ng-model="System.weighbridgeInfo.name">
+                </div>
+                <div class="form-group col-sm-12 col-md-6">
+                    <label for="inputcode" class="label label-danger">Code</label>
+                    <input type="text" class="form-control" id="inputcode" placeholder="Code"
+                        ng-model="System.weighbridgeInfo.code">
+                </div>
+                <div class="form-group col-sm-12 col-md-6">
+                    <label for="inputport_num" class="label label-danger">Scale Port Number:
+                        {{System.weighbridgeInfo.port_num}}</label>
+                    <div class="input-group">
+                        <select name="port_num" id="port_num" class="form-control"
+                            ng-model="System.weighbridgeInfo.port_num">
+                            <option ng-repeat="option in System.availablePorts" value="{{option.port}}"
+                                ng-selected="System.weighbridgeInfo.port_num == option.port">{{option.name}}</option>
+                        </select>
+                        <span class="input-group-btn">
+                            <button class="btn btn-danger" type="button" ng-click="System.refreshPorts()">
+                                <i class="fa fa-refresh"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group col-sm-12 col-md-6">
+                    <label for="inputscale" class="label label-danger">Choose Scale: {{System.getScaleName(System.weighbridgeInfo.scale)}}</label>
+                    <select name="inputscale" id="inputscale" class="form-control"
+                            ng-model="System.weighbridgeInfo.scale">
+                            <option ng-repeat="scale in System.scaleList" value="{{scale.record}}"
+                            ng-selected="{{System.weighbridgeInfo.scale == scale.record}}">{{scale.name}}</option>
+                    </select>
+                </div>
+                <div class="form-group col-sm-12 col-md-6" ng-if = "System.weighbridgeInfo.remote_display == 'Yes'">
+                    <label for="inputdisplayport_num" class="label label-danger">Display Port Number:
+                        {{System.weighbridgeInfo.display_port_num}}</label>
+                    <select name="AvailablePorts" id="AvailablePorts" class="form-control"
+                        ng-model="System.weighbridgeInfo.display_port_num">
+                        <option ng-repeat="option in AvailablePorts" value="{{option.port}}"
+                            ng-selected="{{ System.weighbridgeInfo.display_port_num == option.port}}">{{option.name}}</option>
+                    </select>
+                </div>
+            </form>
+            <form class="row" ng-if="System.isEditing">
+                <div class="form-group col-sm-6 col-md-2">
+                    <label for="inputdecimal" class="label label-danger">Decimal Places</label>
+                    <input type="number" class="form-control" id="inputdecimal"
+                        ng-model="System.weighbridgeInfo.decimal_places">
+
+                </div>
+                <div class="form-group col-sm-6 col-md-2">
+                    <label for="inputstable_samples" class="label label-danger">Stable Samples</label>
+                    <input type="number" class="form-control" id="inputstable_samples" placeholder="0"
+                        ng-model="System.weighbridgeInfo.stable_samples">
+
+                </div>
+            </form>
+            <form class="row" ng-if="System.isEditing">
+                <div class="form-group col-sm-6 col-md-2">
+                    <label for="inputin_reverse" class="label label-danger">Remote Display</label>
+                    <input id="inputin_reverse" type="checkbox" class="iswitch-lg iswitch-danger" name="inputin_reverse"
+                        ng-model="System.weighbridgeInfo.remote_display" ng-true-value="'Yes'" ng-false-value="'No'">
+
+                </div>
+                <div class="form-group col-sm-6 col-md-2">
+                    <label for="inputin_reverse" class="label label-danger">In Reverse</label>
+                    <input id="inputin_reverse" type="checkbox" class="iswitch-lg iswitch-danger" name="inputin_reverse"
+                        ng-model="System.weighbridgeInfo.in_reverse" ng-true-value="'Yes'" ng-false-value="'No'">
+
+                </div>
+                <div class="form-group col-sm-6 col-md-2">
+                    <label for="inputin_reverse" class="label label-danger">Manual</label>
+                    <input id="inputmanual" type="checkbox" class="iswitch-lg iswitch-danger" name="inputmanual"
+                        ng-model="System.weighbridgeInfo.manual" ng-true-value="'Yes'" ng-false-value="'No'">
+
+                </div>
+                <div class="form-group col-sm-12 col-md-6">
+                    <label for="inputin_weighing_transaction_flag" class="label label-danger">Weighing
+                        Transaction</label>
+                    <div class="col-sm-10">
+                        <input id="weighing_transaction_flag" type="checkbox" class="iswitch-lg iswitch-danger"
+                            name="weighing_transaction_flag" ng-model="System.weighbridgeInfo.weighing_transaction_flag"
+                            ng-true-value="'Yes'" ng-false-value="'No'">
+                    </div>
+                </div>
+                <div class="form-group col-sm-12 well"
+                    ng-if="System.weighbridgeInfo.manual == 'No' || System.weighbridgeInfo.manual == null">
+                    <div class="col-sm-4">
+                        <label for="inputweight" class="label label-danger">Weight</label>
+                        <input type="number" step="0.0001" readonly="readonly" class="form-control" id="inputweight"
+                            placeholder="0" ng-model="System.weighbridgeInfo.weight">
+                    </div>
+                    <div class="col-sm-2">
+                        <button class="btn btn-danger" ng-click="System.StartWeighing()">Start</button>
+                    </div>
+                    <div class="col-sm-2">
+                        <button class="btn btn-black pull-right" ng-click="System.StopWeighing()">Stop</button>
+                    </div>
+                    <div class="col-sm-10">
+                        <label for="inputweight" class="label label-danger">Data</label>
+                        <input type="text" class="form-control" id="inputweight" placeholder="0"
+                            ng-model="System.weighbridgeInfo.data">
+                    </div>
+                </div>
+                <div class="form-group col-sm-12">
+                    <div class="col-sm-6">
+                        <button class="btn btn-danger" ng-click="System.saveForm()">Save</button>
+                    </div>
+                    <div class="col-sm-6">
+                        <button class="btn btn-danger pull-right" ng-click="System.cancelEdit()">Cancel</button>
+                    </div>
+                </div>
+            </form>
+            <div ng-hide="System.isEditing">
+                <table datatable="ng" class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>WorkStation</th>
+                            <th>Company</th>
+                            <th>Updated At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr data-ng-repeat="data in System.weighbridgeList">
+                            <td data-ng-bind="data.name"></td>
+                            <td data-ng-bind="data.workstation"></td>
+                            <td data-ng-bind="data.company"></td>
+                            <td data-ng-bind="data.updated_at"></td>
+                            <td>
+                                <button type="button" data-ng-click="System.showEditForm(data)"
+                                    class="btn btn-black btn-sm btn-icon icon-left">
+                                    Edit
+                                </button>
+                                <button type="button" data-ng-click="System.deleteWeighbridge(data)"
+                                    class="btn btn-danger btn-sm btn-icon icon-left">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

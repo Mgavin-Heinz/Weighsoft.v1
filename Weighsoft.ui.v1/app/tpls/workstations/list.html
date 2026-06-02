@@ -1,0 +1,168 @@
+<page-title ng-if="layoutOptions.pageTitles" title="WorkStations" description="" data-ng-init="System.initialize()"></page-title>
+<div class="col-lg-12 col-md-12 ">
+    <div class="panel panel-color panel-danger">
+        <div class="panel-heading">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <h2>WorkStation Management</h2>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label for="company_id" class="control-label">Company</label>
+                    <select name="company_id" id="role_id" ng-if="!System.User.company_id" ng-model="System.HeaderSingle.company_id" class="form-control" ng-options="option.value as option.name for option in System.companyList" ng-change="System.changeCompanyID()"></select>
+                    <label class="form-control" for="company_name" ng-if="System.User.company_id">{{ System.companyList }}</label>
+                </div>
+                <div class="form-group" ng-if="System.HeaderSingle.company_id !== null">
+                    <label for="site_id" class="control-label">Site</label>
+                    <select name="site_id" id="site_id" ng-if="!System.User.site_id" ng-model="System.HeaderSingle.site_id" class="form-control"
+                    ng-options="option.value as option.name for option in System.siteList" ng-change="System.changeSiteID()"></select>
+                    <label class="form-control" for="site_name" ng-if="System.User.site_id">{{ System.siteList }}</label>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <button type="button" data-ng-click="System.showAddForm()" ng-hide='System.isEditing' class="btn btn-black pull-right">
+                    Add New
+                </button>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class='col-sm-12' ng-if="System.isEditing">
+                    <h3>Add / Edit</h3>
+                    <form name="CRUD" sf-schema="System.schema" sf-form="System.form" sf-model="System.workstationInfo" ng-submit="System.saveForm(CRUD)"></form>
+                    
+                    <!-- ESP32 Test Buttons - Always visible during edit -->
+                    <div class="well" style="margin-top: 20px;">
+                        <h4><i class="fa fa-bolt"></i> Test ESP32 Relays</h4>
+                        <p class="text-muted">Click test buttons to verify relay configuration (relay turns ON for 1 second then OFF)</p>
+                        <p class="text-warning" ng-if="!System.workstationInfo.incoming_boom_ip && !System.workstationInfo.exiting_boom_ip && !System.workstationInfo.incoming_red_light_ip && !System.workstationInfo.incoming_green_light_ip && !System.workstationInfo.exiting_red_light_ip && !System.workstationInfo.exiting_green_light_ip">
+                            <i class="fa fa-info-circle"></i> Fill in IP addresses and relay numbers above to enable test buttons
+                        </p>
+                        
+                        <div class="row">
+                            <!-- Incoming Boom Test -->
+                            <div class="col-md-3 col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label">Incoming Boom</label>
+                                    <button type="button" class="btn btn-info btn-block" ng-click="System.testIncomingBoom()" 
+                                            ng-disabled="!System.workstationInfo.incoming_boom_ip || !System.workstationInfo.incoming_boom_relay">
+                                        <i class="fa fa-bolt"></i> Test
+                                    </button>
+                                    <small class="text-muted" ng-if="System.workstationInfo.incoming_boom_ip">
+                                        {{System.workstationInfo.incoming_boom_ip}}:{{System.workstationInfo.incoming_boom_relay || '?'}}
+                                    </small>
+                                    <small class="text-muted" ng-if="!System.workstationInfo.incoming_boom_ip">Not configured</small>
+                                </div>
+                            </div>
+                            
+                            <!-- Exiting Boom Test -->
+                            <div class="col-md-3 col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label">Exiting Boom</label>
+                                    <button type="button" class="btn btn-info btn-block" ng-click="System.testExitingBoom()"
+                                            ng-disabled="!System.workstationInfo.exiting_boom_ip || !System.workstationInfo.exiting_boom_relay">
+                                        <i class="fa fa-bolt"></i> Test
+                                    </button>
+                                    <small class="text-muted" ng-if="System.workstationInfo.exiting_boom_ip">
+                                        {{System.workstationInfo.exiting_boom_ip}}:{{System.workstationInfo.exiting_boom_relay || '?'}}
+                                    </small>
+                                    <small class="text-muted" ng-if="!System.workstationInfo.exiting_boom_ip">Not configured</small>
+                                </div>
+                            </div>
+                            
+                            <!-- Incoming Red Light Test -->
+                            <div class="col-md-3 col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label">Incoming Red Light</label>
+                                    <button type="button" class="btn btn-info btn-block" ng-click="System.testIncomingRedLight()"
+                                            ng-disabled="!System.workstationInfo.incoming_red_light_ip || !System.workstationInfo.incoming_red_light_relay">
+                                        <i class="fa fa-bolt"></i> Test
+                                    </button>
+                                    <small class="text-muted" ng-if="System.workstationInfo.incoming_red_light_ip">
+                                        {{System.workstationInfo.incoming_red_light_ip}}:{{System.workstationInfo.incoming_red_light_relay || '?'}}
+                                    </small>
+                                    <small class="text-muted" ng-if="!System.workstationInfo.incoming_red_light_ip">Not configured</small>
+                                </div>
+                            </div>
+                            
+                            <!-- Incoming Green Light Test -->
+                            <div class="col-md-3 col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label">Incoming Green Light</label>
+                                    <button type="button" class="btn btn-info btn-block" ng-click="System.testIncomingGreenLight()"
+                                            ng-disabled="!System.workstationInfo.incoming_green_light_ip || !System.workstationInfo.incoming_green_light_relay">
+                                        <i class="fa fa-bolt"></i> Test
+                                    </button>
+                                    <small class="text-muted" ng-if="System.workstationInfo.incoming_green_light_ip">
+                                        {{System.workstationInfo.incoming_green_light_ip}}:{{System.workstationInfo.incoming_green_light_relay || '?'}}
+                                    </small>
+                                    <small class="text-muted" ng-if="!System.workstationInfo.incoming_green_light_ip">Not configured</small>
+                                </div>
+                            </div>
+                            
+                            <!-- Exiting Red Light Test -->
+                            <div class="col-md-3 col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label">Exiting Red Light</label>
+                                    <button type="button" class="btn btn-info btn-block" ng-click="System.testExitingRedLight()"
+                                            ng-disabled="!System.workstationInfo.exiting_red_light_ip || !System.workstationInfo.exiting_red_light_relay">
+                                        <i class="fa fa-bolt"></i> Test
+                                    </button>
+                                    <small class="text-muted" ng-if="System.workstationInfo.exiting_red_light_ip">
+                                        {{System.workstationInfo.exiting_red_light_ip}}:{{System.workstationInfo.exiting_red_light_relay || '?'}}
+                                    </small>
+                                    <small class="text-muted" ng-if="!System.workstationInfo.exiting_red_light_ip">Not configured</small>
+                                </div>
+                            </div>
+                            
+                            <!-- Exiting Green Light Test -->
+                            <div class="col-md-3 col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label">Exiting Green Light</label>
+                                    <button type="button" class="btn btn-info btn-block" ng-click="System.testExitingGreenLight()"
+                                            ng-disabled="!System.workstationInfo.exiting_green_light_ip || !System.workstationInfo.exiting_green_light_relay">
+                                        <i class="fa fa-bolt"></i> Test
+                                    </button>
+                                    <small class="text-muted" ng-if="System.workstationInfo.exiting_green_light_ip">
+                                        {{System.workstationInfo.exiting_green_light_ip}}:{{System.workstationInfo.exiting_green_light_relay || '?'}}
+                                    </small>
+                                    <small class="text-muted" ng-if="!System.workstationInfo.exiting_green_light_ip">Not configured</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div ng-hide='System.isEditing'>
+                <table datatable="ng" class="table table-striped table-bordered" ng-if="System.workstationList.length">
+                    <thead>
+                        <tr>
+                            <th>Workstation Code</th>
+                            <th>Workstation Name</th>
+                            <th>Company</th>
+                            <th>Site</th>
+                            <th>Updated At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr data-ng-repeat="data in System.workstationList">
+                            <td data-ng-bind="data.workstation_type"></td>
+                            <td data-ng-bind="data.name"></td>
+                            <td data-ng-bind="data.company"></td>
+                            <td data-ng-bind="data.site"></td>
+                            <td data-ng-bind="data.updated_at"></td>
+                            <td>
+                                <button type="button" data-ng-click="System.showEditForm(data)" class="btn btn-black btn-sm btn-icon icon-left">
+                                    Edit
+                                </button>
+                                <button type="button" data-ng-click="System.deleteWorkstation(data)" class="btn btn-danger btn-sm btn-icon icon-left">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

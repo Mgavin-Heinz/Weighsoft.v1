@@ -1,0 +1,272 @@
+---
+description: Service layer patterns, business logic organization, and service conventions
+globs: ["app/Services/**/*.php"]
+alwaysApply: false
+---
+
+# Service Layer Patterns
+
+## Service Purpose
+
+Services contain **complex business logic** that should not be in controllers:
+- Complex database queries
+- Business rule calculations
+- Data transformations
+- Multi-step operations
+- Reusable business logic
+
+## Service Structure
+
+### Basic Service Pattern
+
+```php
+<?php
+
+namespace App\Services;
+
+use App\Models\weighingHeaders;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
+class WeighingHeaderService
+{
+    public function getWeighingHeaders(
+        $companyId, 
+        $siteId, 
+        $workstationId, 
+        $status, 
+        $pageStart, 
+        $pageSize, 
+        $orderByCol, 
+        $orderByDir, 
+        $searchTerm
+    ): array {
+        // Build complex query
+        $sqlStatement = "SELECT ... FROM weighingheaders wh";
+        
+        $filters = ["deleted_at IS NULL"];
+        $parameters = [];
+        
+        // Add filters dynamically
+        if (isset($companyId) && !empty($companyId)) {
+            array_push($filters, "company_id = ?");
+            array_push($parameters, $companyId);
+        }
+        
+        // Build WHERE clause
+        $whereStatement = " WHERE " . implode(" AND ", $filters);
+        $sqlStatement .= $whereStatement;
+        
+        // Execute query
+        $data = DB::select($sqlStatement, $parameters);
+        
+        // Get count
+        $countSql = "SELECT count(1) as count FROM weighingheaders" . $whereStatement;
+        $count = DB::selectOne($countSql, $filterParameters);
+        
+        return [$data, $count->count];
+    }
+}
+```
+
+## Service Methods
+
+### Query Methods
+
+Services often contain complex query methods:
+
+```php
+public function getWeighingHeaders(...): array
+{
+    // Complex SQL with dynamic filters
+    // Returns array with [data, count]
+}
+
+public function getOneWeighingHeader($id): Model|weighingHeaders|null
+{
+    // Get single record with UUID conversion
+    $weighingHeader = (new weighingHeaders)
+        ->whereRaw("id = UUID_TO_BIN(?, TRUE)", [$id])
+        ->first(["weighingheaders.*", DB::raw("BIN_TO_UUID(id, TRUE) as id2")]);
+    
+    if (!empty($weighingHeader)) {
+        $weighingHeader['id'] = $weighingHeader['id2'];
+        unset($weighingHeader['id2']);
+    }
+    
+    return $weighingHeader;
+}
+```
+
+### Insert Methods
+
+```php
+public function insertWeighingHeader($weighingHeader)
+{
+    $sql = "
+        INSERT INTO weighingheaders (
+            id, transaction, settings_id, ...
+        ) VALUES (
+            UUID_TO_BIN(UUID(), true), ?, ?, ...
+        )
+    ";
+    
+    $params = [
+        $weighingHeader['transaction'],
+        $weighingHeader['settings_id'],
+        // ... more params
+    ];
+    
+    DB::insert($sql, $params);
+    
+    // Return the inserted record
+    return $this->getLastUpdatedItem();
+}
+```
+
+### Update Methods
+
+```php
+public function updateWeighingHeader($id, $weighingHeader): int
+{
+    // Build dynamic SQL to only update provided fields
+    $setParts = [];
+    $parameters = [];
+    
+    // Always update core fields
+    if (isset($weighingHeader['status'])) {
+        $setParts[] = "status = ?";
+        $parameters[] = $weighingHeader['status'];
+    }
+    
+    // Only update if explicitly provided
+    $preserveFields = ['RegNumber', 'Custom1', ...];
+    foreach ($preserveFields as $field) {
+        if (array_key_exists($field, $weighingHeader)) {
+            $setParts[] = "$field = ?";
+            $parameters[] = $weighingHeader[$field];
+        }
+    }
+    
+    // Always update timestamp
+    $setParts[] = "updated_at = CURRENT_TIMESTAMP";
+    
+    if (empty($setParts)) {
+        return 0;
+    }
+    
+    $sql = "
+        UPDATE weighingheaders
+        SET " . implode(", ", $setParts) . "
+        WHERE id = UUID_TO_BIN(?, TRUE)
+    ";
+    
+    $parameters[] = $id;
+    return DB::update($sql, $parameters);
+}
+```
+
+### Delete Methods
+
+```php
+public function deleteWeighingHeader($id, $userId, $reason = null): int
+{
+    // Soft delete with reason
+    $sql = "
+        UPDATE weighingheaders
+        SET
+            reason = ?,
+            deleted_at = ?,
+            deletedUserId = ?
+        WHERE
+            id = UUID_TO_BIN(?, TRUE)
+    ";
+    
+    return DB::update($sql, [
+        $reason, 
+        date("Y-m-d H:i:s", time()), 
+        $userId, 
+        $id
+    ]);
+}
+```
+
+## Dependency Injection
+
+Services are injected into controllers via constructor:
+
+```php
+class WeighingHeadersController extends JwtAuthController
+{
+    private WeighingHeaderService $headerService;
+    private WeighingTransactionService $transactionService;
+
+    public function __construct(
+        WeighingHeaderService $headerService,
+        WeighingTransactionService $transactionService
+    ) {
+        parent::__construct();
+        $this->headerService = $headerService;
+        $this->transactionService = $transactionService;
+    }
+}
+```
+
+## Service Responsibilities
+
+### What Goes in Services
+
+- Complex database queries (especially with UUIDs)
+- Business logic calculations
+- Data transformations
+- Multi-step operations
+- Reusable query patterns
+
+### What Stays in Controllers
+
+- Request validation
+- Response formatting
+- HTTP status codes
+- Simple CRUD operations (can stay in controller if simple)
+
+## Error Handling in Services
+
+Services should throw exceptions, controllers handle them:
+
+```php
+// In Service
+public function getOneWeighingHeader($id)
+{
+    $weighingHeader = // ... query
+    
+    if (!$weighingHeader) {
+        throw new Exception("WeighingHeader not found");
+    }
+    
+    return $weighingHeader;
+}
+
+// In Controller
+public function show(string $id): JsonResponse
+{
+    try {
+        $weighingHeader = $this->headerService->getOneWeighingHeader($id);
+        return response()->json($weighingHeader);
+    } catch (\Throwable $th) {
+        return response()->json(['error' => $th->getMessage()], 404);
+    }
+}
+```
+
+## Critical Rules
+
+1. **DO** use Services for complex business logic
+2. **DO** use Services for complex queries (especially with UUIDs)
+3. **DO** inject Services via constructor
+4. **DO** return appropriate types from service methods
+5. **DO** throw exceptions for errors (let controllers handle responses)
+6. **DO** use database transactions in services for multi-step operations
+7. **DO NOT** put HTTP concerns (responses, status codes) in services
+8. **DO NOT** put request validation in services
+9. **DO** keep services focused on business logic

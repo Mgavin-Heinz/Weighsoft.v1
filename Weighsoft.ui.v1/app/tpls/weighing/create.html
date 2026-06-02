@@ -1,0 +1,829 @@
+<page-title ng-if="layoutOptions.pageTitles" title="Weighing List" description="" data-ng-init="System.initialize()"></page-title>
+<div class="col-lg-12 col-md-12 hidden-print">
+    <div class="panel panel-color panel-info">
+        <div class="panel-heading hidden-print">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <h2>Weighing Create</h2>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label for="company_id" class="control-label">Company</label>
+                    <h2 id="company_id">{{System.HeaderSingle.company}}</h2>
+                </div>
+                <div class="form-group" ng-if="System.HeaderSingle.company_id !== null">
+                    <label for="site_id" class="control-label">Site</label>
+                    <h2 id="site_id">{{System.HeaderSingle.site}}</h2>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <div>
+                    <div class="form-group" ng-if="System.HeaderSingle.site_id !== null">
+                        <label for="workstation_id" class="control-label">Workstation</label>
+                        <h2 id="workstation_id">{{System.HeaderSingle.workstation}}</h2>
+                    </div>
+                </div>
+                <div class="form-group" ng-if="System.HeaderSingle.workstation_id !== null"></div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <div class="select-box">
+                        <label for="settings_id" class="control-label">Weighing System Type:</label>
+                        <ui-select
+                            name="settings_id"
+                            id="settings_id"
+                            ng-model="System.selected_settings"
+                            ng-change="System.SelectOnChange('settings')"
+                            theme="selectize"
+                            ng-disabled="System.Single.actiontype == 'Edit'"
+                        >
+                            <ui-select-match name="settings_id" placeholder="Please Select">{{$select.selected.name}}</ui-select-match>
+                            <ui-select-choices name="settings_id" repeat="option in System.Settings | filter: $select.search">
+                                <div ng-bind-html="option.name | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                    <!-- <div class="form-group">
+                                            <label for="settings_id" class="control-label">Weighing System Type:</label>
+                                            <select name="settings_id" id="settings_id" ng-model="System.Single.settings_id" class="form-control" ng-change="System.SelectOnChange('settings')" 
+                                                    ng-options="option.id as option.name for option in System.Settings">
+                                            </select>
+                                        </div> -->
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.id !== undefined">
+                    <div class="select-box">
+                        <label for="weighbridge_id" class="control-label">Weighbridge:</label>
+                        <ui-select name="weighbridge_id" id="weighbridge_id" ng-model="System.selected_weighbridge" ng-change="System.SelectOnChange('weighbridge')" theme="selectize">
+                            <ui-select-match name="weighbridge_id" placeholder="Please Select">{{$select.selected.name}}</ui-select-match>
+                            <ui-select-choices name="weighbridge_id" repeat="option in System.Weighbridges | filter: $select.search">
+                                <div ng-bind-html="option.name | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                    <!-- <div class="form-group">
+                                            <label for="weighbridge_id" class="control-label">Weighbridge:</label>
+                                            <select name="weighbridge_id" id="weighbridge_id" ng-model="System.Single.weighbridge_id" class="form-control" ng-change="System.SelectOnChange('weighbridge')" 
+                                                    ng-options="option.value as option.name for option in System.Weighbridges">
+                                            </select>
+                                        </div> -->
+                </div>
+                <div class="col-md-8 col-sm-6">
+                    <textarea ng-if="false" name="Feedback" id="" cols="50" rows="10" ng-model="WeighFeedback"></textarea>
+                    <textarea ng-if="false" name="Feedback" id="" cols="30" rows="10" ng-model="WeighFeedback2"></textarea>
+                    <img alt="nprimage" ng-show="System.Setting.numberplate_recognition == 'Yes'" id="nprimage" ng-src="{{System.pn_recog}}" style="height: 100px; width: 100px" />
+                </div>
+                <div class="col-md-4 col-sm-6" ng-if="System.Single.weighbridge_id != null && System.WeighBridge.manual == 'No'" ng-click="System.ResetWeighing()">
+                    <div class="xe-widget xe-counter-block xe-counter-block-danger">
+                        <div class="xe-upper">
+                            <div class="xe-icon">
+                                <i class="fa-list-alt"></i>
+                            </div>
+                            <div class="xe-label">
+                                <strong class="num">{{System.formatNumber(System.Single.weight)}} {{System.Site.measure_type}}</strong>
+                                <span>Weight : {{System.Single.weighttxt}}</span>
+                            </div>
+                        </div>
+                        <div class="xe-lower">
+                            <span></span>
+                            <strong></strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.numberplate_1 == 'Yes'">
+                    <div class="form-group">
+                        <label for="RegNumber" class="control-label">Number Plate 1:</label>
+                        <div class="input-group">
+                            <input
+                                name="RegNumber"
+                                ng-readonly="System.Single.actiontype == 'Edit'"
+                                id="RegNumber"
+                                ng-class="System.NumberplateClass"
+                                ng-change="System.NumberplateChange()"
+                                ng-model="System.Single.RegNumber"
+                                class="form-control"
+                            />
+                            <div ng-hide="System.Single.actiontype == 'Edit' || System.Setting.numberplate_recognition != 'Yes'" class="input-group-addon" ng-click="System.NPR()">
+                                <i class="glyphicon glyphicon-refresh"></i>
+                            </div>
+                            <div ng-hide="System.Single.actiontype == 'Edit' || System.Setting.numberplate_recognition != 'Yes'" class="input-group-addon" ng-class="System.Single.NumberplateVerify">
+                                <input ng-model="System.Single.NumberplateVerify" type="checkbox" ng-true-value="'success'" ng-false-value="'danger'" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.numberplate_2 == 'Yes'">
+                    <div class="form-group">
+                        <label for="RegNumber" class="control-label">Number Plate 2:</label>
+                        <input name="RegNumber" ng-readonly="System.Single.actiontype == 'Edit'" id="RegNumber" ng-model="System.Single.RegNumber2" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.numberplate_3 == 'Yes'">
+                    <div class="form-group">
+                        <label for="RegNumber" class="control-label">Number Plate 3:</label>
+                        <input name="RegNumber" ng-readonly="System.Single.actiontype == 'Edit'" id="RegNumber" ng-model="System.Single.RegNumber3" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.haulier == 'Yes'">
+                    <div class="form-group">
+                        <label for="haulier_id" class="control-label">Haulier Partner:</label>
+                        <ui-select name="haulier_id" id="haulier_id" ng-model="System.selected_haulier" theme="selectize" ng-change="System.SelectOnChange('haulier')">
+                            <ui-select-match>{{$select.selected.displayName}}</ui-select-match>
+                            <ui-select-choices repeat="option in System.Hauliers | filter: $select.search">
+                                <div ng-bind-html="option.displayName | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                        <span ng-if="System.autoSelectedVehicle" class="label label-success" style="margin-top: 5px; display: inline-block;">
+                            🚗 Auto-selected from vehicle {{System.autoSelectedVehicle.registration_number}}
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.tares_enabled === 'true'">
+                    <div class="form-group">
+                        <label class="control-label" for="tare_id" class="control-label">Stored Tares:</label>
+                        <ui-select name="tare_id" id="tare_id" ng-model="System.selected_tare" theme="selectize" ng-change="System.SelectOnChange('tare')">
+                            <ui-select-match>{{$select.selected.registration_no}}</ui-select-match>
+                            <ui-select-choices repeat="option in System.Tares | filter: $select.search">
+                                <div ng-bind-html="option.registration_no | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.business_partner == 'Yes'">
+                    <div class="form-group">
+                        <label for="businesspartner_id" class="control-label">Business Partner:</label>
+                        <ui-select name="businesspartner_id" id="businesspartner_id" ng-model="System.selected_businessPartner" theme="selectize" ng-change="System.SelectOnChange('businesspartner')">
+                            <ui-select-match>{{$select.selected.displayName}}</ui-select-match>
+                            <ui-select-choices repeat="option in System.BusinessPartners | filter: $select.search">
+                                <div ng-bind-html="option.displayName | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                        <span ng-if="System.autoSelectedVehicle && System.autoSelectedVehicle.haulier.business_partner" class="label label-success" style="margin-top: 5px; display: inline-block;">
+                            🚗 Auto-selected from haulier
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.use_product_list == 'Yes'">
+                    <div class="form-group">
+                        <label for="product_id" class="control-label">Product:</label>
+                        <ui-select
+                            name="product_id"
+                            id="product_id"
+                            ng-model="System.selected_product"
+                            theme="selectize"
+                            ng-if="System.Single.actiontype != 'Edit'"
+                            ng-change="System.SelectOnChange('product')"
+                        >
+                            <ui-select-match>{{$select.selected.displayName}}</ui-select-match>
+                            <ui-select-choices repeat="option in System.Products | filter: $select.search">
+                                <div ng-bind-html="option.displayName | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                        <input
+                            name="product_id"
+                            id="product_id"
+                            for="product_id"
+                            ng-show="System.Single.actiontype == 'Edit'"
+                            class="form-control"
+                            ng-value="System.selected_product.name"
+                            readonly="readonly"
+                        />
+                    </div>
+                </div>
+                   <!-- Grades -->
+                    <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.selected_product.grades_enabled == 'Yes'">
+                        <div class="form-group">
+                            <label for="System.selected_product.grades" class="control-label">Product Grades:</label>
+                            <ui-select
+                                name="selected_product.grades"
+                                id="selected_product.grades"
+                                ng-model="System.Single.grades"
+                                theme="selectize"
+                                ng-if="System.Single.actiontype != 'Edit'"
+                            >
+                                <ui-select-match>{{$select.selected}}</ui-select-match>
+                                <ui-select-choices repeat="option in System.selected_product.grades | commaspliter">
+                                    <div ng-bind-html="option | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                            <input
+                                name="selected_product.grades"
+                                id="selected_product.grades"
+                                ng-if="System.Single.actiontype == 'Edit'"
+                                class="form-control"
+                                ng-value="System.Single.grades"
+                                readonly="readonly"
+                            />
+                        </div>
+                    </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.business_partner == 'Yes' && System.selected_settings.contract_enabled === 'true'">
+                    <div class="form-group" ng-show="System.selected_product && System.selected_businessPartner && System.Contracts.length > 0">
+                        <label for="contract_id" class="control-label">Contract:</label>
+                        <ui-select name="contract_id" id="contract_id" ng-model="System.selected_contract" theme="selectize" ng-change="System.SelectOnChange('contract')">
+                            <ui-select-match>{{$select.selected.name}}</ui-select-match>
+                            <ui-select-choices repeat="option in System.Contracts | filter: $select.search">
+                                <div ng-bind-html="option.name | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.business_partner == 'Yes' && System.selected_settings.contract_enabled === 'true'">
+                    <div class="form-group" ng-show="System.selected_product && System.selected_businessPartner && System.Contracts.length > 0">
+                        <label for="stockpile_nr_w" class="control-label">Stockpile Nr</label>
+                        <input type="text" class="form-control" id="stockpile_nr_w" placeholder="Optional" ng-model="System.Single.stockpile_nr" />
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.business_partner == 'Yes' && System.selected_settings.contract_enabled === 'true'">
+                    <div class="form-group" ng-show="System.selected_product && System.selected_businessPartner && System.Contracts.length > 0">
+                        <label for="destination_w" class="control-label">Destination</label>
+                        <input type="text" class="form-control" id="destination_w" placeholder="Optional" ng-model="System.Single.destination" />
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.enable_moisture === 'true'">
+                    <div class="form-group">
+                        <label class="control-label" for="moisture" class="control-label">Moisture:</label>
+                        <input class="form-control" name="moisture" id="moisture_deduction_level" ng-model="System.Single.moisture_deduction" ng-change="System.updateNetWeight();" />
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.enable_handling === 'true'">
+                    <div class="form-group">
+                        <label class="control-label" for="handling" class="control-label">{{System.handlingAlias}}:</label>
+                        <input class="form-control" name="handling" id="handling_charges_level" ng-model="System.Single.handling_charges" ng-change="System.updateNetWeight();" />
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.pallet_enabled === 'true'">
+                    <div class="form-group">
+                        <label class="control-label" for="pallet_id" class="control-label">Pallet type</label>
+
+                        <ui-select name="pallet_id" id="pallet_id" ng-model="System.selected_pallet" theme="selectize" ng-change="System.SelectOnChange('pallet')">
+                            <ui-select-match>{{$select.selected.pallet_name}}</ui-select-match>
+                            <ui-select-choices repeat="option in System.Pallets | filter: $select.search">
+                                <div ng-bind-html="option.pallet_name | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.pallet_enabled === 'true'">
+                    <div class="form-group">
+                        <label class="control-label" for="pallet_count" class="control-label">Number of pallets</label>
+                        <input class="form-control" name="pallet_count" id="pallet_count" ng-model="System.Single.pallet_count" ng-change="System.calculatePalletCharges(); System.updateNetWeight();" />
+                    </div>
+                </div>
+            </div>
+            <div class="row well well-sm" ng-hide="System.Setting.id === undefined || System.Setting.custom_fields === 'No'">
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.user_defined_input1 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input1" class="control-label">{{System.Setting.user_defined_name1}}:</label>
+                        <input
+                            ng-if="System.Setting.user_defined_input1 == 'TO' || System.Setting.user_defined_input1 == 'TC'"
+                            name="user_defined_input1"
+                            id="user_defined_input1"
+                            ng-model="System.Single.Custom1"
+                            class="form-control"
+                        />
+                        <select
+                            ng-if="System.Setting.user_defined_input1 == 'SO' || System.Setting.user_defined_input1 == 'SC'"
+                            ng-model="System.Single.Custom1"
+                            ng-options="o as o for o in System.Setting.user_defined_val1| commaspliter"
+                            class="form-control"
+                        ></select>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.user_defined_input2 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input2" class="control-label">{{System.Setting.user_defined_name2}}:</label>
+                        <input
+                            ng-if="System.Setting.user_defined_input2 == 'TO' || System.Setting.user_defined_input2 == 'TC'"
+                            name="user_defined_input2"
+                            id="user_defined_input2"
+                            ng-model="System.Single.Custom2"
+                            class="form-control"
+                        />
+                        <select
+                            ng-if="System.Setting.user_defined_input2 == 'SO' || System.Setting.user_defined_input2 == 'SC'"
+                            ng-model="System.Single.Custom2"
+                            ng-options="o as o for o in System.Setting.user_defined_val2| commaspliter"
+                            class="form-control"
+                        ></select>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.user_defined_input3 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input3" class="control-label">{{System.Setting.user_defined_name3}}:</label>
+                        <input
+                            ng-if="System.Setting.user_defined_input3 == 'TO' || System.Setting.user_defined_input3 == 'TC'"
+                            name="user_defined_input3"
+                            id="user_defined_input3"
+                            ng-model="System.Single.Custom3"
+                            class="form-control"
+                        />
+                        <select
+                            ng-if="System.Setting.user_defined_input3 == 'SO' || System.Setting.user_defined_input3 == 'SC'"
+                            ng-model="System.Single.Custom3"
+                            ng-options="o as o for o in System.Setting.user_defined_val3| commaspliter"
+                            class="form-control"
+                        ></select>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.user_defined_input4 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input4" class="control-label">{{System.Setting.user_defined_name4}}:</label>
+                        <input
+                            ng-if="System.Setting.user_defined_input4 == 'TO' || System.Setting.user_defined_input4 == 'TC'"
+                            name="user_defined_input4"
+                            id="user_defined_input4"
+                            ng-model="System.Single.Custom4"
+                            class="form-control"
+                        />
+                        <select
+                            ng-if="System.Setting.user_defined_input4 == 'SO' || System.Setting.user_defined_input4 == 'SC'"
+                            ng-model="System.Single.Custom4"
+                            ng-options="o as o for o in System.Setting.user_defined_val4| commaspliter"
+                            class="form-control"
+                        ></select>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.user_defined_input5 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input5" class="control-label">{{System.Setting.user_defined_name5}}:</label>
+                        <input
+                            ng-if="System.Setting.user_defined_input5 == 'TO' || System.Setting.user_defined_input5 == 'TC'"
+                            name="user_defined_input5"
+                            id="user_defined_input5"
+                            ng-model="System.Single.Custom5"
+                            class="form-control"
+                        />
+                        <select
+                            ng-if="System.Setting.user_defined_input5 == 'SO' || System.Setting.user_defined_input5 == 'SC'"
+                            ng-model="System.Single.Custom5"
+                            ng-options="o as o for o in System.Setting.user_defined_val5| commaspliter"
+                            class="form-control"
+                        ></select>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.user_defined_input6 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input6" class="control-label">{{System.Setting.user_defined_name6}}:</label>
+                        <input
+                            ng-if="System.Setting.user_defined_input6 == 'TO' || System.Setting.user_defined_input6 == 'TC'"
+                            name="user_defined_input6"
+                            id="user_defined_input6"
+                            ng-model="System.Single.Custom6"
+                            class="form-control"
+                        />
+                        <select
+                            ng-if="System.Setting.user_defined_input6 == 'SO' || System.Setting.user_defined_input6 == 'SC'"
+                            ng-model="System.Single.Custom6"
+                            ng-options="o as o for o in System.Setting.user_defined_val6| commaspliter"
+                            class="form-control"
+                        ></select>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.user_defined_input7 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input7" class="control-label">{{System.Setting.user_defined_name7}}:</label>
+                        <input
+                            ng-if="System.Setting.user_defined_input7 == 'TO' || System.Setting.user_defined_input7 == 'TC'"
+                            name="user_defined_input7"
+                            id="user_defined_input7"
+                            ng-model="System.Single.Custom7"
+                            class="form-control"
+                        />
+                        <select
+                            ng-if="System.Setting.user_defined_input7 == 'SO' || System.Setting.user_defined_input7 == 'SC'"
+                            ng-model="System.Single.Custom7"
+                            ng-options="o as o for o in System.Setting.user_defined_val7| commaspliter"
+                            class="form-control"
+                        ></select>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.user_defined_input8 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input8" class="control-label">{{System.Setting.user_defined_name8}}:</label>
+                        <input
+                            ng-if="System.Setting.user_defined_input8 == 'TO' || System.Setting.user_defined_input8 == 'TC'"
+                            name="user_defined_input8"
+                            id="user_defined_input8"
+                            ng-model="System.Single.Custom8"
+                            class="form-control"
+                        />
+                        <select
+                            ng-if="System.Setting.user_defined_input8 == 'SO' || System.Setting.user_defined_input8 == 'SC'"
+                            ng-model="System.Single.Custom8"
+                            ng-options="o as o for o in System.Setting.user_defined_val8| commaspliter"
+                            class="form-control"
+                        ></select>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.user_defined_input9 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input9" class="control-label">{{System.Setting.user_defined_name9}}:</label>
+                        <input
+                            ng-if="System.Setting.user_defined_input9 == 'TO' || System.Setting.user_defined_input9 == 'TC'"
+                            name="user_defined_input9"
+                            id="user_defined_input9"
+                            ng-model="System.Single.Custom9"
+                            class="form-control"
+                        />
+                        <select
+                            ng-if="System.Setting.user_defined_input9 == 'SO' || System.Setting.user_defined_input9 == 'SC'"
+                            ng-model="System.Single.Custom9"
+                            ng-options="o as o for o in System.Setting.user_defined_val9| commaspliter"
+                            class="form-control"
+                        ></select>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.user_defined_input10 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input10" class="control-label">{{System.Setting.user_defined_name10}}:</label>
+                        <input
+                            ng-if="(System.Setting.user_defined_input10 == 'TO' || System.Setting.user_defined_input10 == 'TC') && (System.Single.actiontype != 'Edit')"
+                            name="user_defined_input10"
+                            id="user_defined_input10"
+                            ng-model="System.Single.Custom10"
+                            class="form-control"
+                        />
+                        <label
+                            ng-if="(System.Setting.user_defined_input10 == 'TO' || System.Setting.user_defined_input10 == 'TC') && (System.Single.actiontype == 'Edit')"
+                            name="user_defined_input10"
+                            id="user_defined_input10"
+                            class="form-control"
+                        >
+                            {{ System.Single.Custom10}}
+                        </label>
+                        <select
+                            ng-if="System.Setting.user_defined_input10 == 'SO' || System.Setting.user_defined_input10 == 'SC'"
+                            ng-model="System.Single.Custom10"
+                            ng-options="o as o for o in System.Setting.user_defined_val10| commaspliter"
+                            class="form-control"
+                        ></select>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.user_defined_input11 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input11" class="control-label">{{System.Setting.user_defined_name11}}:</label>
+                        <input
+                            ng-if="System.Setting.user_defined_input11 == 'TO' || System.Setting.user_defined_input11 == 'TC'"
+                            name="user_defined_input11"
+                            id="user_defined_input11"
+                            ng-model="System.Single.Custom11"
+                            class="form-control"
+                        />
+                        <select
+                            ng-if="System.Setting.user_defined_input11 == 'SO' || System.Setting.user_defined_input11 == 'SC'"
+                            ng-model="System.Single.Custom11"
+                            ng-options="o as o for o in System.Setting.user_defined_val11| commaspliter"
+                            class="form-control"
+                        ></select>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.user_defined_input12 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input12" class="control-label">{{System.Setting.user_defined_name12}}:</label>
+                        <input
+                            ng-if="System.Setting.user_defined_input12 == 'TO' || System.Setting.user_defined_input12 == 'TC'"
+                            name="user_defined_input12"
+                            id="user_defined_input12"
+                            ng-model="System.Single.Custom12"
+                            class="form-control"
+                        />
+                        <select
+                            ng-if="System.Setting.user_defined_input12 == 'SO' || System.Setting.user_defined_input12 == 'SC'"
+                            ng-model="System.Single.Custom12"
+                            ng-options="o as o for o in System.Setting.user_defined_val12| commaspliter"
+                            class="form-control"
+                        ></select>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.user_defined_input13 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input13" class="control-label">{{System.Setting.user_defined_name13}}:</label>
+                        <input
+                            ng-if="System.Setting.user_defined_input13 == 'TO' || System.Setting.user_defined_input13 == 'TC'"
+                            name="user_defined_input13"
+                            id="user_defined_input13"
+                            ng-model="System.Single.Custom13"
+                            class="form-control"
+                        />
+                        <select
+                            ng-if="System.Setting.user_defined_input13 == 'SO' || System.Setting.user_defined_input13 == 'SC'"
+                            ng-model="System.Single.Custom13"
+                            ng-options="o as o for o in System.Setting.user_defined_val13| commaspliter"
+                            class="form-control"
+                        ></select>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.user_defined_input14 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input14" class="control-label">{{System.Setting.user_defined_name14}}:</label>
+                        <input
+                            ng-if="System.Setting.user_defined_input14 == 'TO' || System.Setting.user_defined_input14 == 'TC'"
+                            name="user_defined_input14"
+                            id="user_defined_input14"
+                            ng-model="System.Single.Custom14"
+                            class="form-control"
+                        />
+                        <select
+                            ng-if="System.Setting.user_defined_input14 == 'SO' || System.Setting.user_defined_input14 == 'SC'"
+                            ng-model="System.Single.Custom14"
+                            ng-options="o as o for o in System.Setting.user_defined_val14| commaspliter"
+                            class="form-control"
+                        ></select>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.user_defined_input15 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input15" class="control-label">{{System.Setting.user_defined_name15}}:</label>
+                        <input
+                            ng-if="System.Setting.user_defined_input15 == 'TO' || System.Setting.user_defined_input15 == 'TC'"
+                            name="user_defined_input15"
+                            id="user_defined_input15"
+                            ng-model="System.Single.Custom15"
+                            class="form-control"
+                        />
+                        <select
+                            ng-if="System.Setting.user_defined_input15 == 'SO' || System.Setting.user_defined_input15 == 'SC'"
+                            ng-model="System.Single.Custom15"
+                            ng-options="o as o for o in System.Setting.user_defined_val15| commaspliter"
+                            class="form-control"
+                        ></select>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.user_defined_input16 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input16" class="control-label">{{System.Setting.user_defined_name16}}:</label>
+                        <input
+                            ng-if="System.Setting.user_defined_input16 == 'TO' || System.Setting.user_defined_input16 == 'TC'"
+                            name="user_defined_input16"
+                            id="user_defined_input16"
+                            ng-model="System.Single.Custom16"
+                            class="form-control"
+                        />
+                        <select
+                            ng-if="System.Setting.user_defined_input16 == 'SO' || System.Setting.user_defined_input16 == 'SC'"
+                            ng-model="System.Single.Custom16"
+                            ng-options="o as o for o in System.Setting.user_defined_val16| commaspliter"
+                            class="form-control"
+                        ></select>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.user_defined_input17 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input17" class="control-label">{{System.Setting.user_defined_name17}}:</label>
+                        <input
+                            ng-if="System.Setting.user_defined_input17 == 'TO' || System.Setting.user_defined_input17 == 'TC'"
+                            name="user_defined_input17"
+                            id="user_defined_input17"
+                            ng-model="System.Single.Custom17"
+                            class="form-control"
+                        />
+                        <select
+                            ng-if="System.Setting.user_defined_input17 == 'SO' || System.Setting.user_defined_input17 == 'SC'"
+                            ng-model="System.Single.Custom17"
+                            ng-options="o as o for o in System.Setting.user_defined_val17| commaspliter"
+                            class="form-control"
+                        ></select>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.user_defined_input18 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input18" class="control-label">{{System.Setting.user_defined_name18}}:</label>
+                        <input
+                            ng-if="System.Setting.user_defined_input18 == 'TO' || System.Setting.user_defined_input18 == 'TC'"
+                            name="user_defined_input18"
+                            id="user_defined_input18"
+                            ng-model="System.Single.Custom18"
+                            class="form-control"
+                        />
+                        <select
+                            ng-if="System.Setting.user_defined_input18 == 'SO' || System.Setting.user_defined_input18 == 'SC'"
+                            ng-model="System.Single.Custom18"
+                            ng-options="o as o for o in System.Setting.user_defined_val18| commaspliter"
+                            class="form-control"
+                        ></select>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.user_defined_input19 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input19" class="control-label">{{System.Setting.user_defined_name19}}:</label>
+                        <input
+                            ng-if="System.Setting.user_defined_input19 == 'TO' || System.Setting.user_defined_input19 == 'TC'"
+                            name="user_defined_input19"
+                            id="user_defined_input19"
+                            ng-model="System.Single.Custom19"
+                            class="form-control"
+                        />
+                        <select
+                            ng-if="System.Setting.user_defined_input19 == 'SO' || System.Setting.user_defined_input19 == 'SC'"
+                            ng-model="System.Single.Custom19"
+                            ng-options="o as o for o in System.Setting.user_defined_val19| commaspliter"
+                            class="form-control"
+                        ></select>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Setting.user_defined_input20 != 'N'">
+                    <div class="form-group">
+                        <label for="user_defined_input20" class="control-label">{{System.Setting.user_defined_name20}}:</label>
+                        <input
+                            ng-if="System.Setting.user_defined_input20 == 'TO' || System.Setting.user_defined_input20 == 'TC'"
+                            name="user_defined_input20"
+                            id="user_defined_input20"
+                            ng-model="System.Single.Custom20"
+                            class="form-control"
+                        />
+                        <select
+                            ng-if="System.Setting.user_defined_input20 == 'SO' || System.Setting.user_defined_input20 == 'SC'"
+                            ng-model="System.Single.Custom20"
+                            ng-options="o as o for o in System.Setting.user_defined_val20| commaspliter"
+                            class="form-control"
+                        ></select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 col-sm-12 col-xs-12 well well-sm" ng-if="System.selected_settings.contract_enabled==='true'" ng-show="System.selected_contract">
+                <div class="form-group">
+                    <label for="contract-" class="control-label">Contract Status: </label>
+                </div>
+
+                <div class="col-md-4 col-sm-4 col-xs-12">
+                    <div class="form-group">
+                        <label for="contract-initial" class="control-label">Initial Quantity:</label>
+                        <p>{{System.contractStatus.promised | number:0}}</p>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-4 col-xs-12">
+                    <div class="form-group">
+                        <label for="contract-delivered" class="control-label">Delivered Quantity:</label>
+                        <p>{{System.contractStatus.delivered | number:0}}</p>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-4 col-xs-12">
+                    <div class="form-group">
+                        <label for="contract-remaining" class="control-label">Remaining Quantity:</label>
+                        <p>{{System.contractStatus.remaining | number:0}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row" ng-hide="System.Single.weighbridge_id === null">
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                        <label for="FirstWeight" class="control-label">First Weight:</label>
+                        <input
+                            name="FirstWeight"
+                            id="FirstWeight"
+                            ng-model="System.Single.FirstWeight"
+                            class="form-control"
+                            ng-readonly="(System.WeighBridge.manual == 'No' && System.Setting.type_of_weighing != '1') ||
+                                            (System.Single.actiontype == 'Edit' && System.Setting.type_of_weighing != '1') ||
+                                            (AxelSetups.Selected != null && System.Setting.type_of_weighing != '1') ||
+                                            (WeighingSystem.On != null && System.Setting.type_of_weighing != '1') ||
+                                            System.Setting.tares_enabled !== 'false'" 
+                        />
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-hide="System.Setting.tares_enabled !== 'true' && System.Setting.type_of_weighing === '1'">
+                    <div class="form-group">
+                        <label for="SecondWeight" class="control-label">Second Weight:</label>
+                        <input
+                            name="SecondWeight"
+                            id="SecondWeight"
+                            ng-model="System.Single.SecondWeight"
+                            class="form-control"
+                            ng-model-options="{ debounce: 300 }"
+                            ng-change="System.updateNetWeight();"
+                            ng-readonly="System.WeighBridge.manual == 'No' || System.Single.actiontype == 'New' || AxelSetups.Selected != null || WeighingSystem.On != null"
+                        />
+                    </div>
+                </div>
+            </div>
+            <div class="row" ng-hide="System.Single.weighbridge_id === null">
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                        <label for="FirstWeight" class="control-label">Total Weight:</label>
+                        <p>{{System.formatNumber(System.Single.SecondWeight - System.Single.FirstWeight)}} {{System.Site.measure_type}}</p>
+                    </div>
+                </div>
+
+                <div
+                    class="col-md-6 col-sm-6 col-xs-12"
+                    ng-if="System.Single.actiontype !== 'New' && System.Setting.enable_moisture == 'true' || (System.Single.actiontype === 'New' && System.Setting.enable_moisture == 'true' && System.Setting.tares_enabled === 'true')"
+                >
+                    <div class="form-group">
+                        <label for="moisture" class="control-label">Moisture Deduction:</label>
+                        <p>{{ System.formatNumber(System.moistureDeduction)}} {{System.Site.measure_type}}</p>
+                    </div>
+                </div>
+                <div
+                    class="col-md-6 col-sm-6 col-xs-12"
+                    ng-if="System.Single.actiontype !== 'New' && System.Setting.enable_handling == 'true' || (System.Single.actiontype === 'New' && System.Setting.enable_handling == 'true' && System.Setting.tares_enabled === 'true')"
+                >
+                    <div class="form-group">
+                        <label for="handling" class="control-label">{{System.handlingAlias}} Deduction:</label>
+                        <p>{{ System.formatNumber(System.handlingCharges)}} {{System.Site.measure_type}}</p>
+                    </div>
+                </div>
+                <div
+                    class="col-md-6 col-sm-6 col-xs-12"
+                    ng-if="System.Single.actiontype !== 'New' && System.Setting.pallet_enabled == 'true' || (System.Single.actiontype === 'New' && System.Setting.pallet_enabled == 'true' && System.Setting.tares_enabled === 'true')"
+                >
+                    <div class="form-group">
+                        <label for="pallet" class="control-label">Pallet Weight Deduction:</label>
+                        <p>{{ System.formatNumber(System.palletCharges) }} {{System.Site.measure_type}}</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" ng-if="System.Single.actiontype !== 'New' || (System.Single.actiontype === 'New' && System.Setting.tares_enabled === 'true')">
+                    <div class="form-group">
+                        <label for="moisture" class="control-label">Nett Weight:</label>
+                        <p>{{System.formatNumber(System.nettWeight)}} {{System.Site.measure_type}}</p>
+                    </div>
+                </div>
+                <div
+                    class="col-md-6 col-sm-6 col-xs-12"
+                    ng-if="((System.Setting.first_can_axel == 'On_Inmotion' || System.Setting.first_can_axel == 'Compulsory_Inmotion'
+                || System.Setting.first_can_axel == 'On_Cumulative' || System.Setting.first_can_axel == 'Compulsory_Cumulative') &&
+                                (System.Single.actiontype == 'New' && System.Setting.tares_enabled !== 'true'))"
+                >
+                    <div class="form-group">
+                        <input type="button" name="FirstWeight" value="Do Axel Weighing" id="FirstWeight" class="btn btn-danger" ng-click="System.OpenDialog()" />
+                    </div>
+                </div>
+                <div
+                    class="col-md-6 col-sm-6 col-xs-12"
+                    ng-if="((System.Setting.second_can_axel == 'On_Inmotion' || System.Setting.second_can_axel == 'Compulsory_Inmotion' ||
+                System.Setting.second_can_axel == 'On_Cumulative' || System.Setting.second_can_axel == 'Compulsory_Cumulative') &&
+                        ((System.Single.actiontype == 'Edit')  || (System.Single.actiontype == 'New' && System.Setting.tares_enabled === 'true')))"
+                >
+                    <div class="form-group">
+                        <input type="button" name="SecondWeight" value="Do Axel Weighing" id="SecondWeight" class="btn btn-danger" ng-click="System.OpenDialog()" />
+                    </div>
+                </div>
+            </div>
+            <div class="row" ng-if="System.FormDisplay && System.Setting.use_cameras == 'Yes' && System.Setting.display_cameras == 'Yes'">
+                <div ng-repeat="data in System.Cameras" class="col-sm-4 col-xs-6">
+                    <img alt="{{data.name}}" id="{{data.name}}" ng-src="{{data.src}}" style="height: 100px; width: 100px" />
+                </div>
+            </div>
+            <div class="row" ng-if="System.FormDisplay" ng-class="System.NumberplateClass">
+                <div class="col-md-6">
+                        <!-- Modal Trigger
+                        <button class="btn btn-primary" ng-click="System.OpenDailog()">Open Modal</button> -->
+                    <button
+                        class="btn btn-danger"
+                        ng-hide="(((System.Setting.first_can_axel == 'On_Inmotion' || System.Setting.first_can_axel == 'Compulsory_Inmotion'
+                            || System.Setting.first_can_axel == 'On_Cumulative' || System.Setting.first_can_axel == 'Compulsory_Cumulative') &&
+                                            System.Single.actiontype == 'New') ||
+                                            ((System.Setting.second_can_axel == 'On_Inmotion' || System.Setting.second_can_axel == 'Compulsory_Inmotion' 
+                                            || System.Setting.second_can_axel == 'On_Cumulative' || System.Setting.second_can_axel == 'Compulsory_Cumulative') &&
+                                                    System.Single.actiontype == 'Edit'))
+                                            && (System.Single.Weight1 == undefined || System.Single.Weight1 == 0)"
+                        ng-if="System.ScannedUser === null && System.FingerPrintVerify == 'Yes'"
+                        ng-click="System.Fingerprint()"
+                    >
+                        Scan Fingerprint
+                    </button>
+                    <button
+                        class="btn btn-danger"
+                        ng-hide="(((System.Setting.first_can_axel == 'On_Inmotion' || System.Setting.first_can_axel == 'Compulsory_Inmotion') &&
+                                            System.Single.actiontype == 'New') ||
+                                            ((System.Setting.second_can_axel == 'On_Inmotion' || System.Setting.second_can_axel == 'Compulsory_Inmotion' 
+                                            || System.Setting.second_can_axel == 'On_Cumulative' || System.Setting.second_can_axel == 'Compulsory_Cumulative') &&
+                                                    System.Single.actiontype == 'Edit'))
+                                            && (System.Single.Weight1 == undefined || System.Single.Weight1 == 0)"
+                        ng-click="System.save(Single)"
+                        ng-disabled="System.isSaving || System.submit"
+                    >
+                        Save
+                    </button>
+                    <div class="well well-sm" style="margin-top: 10px; padding: 8px 10px;"
+                        ng-if="System.selected_product && (System.ReportData.productVat !== null && System.ReportData.productVat !== undefined)">
+                        <div class="row">
+                            <div class="col-xs-7">
+                                <strong>Total cost</strong>
+                            </div>
+                            <div class="col-xs-5 text-right">
+                                <strong>{{ (System.ReportData.pricingFinal || 0) | number:2 }}</strong>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 4px;">
+                            <div class="col-xs-7 text-muted">Excl VAT</div>
+                            <div class="col-xs-5 text-right">{{ (System.ReportData.pricingExclVat || 0) | number:2 }}</div>
+                        </div>
+                        <div class="row" style="margin-top: 2px;">
+                            <div class="col-xs-7 text-muted">VAT</div>
+                            <div class="col-xs-5 text-right">{{ (System.ReportData.pricingVat || 0) | number:2 }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <button class="btn btn-black pull-right" ng-click="System.cancel()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12 col-md-12 hidden-screen">
+    <ticket-print site="System.Site" setting="System.Setting" report-data="System.ReportData" weighing-header="System.Single" axel-setups="AxelSetups" cameras="System.Cameras"></ticket-print>
+    <div class="col-sm-12 page-header" ng-if="System.Setting.invoice_enabled==='true'">
+        <invoice-print single="System.Single" invoice="System.invoice" report-data="System.ReportData" setting="System.Setting"> </invoice-print>
+    </div>
+</div>

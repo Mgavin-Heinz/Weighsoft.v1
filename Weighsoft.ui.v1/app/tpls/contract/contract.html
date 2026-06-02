@@ -1,0 +1,35 @@
+<page-title ng-if="layoutOptions.pageTitles" title="Contracts" description="" data-ng-init="System.initialize()"></page-title>
+<div class="col-lg-12 col-md-12">
+    <div class="panel panel-color panel-danger">
+        <div class="panel-heading hidden-print">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <h2>Contracts Management</h2>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label for="company_id" class="control-label">Company</label>
+                    <select name="company_id" id="role_id" ng-if="!System.User.company_id" ng-model="System.HeaderSingle.company_id" class="form-control"
+                        ng-options="option.value as option.name for option in System.companyList" ng-change="System.changeFilter('company')"></select>
+                    <label class="form-control" for="company_name" ng-if="System.User.company_id">{{ System.companyList.registered_name}}</label>
+                </div>
+                <div ng-if="businessPartner">
+                    <div class="form-group" ng-if="System.HeaderSingle.company_id !== null">
+                        <label for="site_id" class="control-label">Site</label>
+                        <select name="site_id" id="site_id" ng-model="System.HeaderSingle.site_id" class="form-control" ng-options="option.value as option.name for option in System.siteList"
+                            ng-change="System.changeFilter('site')"></select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <div class="form-group" ng-if="System.HeaderSingle.site_id !== null">
+                    <button type="button" data-ng-click="System.showAddForm()" ng-hide='System.isEditing' class="btn btn-black pull-right">
+                        Add New
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <ui-view></ui-view>
+        </div>
+    </div>
+</div>

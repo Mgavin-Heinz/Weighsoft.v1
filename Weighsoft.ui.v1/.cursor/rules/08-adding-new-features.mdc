@@ -1,0 +1,322 @@
+---
+description: Step-by-step guide for adding new features following existing patterns
+alwaysApply: false
+---
+
+# Adding New Features - Step-by-Step Guide
+
+## Overview
+
+This guide walks through adding a new feature to the Weighsoft UI application, following all established patterns and conventions.
+
+## Step 1: Create the Controller
+
+### Option A: Individual Controller File (Recommended)
+
+Create `app/js/controllers/my_feature.js`:
+
+```javascript
+'use strict';
+angular
+  .module('xenon.controllers')
+  .controller('MyFeatureCtrl', function($scope, $rootScope, $state, Restangular) {
+    $rootScope.Start();
+    const vm = this;
+    const routeName = 'my_feature';  // Match API endpoint
+    
+    vm.baseData = Restangular.all(routeName);
+    vm.isEditing = false;
+    vm.data = {};
+    vm.list = [];
+    
+    function loadData() {
+      $rootScope.Start();
+      vm.baseData.getList().then(function(data) {
+        vm.list = data;
+        $rootScope.Loaded();
+      }, function(response) {
+        $rootScope.Error(response);
+      });
+    }
+    
+    vm.showAddForm = function() {
+      vm.isEditing = true;
+      vm.data = {};
+    };
+    
+    vm.showEditForm = function(item) {
+      $rootScope.Start();
+      Restangular.one(routeName, item.id).get().then(function(data) {
+        vm.data = data;
+        vm.isEditing = true;
+        $rootScope.Loaded();
+      }, function(response) {
+        vm.isEditing = false;
+        $rootScope.Error(response);
+      });
+    };
+    
+    vm.saveForm = function(formData) {
+      if (!formData.$valid) {
+        return;
+      }
+      
+      $rootScope.Start();
+      var promise = typeof vm.data.id === 'undefined'
+        ? vm.baseData.post(vm.data)
+        : vm.data.save();
+        
+      promise.then(function() {
+        vm.isEditing = false;
+        loadData();
+      }, function(response) {
+        $rootScope.Error(response);
+      });
+    };
+    
+    vm.deleteItem = function(item) {
+      if (!confirm('Are you sure you want to delete this item?')) {
+        return;
+      }
+      $rootScope.Start();
+      Restangular.one(routeName, item.id).get().then(function(data) {
+        data.remove().then(function() {
+          loadData();
+        }, function(response) {
+          $rootScope.Error(response);
+        });
+      });
+    };
+    
+    vm.cancel = function() {
+      vm.isEditing = false;
+      $state.go('app.my_feature');
+    };
+    
+    vm.initialize = function() {
+      loadData();
+    };
+  });
+```
+
+### Option B: Register in controllers.js
+
+If it's a simple controller, you can add it to `app/js/controllers.js`:
+
+```javascript
+.controller('MyFeatureCtrl', function($scope, $rootScope, $state, Restangular) {
+  // ... controller code
+});
+```
+
+## Step 2: Create the Template
+
+Create `app/tpls/my_feature/list.html`:
+
+```html
+<div ng-controller="MyFeatureCtrl as System">
+  <page-title 
+    title="My Feature" 
+    description="Manage my feature items">
+  </page-title>
+  
+  <!-- List View -->
+  <div class="panel panel-default" ng-if="!System.isEditing">
+    <div class="panel-heading">
+      <button class="btn btn-primary" ng-click="System.showAddForm()">
+        <i class="fa fa-plus"></i> Add Item
+      </button>
+    </div>
+    <div class="panel-body">
+      <table datatable="ng" class="table table-striped">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="item in System.list">
+            <td>{{ item.name }}</td>
+            <td>
+              <button class="btn btn-sm btn-primary" ng-click="System.showEditForm(item)">
+                Edit
+              </button>
+              <button class="btn btn-sm btn-danger" ng-click="System.deleteItem(item)">
+                Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <!-- Form View -->
+  <div class="panel panel-default" ng-if="System.isEditing">
+    <div class="panel-heading">
+      <h3 class="panel-title">{{ System.data.id ? 'Edit' : 'Add' }} Item</h3>
+    </div>
+    <div class="panel-body">
+      <form name="myForm" ng-submit="System.saveForm(myForm)" novalidate>
+        <div class="form-group" ng-class="{'has-error': myForm.name.$invalid && myForm.name.$touched}">
+          <label>Name</label>
+          <input 
+            type="text" 
+            class="form-control" 
+            ng-model="System.data.name"
+            name="name"
+            required>
+          <span ng-if="myForm.name.$error.required && myForm.name.$touched" class="help-block">
+            Name is required
+          </span>
+        </div>
+        
+        <button type="submit" class="btn btn-primary" ng-disabled="myForm.$invalid">
+          Save
+        </button>
+        <button type="button" class="btn btn-default" ng-click="System.cancel()">
+          Cancel
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+```
+
+## Step 3: Add the Route
+
+Add to `app/js/routes.js`:
+
+```javascript
+state('app.my_feature', {
+  url: '/my_feature',
+  templateUrl: appHelper.templatePath('my_feature/list'),
+  controller: 'MyFeatureCtrl as System',
+  resolve: {
+    deps: function ($ocLazyLoad) {
+      return $ocLazyLoad.load([
+        ASSETS.tables.datatables,
+        ASSETS.extra.toastr,
+      ]);
+    },
+  }
+})
+```
+
+## Step 4: Add to Menu (Optional)
+
+If the feature should appear in the sidebar menu, add to `app/js/services.js` in the `prepareSidebarMenu` function:
+
+```javascript
+if (permissions.my_feature === "true") {
+  vm.Operations.addItem("My Feature", "/app/my_feature", "linecons-note");
+}
+```
+
+## Step 5: Test the Feature
+
+1. Navigate to the new route: `/app/my_feature`
+2. Test adding a new item
+3. Test editing an existing item
+4. Test deleting an item
+5. Verify loading states work correctly
+6. Verify error handling works correctly
+
+## Checklist for New Features
+
+- [ ] Controller uses `controller as` syntax with `vm`
+- [ ] Controller uses `'use strict'`
+- [ ] Controller uses Restangular (not $http)
+- [ ] Controller handles errors with `$rootScope.Error()`
+- [ ] Controller shows/hides loading with `$rootScope.Start()` / `$rootScope.Loaded()`
+- [ ] Template uses `controller as` syntax: `ng-controller="Ctrl as System"`
+- [ ] Template uses `appHelper.templatePath()` (in route definition)
+- [ ] Route is added to `app/js/routes.js`
+- [ ] Route includes required assets in `resolve` block
+- [ ] Route state name follows convention: `app.feature_name`
+- [ ] File names use underscores: `my_feature.js`, `list.html`
+- [ ] Controller name uses PascalCase: `MyFeatureCtrl`
+- [ ] Form validation is implemented
+- [ ] Navigation uses `$state.go()` (not `window.location`)
+
+## Adding Nested/Child Features
+
+For features with sub-features (like contracts, pallets, tares):
+
+### Controller Structure
+
+```
+app/js/controllers/my_feature/
+  my_features.controller.js    # Main controller
+  list.controller.js           # List controller
+  edit.controller.js          # Edit controller
+```
+
+### Route Structure
+
+```javascript
+state('app.my_feature', {
+  url: '/my_feature',
+  templateUrl: appHelper.templatePath('my_feature/main'),
+  controller: 'MyFeaturesCtrl as System'
+})
+
+state('app.my_feature.list', {
+  url: '/list/:id',
+  templateUrl: appHelper.templatePath('my_feature/list'),
+  controller: 'MyFeatureListCtrl as System'
+})
+
+state('app.my_feature.edit', {
+  url: '/edit/:id',
+  templateUrl: appHelper.templatePath('my_feature/edit'),
+  controller: 'MyFeatureEditCtrl as System'
+})
+```
+
+## Common Patterns Reference
+
+### Pattern: List with Create/Edit/Delete
+- See: `companies.js`, `users.js`
+- Template: Single template with `ng-if` for form view
+
+### Pattern: Master-Detail
+- See: `contract/`, `pallet/`, `tare/`
+- Template: Separate templates for list and detail views
+
+### Pattern: Complex Forms
+- See: `weighing_create.js`, `weighing_update.js`
+- Template: Multiple form sections, state preservation
+
+## Step 6: Update Versions and Commit
+
+**CRITICAL: After completing any changes, you MUST:**
+
+1. **Update version numbers** in:
+   - `build.bat` - Increment `set version=0.10.X`
+   - `build.sh` - Increment `version=0.10.X`
+   - `app/tpls/layout/page-title.html` - Update all three version numbers
+   - `package.json` - Increment `"version": "1.3.X"`
+
+2. **Commit all changes** with a descriptive message:
+   ```bash
+   git add .
+   git commit -m "[Feature] Description of changes
+
+   - Change 1
+   - Change 2
+   - Version updated to 0.10.X"
+   ```
+
+See `09-version-control-commits.mdc` for detailed version and commit workflow.
+
+## Getting Help
+
+When adding a new feature:
+1. Look at similar existing features for patterns
+2. Follow the controller template in `02-angularjs-patterns.mdc`
+3. Follow the routing patterns in `06-routing-state-management.mdc`
+4. Check `05-common-pitfalls.mdc` to avoid mistakes
+5. Ensure all rules in `04-file-organization.mdc` are followed
+6. **ALWAYS update versions and commit** (see `09-version-control-commits.mdc`)

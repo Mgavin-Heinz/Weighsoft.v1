@@ -1,0 +1,83 @@
+<page-title ng-if="layoutOptions.pageTitles" title="Create Company"></page-title>
+
+<div class="row down-position">
+
+	<div class="col-md-12">
+		<div class="panel panel-color panel-danger">
+			<div class="panel-heading">
+				Site Create
+			</div>
+
+			<br/>
+			<button class="btn btn-primary left-btn" ng-click="PointCreate();">New Work Station</button>
+
+			<div class="panel-body">
+				<form role="form" class="row form-horizontal">
+					<div class="form-group col-md-8">
+						<div class="form-group" ng-if="user_info.role=='Admin'">
+							<label class="col-sm-2 control-label" for="field-1">Company:</label>
+
+							<div class="col-sm-6">
+								<select class="form-control" ng-model="site_infos.company_type">
+									<option ng-repeat="company_info in company_infos" value="{{company_info.registered_name}}">{{company_info.registered_name}}</option>
+								</select>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label" for="field-1">Site:</label>
+
+							<div class="col-sm-6">
+								<input type="text" class="form-control" id="field-1" ng-model="site_infos.site_type">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label" for="field-1">Name:</label>
+
+							<div class="col-sm-6">
+								<input type="text" class="form-control" id="field-1" ng-model="site_infos.site_name">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label" for="field-1">Active:</label>
+							<div class="col-sm-6">
+								<input type="checkbox" checked class="iswitch iswitch-secondary" ng-model="site_infos.site_active" ng-true-value="'true'" ng-false-value="'false'">
+							</div>
+						</div>	
+
+						<div class="col-md-8 left-feature">
+							<label class="col-sm-4 control-label" for="field-1">Features</label>
+							<br/>
+							<div class="col-sm-10">
+								<blockquote class="blockquote blockquote-success">
+									<div class="form-group">
+										<input type="checkbox" class="iswitch iswitch-secondary left-two" ng-model="site_infos.normal_weighing" ng-true-value="'true'" ng-false-value="'false'">
+										<label class="iswitch iswitch-secondary lb-left-one" for="field-1">Normal Weighing</label>
+									</div>
+
+									<div class="form-group">
+										<input type="checkbox" class="iswitch iswitch-secondary left-two" ng-model="site_infos.axle_weighing" ng-true-value="'true'" ng-false-value="'false'">
+										<label class="iswitch iswitch-secondary lb-left-one" for="field-1">Axle Weighing</label>
+									</div>
+
+									<div class="form-group">
+										<input type="checkbox" class="iswitch iswitch-secondary left-two" ng-model="site_infos.public_weighing" ng-true-value="'true'" ng-false-value="'false'">
+										<label class="iswitch iswitch-secondary lb-left-one" for="field-1">Public Weighing</label>
+									</div>
+								</blockquote>
+							</div>
+						</div>
+
+						<div class="form-group col-md-12 left-btn">
+							<button class="btn btn-blue" ng-click="SiteCreate();">Save</button>
+							<button class="btn btn-blue cancel" ng-click="SiteCreateCancel()">Cancel</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>						
+

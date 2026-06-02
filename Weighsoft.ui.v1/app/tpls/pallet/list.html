@@ -1,0 +1,31 @@
+
+<div>
+    <table datatable="ng" class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Pallet Name</th>
+                <th>Amount in KG</th>
+
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr data-ng-repeat="data in System.palletList">
+                <td data-ng-bind="data.pallet_name"></td>
+                <td data-ng-bind="data.amount"></td>
+
+                <td>
+                    <button type="button" ng-if="data.has_transaction" data-ng-click="System.showTransactions(data)" class="btn btn-black btn-sm btn-icon icon-left">
+                        View Transaction
+                    </button>
+                    <button type="button" ng-if="!data.has_transaction" data-ng-click="System.showEditForm(data)" class="btn btn-black btn-sm btn-icon icon-left">
+                        Edit&nbsp;&nbsp;
+                    </button>
+                    <button type="button" ng-if="!data.has_transaction" data-ng-click="System.deleteWeighbridge(data)" class="btn btn-danger btn-sm btn-icon icon-left">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
