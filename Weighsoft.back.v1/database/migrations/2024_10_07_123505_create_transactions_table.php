@@ -11,25 +11,34 @@ class CreateTransactionsTable extends Migration
         if (!Schema::hasTable('transactions')) {
             Schema::create('transactions', function (Blueprint $table) {
                 $table->id();
-                $table->foreignId('current_id')->constrained()->onDelete('cascade');
-                $table->foreignId('settings_id')->constrained()->onDelete('cascade');
-                $table->foreignId('site_id')->constrained()->onDelete('cascade');
-                $table->foreignId('company_id')->constrained()->onDelete('cascade');
+                // current_id references a 'currents' table that does not exist
+                // in this codebase — stored as a plain nullable integer instead.
+                $table->unsignedBigInteger('current_id')->nullable();
+                $table->unsignedBigInteger('settings_id')->nullable();
+                $table->unsignedBigInteger('site_id')->nullable();
+                $table->unsignedBigInteger('company_id')->nullable();
                 $table->timestamps();
+
+                $table->foreign('settings_id')->references('id')->on('settings')->onDelete('cascade');
+                $table->foreign('site_id')->references('id')->on('sites')->onDelete('cascade');
+                $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
             });
         } else {
             Schema::table('transactions', function (Blueprint $table) {
                 if (!Schema::hasColumn('transactions', 'current_id')) {
-                    $table->foreignId('current_id')->constrained()->onDelete('cascade');
+                    $table->unsignedBigInteger('current_id')->nullable();
                 }
                 if (!Schema::hasColumn('transactions', 'settings_id')) {
-                    $table->foreignId('settings_id')->constrained()->onDelete('cascade');
+                    $table->unsignedBigInteger('settings_id')->nullable();
+                    $table->foreign('settings_id')->references('id')->on('settings')->onDelete('cascade');
                 }
                 if (!Schema::hasColumn('transactions', 'site_id')) {
-                    $table->foreignId('site_id')->constrained()->onDelete('cascade');
+                    $table->unsignedBigInteger('site_id')->nullable();
+                    $table->foreign('site_id')->references('id')->on('sites')->onDelete('cascade');
                 }
                 if (!Schema::hasColumn('transactions', 'company_id')) {
-                    $table->foreignId('company_id')->constrained()->onDelete('cascade');
+                    $table->unsignedBigInteger('company_id')->nullable();
+                    $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
                 }
             });
         }

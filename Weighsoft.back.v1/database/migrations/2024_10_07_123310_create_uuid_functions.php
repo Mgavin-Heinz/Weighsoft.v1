@@ -12,9 +12,8 @@ class CreateUuidFunctions extends Migration
      */
     public function up()
     {
-        // Create the BIN_TO_UUID function if it doesn't exist
         DB::unprepared('
-            CREATE FUNCTION BIN_TO_UUID(binary_uuid BINARY(16))
+            CREATE OR REPLACE FUNCTION BIN_TO_UUID(binary_uuid BINARY(16))
             RETURNS CHAR(36) DETERMINISTIC
             BEGIN
                 RETURN CONCAT(
@@ -27,9 +26,8 @@ class CreateUuidFunctions extends Migration
             END;
         ');
 
-        // Create the UUID_TO_BIN function if it doesn't exist
         DB::unprepared('
-            CREATE FUNCTION UUID_TO_BIN(uuid CHAR(36))
+            CREATE OR REPLACE FUNCTION UUID_TO_BIN(uuid CHAR(36))
             RETURNS BINARY(16) DETERMINISTIC
             BEGIN
                 RETURN UNHEX(REPLACE(uuid, "-", ""));
@@ -44,7 +42,6 @@ class CreateUuidFunctions extends Migration
      */
     public function down()
     {
-        // Drop the functions if they exist
         DB::unprepared('DROP FUNCTION IF EXISTS BIN_TO_UUID');
         DB::unprepared('DROP FUNCTION IF EXISTS UUID_TO_BIN');
     }

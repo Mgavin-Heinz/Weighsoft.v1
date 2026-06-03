@@ -6,14 +6,8 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateUsersTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
-        // Check if the table already exists
         if (!Schema::hasTable('users')) {
             Schema::create('users', function (Blueprint $table) {
                 $table->id();
@@ -22,17 +16,22 @@ class CreateUsersTable extends Migration
                 $table->string('contact_num');
                 $table->string('email')->unique();
                 $table->string('password');
-                $table->foreignId('role_id')->nullable()->constrained()->onDelete('set null');
-                $table->foreignId('site_id')->nullable()->constrained()->onDelete('set null');
-                $table->foreignId('workstations_id')->nullable()->constrained()->onDelete('set null');
-                $table->foreignId('company_id')->nullable()->constrained()->onDelete('set null');
+                // role_id references a 'roles' table that does not exist —
+                // stored as a plain nullable integer instead.
+                $table->unsignedBigInteger('role_id')->nullable();
+                $table->unsignedBigInteger('site_id')->nullable();
+                $table->unsignedBigInteger('workstations_id')->nullable();
+                $table->unsignedBigInteger('company_id')->nullable();
                 $table->string('token')->nullable();
                 $table->string('fingerprint');
-                $table->softDeletes(); // For the deleted_at column
+                $table->softDeletes();
                 $table->timestamps();
+
+                $table->foreign('site_id')->references('id')->on('sites')->onDelete('set null');
+                $table->foreign('workstations_id')->references('id')->on('workstations')->onDelete('set null');
+                $table->foreign('company_id')->references('id')->on('companies')->onDelete('set null');
             });
         } else {
-            // Add columns if they do not exist
             Schema::table('users', function (Blueprint $table) {
                 if (!Schema::hasColumn('users', 'firstname')) {
                     $table->string('firstname');
@@ -50,16 +49,19 @@ class CreateUsersTable extends Migration
                     $table->string('password');
                 }
                 if (!Schema::hasColumn('users', 'role_id')) {
-                    $table->foreignId('role_id')->nullable()->constrained()->onDelete('set null');
+                    $table->unsignedBigInteger('role_id')->nullable();
                 }
                 if (!Schema::hasColumn('users', 'site_id')) {
-                    $table->foreignId('site_id')->nullable()->constrained()->onDelete('set null');
+                    $table->unsignedBigInteger('site_id')->nullable();
+                    $table->foreign('site_id')->references('id')->on('sites')->onDelete('set null');
                 }
                 if (!Schema::hasColumn('users', 'workstations_id')) {
-                    $table->foreignId('workstations_id')->nullable()->constrained()->onDelete('set null');
+                    $table->unsignedBigInteger('workstations_id')->nullable();
+                    $table->foreign('workstations_id')->references('id')->on('workstations')->onDelete('set null');
                 }
                 if (!Schema::hasColumn('users', 'company_id')) {
-                    $table->foreignId('company_id')->nullable()->constrained()->onDelete('set null');
+                    $table->unsignedBigInteger('company_id')->nullable();
+                    $table->foreign('company_id')->references('id')->on('companies')->onDelete('set null');
                 }
                 if (!Schema::hasColumn('users', 'token')) {
                     $table->string('token')->nullable();
@@ -68,17 +70,12 @@ class CreateUsersTable extends Migration
                     $table->string('fingerprint');
                 }
                 if (!Schema::hasColumn('users', 'deleted_at')) {
-                    $table->softDeletes(); // Add soft deletes column if not exists
+                    $table->softDeletes();
                 }
             });
         }
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('users');

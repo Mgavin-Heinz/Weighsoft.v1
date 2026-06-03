@@ -111,8 +111,3 @@ NewCertificateForm
 
 ---
 
-## What connects next
-
-- **Task 17** — replace `PRODUCT_OPTIONS` / `HAULIER_OPTIONS` with real data from TanStack Query hooks
-- **Task 19** — wire up the `onNext` prop to navigate to Step 2 using React Navigation
-- **Task 29** — add auto-save so draft data is not lost if the app is closed mid-form
