@@ -1,0 +1,143 @@
+<svg viewBox="0 0 380 820" xmlns="http://www.w3.org/2000/svg" role="img" font-family="Arial, sans-serif">
+  <title>Task 13 — New Weighing Certificate mobile screen wireframe</title>
+  <desc>Mobile wireframe showing the multi-step form for creating a new weighing certificate in Weighsoft</desc>
+
+  <!-- Background -->
+  <rect width="380" height="820" fill="#F5F5F5" rx="0"/>
+
+  <!-- ── Phone frame ── -->
+  <rect x="10" y="10" width="360" height="800" rx="24" fill="#FFFFFF" stroke="#CCCCCC" stroke-width="1"/>
+
+  <!-- Status bar -->
+  <rect x="10" y="10" width="360" height="36" rx="24" fill="#1F3864"/>
+  <rect x="10" y="34" width="360" height="12" fill="#1F3864"/>
+  <text x="30" y="32" font-size="11" fill="#FFFFFF" font-weight="bold">9:41</text>
+  <text x="318" y="32" font-size="11" fill="#FFFFFF">●●●</text>
+
+  <!-- App header -->
+  <rect x="10" y="46" width="360" height="52" fill="#1F3864"/>
+  <text x="30" y="77" font-size="11" fill="#AABFDE">← Back</text>
+  <text x="190" y="77" font-size="15" fill="#FFFFFF" font-weight="bold" text-anchor="middle">New Certificate</text>
+
+  <!-- Step indicator -->
+  <rect x="10" y="98" width="360" height="40" fill="#F0F4FB"/>
+
+  <!-- Step dots and labels -->
+  <!-- Step 1 active -->
+  <circle cx="72" cy="118" r="10" fill="#1F3864"/>
+  <text x="72" y="122" font-size="10" fill="#FFFFFF" text-anchor="middle" font-weight="bold">1</text>
+  <text x="72" y="133" font-size="9" fill="#1F3864" text-anchor="middle" font-weight="bold">Details</text>
+  <!-- connector -->
+  <line x1="82" y1="118" x2="138" y2="118" stroke="#CCCCCC" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <!-- Step 2 incomplete -->
+  <circle cx="148" cy="118" r="10" fill="#FFFFFF" stroke="#CCCCCC" stroke-width="1.5"/>
+  <text x="148" y="122" font-size="10" fill="#CCCCCC" text-anchor="middle">2</text>
+  <text x="148" y="133" font-size="9" fill="#999999" text-anchor="middle">Readings</text>
+  <!-- connector -->
+  <line x1="158" y1="118" x2="214" y2="118" stroke="#CCCCCC" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <!-- Step 3 incomplete -->
+  <circle cx="224" cy="118" r="10" fill="#FFFFFF" stroke="#CCCCCC" stroke-width="1.5"/>
+  <text x="224" y="122" font-size="10" fill="#CCCCCC" text-anchor="middle">3</text>
+  <text x="224" y="133" font-size="9" fill="#999999" text-anchor="middle">Summary</text>
+  <!-- connector -->
+  <line x1="234" y1="118" x2="290" y2="118" stroke="#CCCCCC" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <!-- Step 4 incomplete -->
+  <circle cx="300" cy="118" r="10" fill="#FFFFFF" stroke="#CCCCCC" stroke-width="1.5"/>
+  <text x="300" y="122" font-size="10" fill="#CCCCCC" text-anchor="middle">4</text>
+  <text x="300" y="133" font-size="9" fill="#999999" text-anchor="middle">Review</text>
+
+  <!-- ── STEP 1 FORM ── -->
+  <!-- Section: Weighing Info -->
+  <rect x="20" y="148" width="340" height="22" rx="4" fill="#E8EDF5"/>
+  <text x="30" y="163" font-size="11" fill="#1F3864" font-weight="bold">WEIGHING INFORMATION</text>
+
+  <!-- Ticket No field -->
+  <text x="30" y="186" font-size="11" fill="#555555">Ticket No.</text>
+  <rect x="30" y="191" width="148" height="34" rx="6" fill="#FFFFFF" stroke="#CCCCCC" stroke-width="1"/>
+  <text x="44" y="212" font-size="11" fill="#999999">Auto-generated</text>
+  <!-- Effective Date -->
+  <text x="194" y="186" font-size="11" fill="#555555">Effective Date <tspan fill="#CC0000">*</tspan></text>
+  <rect x="194" y="191" width="166" height="34" rx="6" fill="#FFFFFF" stroke="#CCCCCC" stroke-width="1"/>
+  <text x="208" y="212" font-size="11" fill="#333333">2024-06-01</text>
+  <text x="340" y="212" font-size="14" fill="#999999">📅</text>
+
+  <!-- Product field -->
+  <text x="30" y="244" font-size="11" fill="#555555">Product <tspan fill="#CC0000">*</tspan></text>
+  <rect x="30" y="249" width="148" height="34" rx="6" fill="#FFFFFF" stroke="#1F3864" stroke-width="1.5"/>
+  <text x="44" y="270" font-size="11" fill="#333333">Iron Ore</text>
+  <text x="165" y="270" font-size="12" fill="#999999">▾</text>
+  <!-- Haulier field -->
+  <text x="194" y="244" font-size="11" fill="#555555">Haulier <tspan fill="#CC0000">*</tspan></text>
+  <rect x="194" y="249" width="166" height="34" rx="6" fill="#FFFFFF" stroke="#CCCCCC" stroke-width="1"/>
+  <text x="208" y="270" font-size="11" fill="#999999">Select haulier…</text>
+  <text x="347" y="270" font-size="12" fill="#999999">▾</text>
+
+  <!-- Vehicle Reg -->
+  <text x="30" y="302" font-size="11" fill="#555555">Vehicle Reg.</text>
+  <rect x="30" y="307" width="148" height="34" rx="6" fill="#FFFFFF" stroke="#CCCCCC" stroke-width="1"/>
+  <text x="44" y="328" font-size="11" fill="#999999">e.g. GP 123-456</text>
+  <!-- Contract -->
+  <text x="194" y="302" font-size="11" fill="#555555">Contract (optional)</text>
+  <rect x="194" y="307" width="166" height="34" rx="6" fill="#FFFFFF" stroke="#CCCCCC" stroke-width="1"/>
+  <text x="208" y="328" font-size="11" fill="#999999">Select contract…</text>
+  <text x="347" y="328" font-size="12" fill="#999999">▾</text>
+
+  <!-- Section: Certificate Meta -->
+  <rect x="20" y="354" width="340" height="22" rx="4" fill="#E8EDF5"/>
+  <text x="30" y="369" font-size="11" fill="#1F3864" font-weight="bold">CERTIFICATE DETAILS</text>
+
+  <!-- Template -->
+  <text x="30" y="392" font-size="11" fill="#555555">Template <tspan fill="#CC0000">*</tspan></text>
+  <rect x="30" y="397" width="148" height="34" rx="6" fill="#FFFFFF" stroke="#CCCCCC" stroke-width="1"/>
+  <text x="44" y="418" font-size="11" fill="#333333">Standard</text>
+  <text x="165" y="418" font-size="12" fill="#999999">▾</text>
+  <!-- Title -->
+  <text x="194" y="392" font-size="11" fill="#555555">Certificate Title</text>
+  <rect x="194" y="397" width="166" height="34" rx="6" fill="#FFFFFF" stroke="#CCCCCC" stroke-width="1"/>
+  <text x="208" y="418" font-size="11" fill="#333333">Weighing Certificate</text>
+
+  <!-- Notes -->
+  <text x="30" y="450" font-size="11" fill="#555555">Notes</text>
+  <rect x="30" y="455" width="330" height="56" rx="6" fill="#FFFFFF" stroke="#CCCCCC" stroke-width="1"/>
+  <text x="44" y="474" font-size="11" fill="#999999">Optional notes for this certificate…</text>
+
+  <!-- Section: Weighbridge Readings preview -->
+  <rect x="20" y="522" width="340" height="22" rx="4" fill="#E8EDF5"/>
+  <text x="30" y="537" font-size="11" fill="#1F3864" font-weight="bold">READINGS PREVIEW  (entered in step 2)</text>
+
+  <!-- Reading placeholder rows -->
+  <rect x="30" y="549" width="330" height="30" rx="4" fill="#FAFAFA" stroke="#EEEEEE" stroke-width="1"/>
+  <text x="46" y="568" font-size="11" fill="#999999">GROSS</text>
+  <text x="200" y="568" font-size="11" fill="#999999">— kg</text>
+  <text x="320" y="568" font-size="11" fill="#999999">not captured</text>
+
+  <rect x="30" y="583" width="330" height="30" rx="4" fill="#FAFAFA" stroke="#EEEEEE" stroke-width="1"/>
+  <text x="46" y="602" font-size="11" fill="#999999">TARE</text>
+  <text x="200" y="602" font-size="11" fill="#999999">— kg</text>
+  <text x="320" y="602" font-size="11" fill="#999999">not captured</text>
+
+  <rect x="30" y="617" width="330" height="30" rx="4" fill="#FAFAFA" stroke="#EEEEEE" stroke-width="1"/>
+  <text x="46" y="636" font-size="11" fill="#999999">NET</text>
+  <text x="200" y="636" font-size="11" fill="#BBBBBB">— kg</text>
+  <text x="310" y="636" font-size="11" fill="#BBBBBB">calculated</text>
+
+  <!-- Validation error example -->
+  <rect x="30" y="656" width="330" height="26" rx="4" fill="#FEF2F2" stroke="#FCA5A5" stroke-width="1"/>
+  <text x="44" y="673" font-size="11" fill="#B91C1C">⚠ Haulier is required before proceeding</text>
+
+  <!-- ── Bottom nav bar ── -->
+  <rect x="10" y="690" width="360" height="1" fill="#DDDDDD"/>
+  <rect x="10" y="691" width="360" height="79" fill="#FFFFFF" rx="0"/>
+  <rect x="10" y="750" width="360" height="40" rx="24" fill="#FFFFFF"/>
+
+  <!-- Save draft button -->
+  <rect x="20" y="702" width="148" height="40" rx="8" fill="#FFFFFF" stroke="#1F3864" stroke-width="1.5"/>
+  <text x="94" y="726" font-size="12" fill="#1F3864" text-anchor="middle" font-weight="bold">Save Draft</text>
+
+  <!-- Next step button -->
+  <rect x="178" y="702" width="182" height="40" rx="8" fill="#1F3864"/>
+  <text x="269" y="726" font-size="12" fill="#FFFFFF" text-anchor="middle" font-weight="bold">Next: Readings →</text>
+
+  <!-- Home indicator -->
+  <rect x="155" y="758" width="70" height="4" rx="2" fill="#CCCCCC"/>
+</svg>
