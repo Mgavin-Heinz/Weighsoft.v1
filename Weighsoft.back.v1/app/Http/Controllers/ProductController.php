@@ -13,11 +13,13 @@ class ProductController extends JwtAuthController
     private Product $model;
     private string $modelName;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->model = new Product();
         $this->modelName = "Product";
     }
+
     public static function LoadData($companyId)
     {
         $query = new Product();
@@ -28,7 +30,7 @@ class ProductController extends JwtAuthController
         $data = $query->orderBy('code')->get();
 
         $companies = (new Company())
-            ->whereIn('id', array_unique(array_map(fn($item) => $item['company_id'], $data->toArray())))
+            ->whereIn('id', array_unique(array_map(fn ($item) => $item['company_id'], $data->toArray())))
             ->get(['id', 'registered_name']);
         $companyDict = array();
         foreach ($companies as $company) {
@@ -38,45 +40,32 @@ class ProductController extends JwtAuthController
         foreach ($data as $product) {
             $company = $companyDict[$product->company_id];
             $product->company = ($company == null ? null : $company->registered_name);
-            
+
             $product["displayName"] = $product->name . "(" . $product->code . ")";
             $product["report"] = $product->code . "<br>" . $product->name . "<br>";
         }
         return $data;
     }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return JsonResponse
-     */
-    public function index(): JsonResponse
-    {
-        $companyId = "";
-        if (isset($_GET) && isset($_GET['company_id'])) {
-            $companyId = $_GET['company_id'];
-        }
 
+    // Fix: inject Request and use $request->query() instead of $_GET
+    public function index(Request $request): JsonResponse
+    {
+        $companyId = $request->query('company_id', '');
         $data = $this->LoadData($companyId);
         return response()->json($data);
     }
 
+    // Fix: validate input before creating
     public function store(Request $request): JsonResponse
     {
-        $product = $this->model->create($request->all());
+        $data = $request->validate([
+            'code'       => 'required|string|max:50',
+            'name'       => 'required|string|max:100',
+            'company_id' => 'required|integer|exists:companies,id',
+        ]);
 
-        return response()->json($product);
-    }
-
-    public function destroy(int $id): JsonResponse
-    {
-        try {
-            $product = $this->model->findOrFail($id);
-        } catch (ModelNotFoundException) {
-            return $this->error("$this->modelName not found", 404);
-        }
-
-        $product->delete();
-        return response()->json($product);
+        $product = $this->model->create($data);
+        return response()->json($product, 201);
     }
 
     public function show($id): JsonResponse
@@ -90,7 +79,9 @@ class ProductController extends JwtAuthController
         return response()->json($product);
     }
 
-    public function update(int $id, Request $request): JsonResponse
+    // Fix: correct parameter order (Request first, then $id)
+    // Fix: validate input before updating
+    public function update(Request $request, int $id): JsonResponse
     {
         try {
             $product = $this->model->findOrFail($id);
@@ -98,7 +89,25 @@ class ProductController extends JwtAuthController
             return $this->error("$this->modelName not found", 404);
         }
 
-        $product->update($request->all());
+        $data = $request->validate([
+            'code'       => 'sometimes|string|max:50',
+            'name'       => 'sometimes|string|max:100',
+            'company_id' => 'sometimes|integer|exists:companies,id',
+        ]);
+
+        $product->update($data);
+        return response()->json($product);
+    }
+
+    public function destroy(int $id): JsonResponse
+    {
+        try {
+            $product = $this->model->findOrFail($id);
+        } catch (ModelNotFoundException) {
+            return $this->error("$this->modelName not found", 404);
+        }
+
+        $product->delete();
         return response()->json($product);
     }
 }

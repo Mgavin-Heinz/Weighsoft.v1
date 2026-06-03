@@ -48,25 +48,80 @@ class HaulierController extends JwtAuthController
         }
         return $data;
     }
-    public function index(): JsonResponse
+
+    // Fix: inject Request and use $request->query() instead of $_GET
+    public function index(Request $request): JsonResponse
     {
-        $companyId = "";
-        $siteId = "";
-        if (isset($_GET) && isset($_GET['company_id'])) {
-            $companyId = $_GET['company_id'];
-        }
-        if (isset($_GET) && isset($_GET['site_id'])) {
-            $siteId = $_GET['site_id'];
-        }
+        $companyId = $request->query('company_id', '');
+        $siteId    = $request->query('site_id', '');
+
         $data = $this->LoadData($companyId, $siteId);
         return response()->json($data);
     }
 
+    // Fix: validate input before creating
     public function store(Request $request): JsonResponse
     {
-        $hauliers = $this->model->create($request->all());
+        $data = $request->validate([
+            'code'       => 'required|string|max:50',
+            'name'       => 'required|string|max:100',
+            'company_id' => 'required|integer|exists:companies,id',
+            'site_id'    => 'required|integer|exists:sites,id',
+        ]);
 
-        return response()->json($hauliers);
+        $haulier = $this->model->create($data);
+        return response()->json($haulier, 201);
+    }
+
+    public function show($id): JsonResponse
+    {
+        try {
+            $haulier = $this->model->findOrFail($id);
+        } catch (ModelNotFoundException) {
+            return $this->error("$this->modelName not found", 404);
+        }
+
+        $company = Company::find($haulier->company_id);
+        $haulier->company_smart_hauliers = $company ? $company->smart_hauliers : false;
+
+        if ($haulier->company_smart_hauliers) {
+            $vehicles = $haulier->vehicles()
+                ->orderBy('registration_number')
+                ->get(['id', 'registration_number', 'rfid', 'haulier_id', 'company_id', 'site_id']);
+
+            $haulier->linked_vehicles = $vehicles->map(function ($vehicle) {
+                return [
+                    'id'                  => $vehicle->id,
+                    'registration_number' => $vehicle->registration_number,
+                    'rfid'                => $vehicle->rfid,
+                ];
+            });
+        } else {
+            $haulier->linked_vehicles = [];
+        }
+
+        return response()->json($haulier);
+    }
+
+    // Fix: correct parameter order (Request first, then $id)
+    // Fix: validate input before updating
+    public function update(Request $request, int $id): JsonResponse
+    {
+        try {
+            $haulier = $this->model->findOrFail($id);
+        } catch (ModelNotFoundException) {
+            return $this->error("$this->modelName not found", 404);
+        }
+
+        $data = $request->validate([
+            'code'       => 'sometimes|string|max:50',
+            'name'       => 'sometimes|string|max:100',
+            'company_id' => 'sometimes|integer|exists:companies,id',
+            'site_id'    => 'sometimes|integer|exists:sites,id',
+        ]);
+
+        $haulier->update($data);
+        return response()->json($haulier);
     }
 
     public function destroy($id): JsonResponse
@@ -78,51 +133,6 @@ class HaulierController extends JwtAuthController
         }
 
         $haulier->delete();
-        return response()->json($haulier);
-    }
-
-    public function show($id): JsonResponse
-    {
-        try {
-            $haulier = $this->model->findOrFail($id);
-        } catch (ModelNotFoundException) {
-            return $this->error("$this->modelName not found", 404);
-        }
-
-        // Load company to check if smart_hauliers is enabled
-        $company = Company::find($haulier->company_id);
-        $haulier->company_smart_hauliers = $company ? $company->smart_hauliers : false;
-
-        // If smart_hauliers is enabled, load linked RFID vehicles
-        if ($haulier->company_smart_hauliers) {
-            $vehicles = $haulier->vehicles()
-                ->orderBy('registration_number')
-                ->get(['id', 'registration_number', 'rfid', 'haulier_id', 'company_id', 'site_id']);
-            
-            // Format vehicles for display
-            $haulier->linked_vehicles = $vehicles->map(function($vehicle) {
-                return [
-                    'id' => $vehicle->id,
-                    'registration_number' => $vehicle->registration_number,
-                    'rfid' => $vehicle->rfid,
-                ];
-            });
-        } else {
-            $haulier->linked_vehicles = [];
-        }
-
-        return response()->json($haulier);
-    }
-
-    public function update($id, Request $request): JsonResponse
-    {
-        try {
-            $haulier = $this->model->findOrFail($id);
-        } catch (ModelNotFoundException) {
-            return $this->error("$this->modelName not found", 404);
-        }
-
-        $haulier->update($request->all());
         return response()->json($haulier);
     }
 }
