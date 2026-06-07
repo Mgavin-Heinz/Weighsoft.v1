@@ -6,7 +6,6 @@ use App\Models\Pallet;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class PalletController extends JwtAuthController
 {
@@ -18,6 +17,7 @@ class PalletController extends JwtAuthController
         $this->model = new Pallet();
         $this->modelName = "Pallet";
     }
+
     public static function LoadData($companyId, $siteId)
     {
         $query = new Pallet();
@@ -27,42 +27,33 @@ class PalletController extends JwtAuthController
         if ($siteId != "") {
             $query = $query->where('site_id', '=', $siteId);
         }
-        
         $data = $query->get();
         return $data;
     }
-    public function index(): JsonResponse
+
+    // updated index to use $request instead of $_GET
+    public function index(Request $request): JsonResponse
     {
-        $companyId = "";
-        $siteId = "";
-        if (isset($_GET) && isset($_GET['company_id'])) {
-            $companyId = $_GET['company_id'];
-        }
-        if (isset($_GET) && isset($_GET['site_id'])) {
-            $siteId = $_GET['site_id'];
-        }
+        $companyId = $request->query('company_id', '');
+        $siteId = $request->query('site_id', '');
         $data = $this->LoadData($companyId, $siteId);
         return response()->json($data);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param Request $request
-     * @return JsonResponse
-     */
     public function store(Request $request): JsonResponse
     {
+        // added some validation
+        $request->validate([
+            'code' => 'required|string',
+            'name' => 'required|string',
+            'company_id' => 'required',
+            'site_id' => 'required',
+        ]);
+
         $item = $this->model->create($request->all());
         return response()->json($item);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param int $id
-     * @return JsonResponse
-     */
     public function show(int $id): JsonResponse
     {
         try {
@@ -74,13 +65,6 @@ class PalletController extends JwtAuthController
         return response()->json($pallet);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param Request $request
-     * @param int $id
-     * @return JsonResponse
-     */
     public function update(Request $request, int $id): JsonResponse
     {
         try {
@@ -88,6 +72,12 @@ class PalletController extends JwtAuthController
         } catch (ModelNotFoundException) {
             return $this->error("$this->modelName not found", 404);
         }
+
+        // added validation for update too
+        $request->validate([
+            'code' => 'string',
+            'name' => 'string',
+        ]);
 
         $pallet->update($request->all());
         return response()->json($pallet);
