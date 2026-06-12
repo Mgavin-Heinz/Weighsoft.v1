@@ -1,0 +1,20 @@
+{
+  "expo": {
+    "name": "Weighsoft",
+    "slug": "weighsoft-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "za.co.weighsoft.mobile"
+    },
+    "android": {
+      "package": "za.co.weighsoft.mobile",
+      "adaptiveIcon": {
+        "backgroundColor": "#1F3864"
+      }
+    }
+  }
+}
