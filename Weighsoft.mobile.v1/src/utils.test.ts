@@ -306,3 +306,31 @@ describe('stampAuditUpdate()', () => {
     expect(result.audit.createdAt).toBe('2024-01-01T00:00:00.000Z');
   });
 });
+
+
+// ─── Mutation-driven test additions ───────────────────────────────────────────
+// These tests were added after mutation testing revealed two surviving mutants.
+
+describe('isValidDateString() — mutation-strengthened', () => {
+  it('rejects a date where month is removed from validation (e.g. day matches but month is wrong)', () => {
+    // Mutant 8 survival: removing the month check meant '2024-13-01' passed
+    // because day (1) and year (2024) matched even with invalid month 13
+    expect(isValidDateString('2024-13-01')).toBe(false);
+    expect(isValidDateString('2024-00-15')).toBe(false);
+  });
+});
+
+describe('buildLookup() — mutation-strengthened', () => {
+  it('correctly keys string IDs that cannot be coerced to numbers', () => {
+    // Mutant 7 survival: removing String() still works for numeric keys
+    // because JS coerces them. This test uses a non-numeric string key
+    // to catch a version that doesn't stringify.
+    const items = [
+      { id: 'abc-123', name: 'First' },
+      { id: 'def-456', name: 'Second' },
+    ];
+    const dict = buildLookup(items, 'id');
+    expect(dict['abc-123'].name).toBe('First');
+    expect(dict['def-456'].name).toBe('Second');
+  });
+});
